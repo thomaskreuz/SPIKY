@@ -33,5 +33,14 @@ elseif para.choice==3 % keep pooled spike train
        surro_spikes{trac}=all_spikes(surro_labels==trac);
    end
 elseif para.choice==4 % keep PSTH
-    
+   % PSTH
+   num_bins = 100;
+   bins = min([spikes{:}]):(max([spikes{:}])-min([spikes{:}]))/num_bins:max([spikes{:}]);
+   psth = histc([spikes{:}], bins);
+   
+   % ICDF
+   lambda = 2;
+   ipsth = icdf(psth, 2);
+   
+   %Generating (still working on)
 end
