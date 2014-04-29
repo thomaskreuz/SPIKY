@@ -1,0 +1,56 @@
+
+% structure 'Please leave exact structure intact, only edit line by line.
+
+
+% structure 'd_para': parameters that describe the data
+
+0;		% Beginning of recording
+4000;		% End of recording
+0.1;		% Sampling interval, precision of spike times
+1;		% Downsampling factor (positive integer)
+2000;		% Relevant time instants
+1000  3000;	% Even more relevant time instants
+1;		% Selection of spike trains (1-all,2-selected groups,3-selected trains)
+1   2   3   4   5   6   7   8   9  10;		% Selected spike trains (if 'select_train_mode==3')
+1  2;		% Selected spike train groups (if 'select_train_mode==2')
+G1#$%G2#$%;	% Names of spike train groups
+20  20;		% Sizes of respective spike train groups
+5  15  25  35;	% Relevant seperations between groups of spike trains
+20;		% Even more relevant seperations between groups of spike trains
+dc;		% Additional comment on the example, will be used in file and figure names
+
+% structure 'f_para': parameters that determine the appearance of the figures (and the movie)
+
+.\images\;	% Path where images (postscript) will be stored
+.\movies\;	% Path where movies (avi) will be stored
+.\mat\;		% Path where Matlab files (mat) will be stored
+1;		% X-axis-Realtime-Mode
+1;		% Extreme spikes
+10;		% Conversion of time unit
+[ms];		% Time unit, used in x-labels
+A#$%B#$%C#$%D#$%E#$%F#$%G#$%H#$%;		% Names of intervals
+500  1000  1500  2000  2500  3000  3500;		% Edges of subsections
+1000:1000:3000;	% Individual time instants for which the instantaneous dissimilarity values will be calculated
+selective;	% One or more continuous intervals for selective temporal averaging
+triggered;	% Non-continuous time-instants for triggered temporal averaging
+0;		% Print to postscript file? (0-no,1-yes)
+0;		% Record a movie? (0-no,1-yes)
+1;		% Display short hints when hovering over GUI element (0-no,1-yes)
+123;		% Number of figure
+0.5125      0.0342      0.4854      0.8867;		% Position of figure (normalized units)
+0.1         0.1         0.8         0.8;		% Position of axis (normalized units)
+1;		% Moving average mode: (1-no,2-only,3-both)
+1;		% Order of moving average
+1;		% Well, frames per second for the movie
+2;		% Number of frames the averages are shown at the end of the movie (important for movies with many frames)
+4;		% +1:vs time,+2::different measures,+4:different cuts,+8:different cuts-Movie (binary addition allows all combinations)
+1;              % 1-All only, 2-Groups only, 3-All and groups
+1;		% Normalization of averaged bivariate measure profiles (1-Absolute maximum value 'one',2-Overall maximum value,3-Individual maximum value)
+1;		% Normalization of pairwise dissimilarity matrices (1-Absolute maximum value 'one',2-Overall maximum value,3-Individual maximum value)
+1;		% Coloring of dendrograms (0-no,1-groups,2-trains)
+0;		% Allows tracing the overall synchronization among groups of spike trains (0-no,1-yes)
+0;		% Cluster trees pairwise dissimilarity matrices (0-no,1-yes)
+0;		% Spike count histogram on the right hand side of the spike trains (0-no,1-yes)
+0  1  0  0  0  0  0  0  0  0  0  2  0  0  0  0  0  0  0  0  0  0;		% Vector with order of subplots
+1  1;		% Vector with size of subplots
+fc;		% Additional comment on the example, will be used in file and figure names
