@@ -6,7 +6,6 @@
 d_para.tmin=str2double(get(handles.dpara_tmin_edit,'String'));
 d_para.tmax=str2double(get(handles.dpara_tmax_edit,'String'));
 d_para.dts=str2double(get(handles.dpara_dts_edit,'String'));
-d_para.dsf=str2double(get(handles.dpara_dsf_edit,'String'));
 
 d_para.thick_markers=str2num(get(handles.dpara_thick_markers_edit,'String'));
 d_para.thick_markers=unique(round(d_para.thick_markers(round(d_para.thick_markers/d_para.dts)*d_para.dts>=d_para.tmin & ...
@@ -161,7 +160,7 @@ if gco==handles.Calculate_pushbutton || gco==handles.Plot_pushbutton
         f_para.plot_mode=get(handles.plots_frame_sequence_checkbox,'Value')*4+...
             get(handles.plots_frame_comparison_checkbox,'Value')*2+get(handles.plots_profiles_checkbox,'Value');
         f_para.profile_mode=get(handles.plots_profiles_popupmenu,'Value');
-        f_para.subplot_size=str2num(get(handles.fpara_subplot_size_edit,'String'));
+        f_para.rel_subplot_size=str2num(get(handles.fpara_subplot_size_edit,'String'));
         f_para.show_title=get(handles.fpara_title_checkbox,'Value');
         f_para.x_realtime_mode=get(handles.fpara_x_realtime_mode_checkbox,'Value');
         f_para.extreme_spikes=get(handles.fpara_extreme_spikes_checkbox,'Value');
@@ -186,7 +185,7 @@ if gco==handles.Calculate_pushbutton || gco==handles.Plot_pushbutton
             set(handles.fpara_train_groups_edit,'String',regexprep(num2str(f_para.select_train_groups),'\s+',' '))
         end
         f_para.ma_mode=get(handles.fpara_moving_average_mode_popupmenu,'Value');
-        f_para.pi_mao=str2num(get(handles.fpara_pi_mao_edit,'String'));
+        f_para.mao=str2num(get(handles.fpara_mao_edit,'String'));
         f_para.psth_window=str2num(get(handles.fpara_psth_window_edit,'String'));
         f_para.spike_train_color_coding_mode=get(handles.fpara_spike_train_color_coding_mode_popupmenu,'Value');
         f_para.profile_norm_mode=get(handles.fpara_profile_norm_mode_popupmenu,'Value');
@@ -207,11 +206,8 @@ if gco==handles.Calculate_pushbutton || gco==handles.Plot_pushbutton
         if isfield(f_para,'ma_mode') && ~isempty(f_para.ma_mode)
             if f_para.ma_mode==1 s_para.nma=1; elseif f_para.ma_mode==2 s_para.nma=2; else s_para.nma=[1 2]; end %#ok<SEPEX>
         end
-        if isfield(f_para,'pi_mao') && ~isempty(f_para.pi_mao)
-            s_para.pi_mao=f_para.pi_mao;    % order of the moving average (piecewise profiles)
-        end
-        if isfield(f_para,'samp_mao') && ~isempty(f_para.samp_mao)
-            s_para.samp_mao=f_para.samp_mao;    % order of the moving average (sampled profiles)
+        if isfield(f_para,'mao') && ~isempty(f_para.mao)
+            s_para.mao=f_para.mao;    % order of the moving average (piecewise profiles)
         end
     end
 

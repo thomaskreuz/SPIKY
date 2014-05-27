@@ -385,8 +385,8 @@ for matc=1:h_para.num_all_matrices
     else
         xlim([0.5 f_para.num_select_train_groups+0.5])
         ylim([0.5 f_para.num_select_train_groups+0.5])
-        set(gca,'XTick',1:f_para.num_select_train_groups,'XTickLabel',f_para.all_train_group_names)
-        set(gca,'YTick',1:f_para.num_select_train_groups,'YTickLabel',fliplr(f_para.all_train_group_names))
+        set(gca,'XTick',1:f_para.num_select_train_groups,'XTickLabel',f_para.select_group_names)
+        set(gca,'YTick',1:f_para.num_select_train_groups,'YTickLabel',fliplr(f_para.select_group_names))
     end
     if length(get(gca,'YTick'))>f_para.num_trains
         set(gca,'YTick',(1:f_para.num_trains),'YTickLabel',fliplr(1:f_para.num_trains));
@@ -424,34 +424,36 @@ for matc=1:h_para.num_all_matrices
         end
     end
     xl=xlim; yl=ylim;
-    if f_para.num_select_train_groups>1 && length(find(diff(f_para.select_group_vect)))==f_para.num_select_train_groups-1
-        for sgc=1:f_para.num_select_train_groups-1
-            mat_sgs_lh(matc,sgc,1)=line(xl,(0.5+f_para.num_trains-f_para.cum_num_select_group_trains(sgc))*ones(1,2),...
-                'Visible',p_para.mat_sgs_vis,'Color',p_para.mat_sgs_col,'LineStyle',p_para.mat_sgs_ls,...
-                'LineWidth',p_para.mat_sgs_lw,'UIContextMenu',mat_sgs_cmenu);
-            mat_sgs_lh(matc,sgc,2)=line((0.5+f_para.cum_num_select_group_trains(sgc))*ones(1,2),yl,...
-                'Visible',p_para.mat_sgs_vis,'Color',p_para.mat_sgs_col,'LineStyle',p_para.mat_sgs_ls,...
-                'LineWidth',p_para.mat_sgs_lw,'UIContextMenu',mat_sgs_cmenu);
+    if matc<=h_para.num_measures
+        if f_para.num_select_train_groups>1 && length(find(diff(f_para.select_group_vect)))==f_para.num_select_train_groups-1
+            for sgc=1:f_para.num_select_train_groups-1
+                mat_sgs_lh(matc,sgc,1)=line(xl,(0.5+f_para.num_trains-f_para.cum_num_select_group_trains(sgc))*ones(1,2),...
+                    'Visible',p_para.mat_sgs_vis,'Color',p_para.mat_sgs_col,'LineStyle',p_para.mat_sgs_ls,...
+                    'LineWidth',p_para.mat_sgs_lw,'UIContextMenu',mat_sgs_cmenu);
+                mat_sgs_lh(matc,sgc,2)=line((0.5+f_para.cum_num_select_group_trains(sgc))*ones(1,2),yl,...
+                    'Visible',p_para.mat_sgs_vis,'Color',p_para.mat_sgs_col,'LineStyle',p_para.mat_sgs_ls,...
+                    'LineWidth',p_para.mat_sgs_lw,'UIContextMenu',mat_sgs_cmenu);
+            end
         end
-    end
-    if isfield(d_para,'thick_separators') && ~isempty(d_para.thick_separators)
-        for sec=1:length(d_para.thick_separators)
-            mat_thick_sep_lh(matc,sec,1)=line(xl,(0.5+f_para.num_trains-d_para.thick_separators(sec))*ones(1,2),...
-                'Visible',p_para.mat_thick_sep_vis,'Color',p_para.mat_thick_sep_col,'LineStyle',p_para.mat_thick_sep_ls,...
-                'LineWidth',p_para.mat_thick_sep_lw,'UIContextMenu',mat_thick_sep_cmenu);
-            mat_thick_sep_lh(matc,sec,2)=line((0.5+d_para.thick_separators(sec))*ones(1,2),yl,...
-                'Visible',p_para.mat_thick_sep_vis,'Color',p_para.mat_thick_sep_col,'LineStyle',p_para.mat_thick_sep_ls,...
-                'LineWidth',p_para.mat_thick_sep_lw,'UIContextMenu',mat_thick_sep_cmenu);
+        if isfield(d_para,'thick_separators') && ~isempty(d_para.thick_separators)
+            for sec=1:length(d_para.thick_separators)
+                mat_thick_sep_lh(matc,sec,1)=line(xl,(0.5+f_para.num_trains-d_para.thick_separators(sec))*ones(1,2),...
+                    'Visible',p_para.mat_thick_sep_vis,'Color',p_para.mat_thick_sep_col,'LineStyle',p_para.mat_thick_sep_ls,...
+                    'LineWidth',p_para.mat_thick_sep_lw,'UIContextMenu',mat_thick_sep_cmenu);
+                mat_thick_sep_lh(matc,sec,2)=line((0.5+d_para.thick_separators(sec))*ones(1,2),yl,...
+                    'Visible',p_para.mat_thick_sep_vis,'Color',p_para.mat_thick_sep_col,'LineStyle',p_para.mat_thick_sep_ls,...
+                    'LineWidth',p_para.mat_thick_sep_lw,'UIContextMenu',mat_thick_sep_cmenu);
+            end
         end
-    end
-    if isfield(d_para,'thin_separators') && ~isempty(d_para.thin_separators)
-        for sec=1:length(d_para.thin_separators)
-            mat_thin_sep_lh(matc,sec,1)=line(xl,(0.5+f_para.num_trains-d_para.thin_separators(sec))*ones(1,2),...
-                'Visible',p_para.mat_thin_sep_vis,'Color',p_para.mat_thin_sep_col,'LineStyle',p_para.mat_thin_sep_ls,...
-                'LineWidth',p_para.mat_thin_sep_lw,'UIContextMenu',mat_thin_sep_cmenu);
-            mat_thin_sep_lh(matc,sec,2)=line((0.5+d_para.thin_separators(sec))*ones(1,2),yl,...
-                'Visible',p_para.mat_thin_sep_vis,'Color',p_para.mat_thin_sep_col,'LineStyle',p_para.mat_thin_sep_ls,...
-                'LineWidth',p_para.mat_thin_sep_lw,'UIContextMenu',mat_thin_sep_cmenu);
+        if isfield(d_para,'thin_separators') && ~isempty(d_para.thin_separators)
+            for sec=1:length(d_para.thin_separators)
+                mat_thin_sep_lh(matc,sec,1)=line(xl,(0.5+f_para.num_trains-d_para.thin_separators(sec))*ones(1,2),...
+                    'Visible',p_para.mat_thin_sep_vis,'Color',p_para.mat_thin_sep_col,'LineStyle',p_para.mat_thin_sep_ls,...
+                    'LineWidth',p_para.mat_thin_sep_lw,'UIContextMenu',mat_thin_sep_cmenu);
+                mat_thin_sep_lh(matc,sec,2)=line((0.5+d_para.thin_separators(sec))*ones(1,2),yl,...
+                    'Visible',p_para.mat_thin_sep_vis,'Color',p_para.mat_thin_sep_col,'LineStyle',p_para.mat_thin_sep_ls,...
+                    'LineWidth',p_para.mat_thin_sep_lw,'UIContextMenu',mat_thin_sep_cmenu);
+            end
         end
     end
 
@@ -510,6 +512,11 @@ for matc=1:h_para.num_all_matrices
                     dh_para.cols=cm(dcol_indy,:);
                 end
                 yl=ylim;
+                if size(sdm_linkage,1)>30 || (h_para.num_all_matrices>1 && size(sdm_linkage,1)>20) || (h_para.num_all_matrices>2 && size(sdm_linkage,1)>10)
+                    dlw=1;
+                else
+                    dlw=p_para.dendrol_lw;
+                end
                 trac=0;
                 for lic=1:size(sdm_linkage,1)
                     for cc=1:2
@@ -517,7 +524,7 @@ for matc=1:h_para.num_all_matrices
                             trac=trac+1;
                             dendrol_lh(matc,lic,cc)=line(find(xtln==sdm_linkage(lic,cc))*ones(1,2),[yl(1) sdm_linkage(lic,3)],...
                                 'Visible',p_para.dendrol_vis,'Color',dh_para.cols(sdm_linkage(lic,cc),:),'LineStyle',p_para.dendrol_ls,...
-                                'LineWidth',p_para.dendrol_lw,'UIContextMenu',dendrol_cmenu,'UserData',gca);
+                                'LineWidth',dlw,'UIContextMenu',dendrol_cmenu,'UserData',gca);
                         end
                     end
                 end
@@ -527,14 +534,14 @@ for matc=1:h_para.num_all_matrices
             %    set(gca,'YTick',[])
             %end
             if matc<=h_para.num_measures
-                if f_para.num_trains>30
+                if f_para.num_trains>20 || (f_para.num_trains>10 && h_para.num_all_matrices>1)
                     set(gca,'XTickLabel',[])
                 elseif f_para.num_trains>10
                     set(gca,'FontSize',8)
                 end
                 f_para.dendro_order{matc}=xtln;
             else
-                if f_para.num_select_train_groups>20
+                if f_para.num_select_train_groups>10
                     set(gca,'XTickLabel',[])
                 end
                 f_para.group_dendro_order{matc-h_para.num_measures}=xtln;
@@ -593,7 +600,7 @@ if f_para.dendrograms==1
     SPIKY_handle_subplot
 end
 
-if mod(f_para.plot_mode,8)>3 && get(handles.print_figures_checkbox,'Value')==1             % Create postscript file
+if get(handles.print_figures_checkbox,'Value')==1             % Create postscript file
     if f_para.publication==1
         set(gcf,'PaperOrientation','Portrait');set(gcf,'PaperType', 'A4');
         set(gcf,'PaperUnits','Normalized','PaperPosition',[0 0.25 1.0 0.7]);
@@ -618,7 +625,6 @@ if mod(f_para.plot_mode,8)>3 && get(handles.print_figures_checkbox,'Value')==1  
 end
 
 if get(handles.record_movie_checkbox,'Value')==1 && isfield(mov_handles,'tmov')
-
     figure(f_para.num_fig)
     F = getframe(f_para.num_fig);
     F1 = F;
@@ -630,5 +636,4 @@ if get(handles.record_movie_checkbox,'Value')==1 && isfield(mov_handles,'tmov')
     if frc==f_para.num_frames
         mov_handles.tmov = close(mov_handles.tmov);
     end
-
 end

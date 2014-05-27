@@ -220,14 +220,14 @@ end
             if gcbo==STC.increasing_spike_number_pb || gcbo==STC.decreasing_spike_number_pb || ...
                    (d_para.num_all_train_groups>1 && (gcbo==STC.increasing_spike_number_within_pb || gcbo==STC.decreasing_spike_number_within_pb))
                onset_str_in=get(STC.spike_number_onset_edit,'String');
-               onset_in=str2num(regexprep(onset_str_in,'[^1234567890e- \.]',''));
+               onset_in=str2num(regexprep(onset_str_in,f_para.regexp_str_scalar_float,''));
                if ~isempty(onset_in)
                    onset_str_out=num2str(onset_in(1));
                else
                    onset_str_out='';
                end
                offset_str_in=get(STC.spike_number_offset_edit,'String');
-               offset_in=str2num(regexprep(offset_str_in,'[^1234567890e- \.]',''));
+               offset_in=str2num(regexprep(offset_str_in,f_para.regexp_str_scalar_float,''));
                if ~isempty(offset_in)
                    offset_str_out=num2str(offset_in(1));
                else
@@ -282,7 +282,7 @@ end
             elseif gcbo==STC.increasing_latency_pb || gcbo==STC.decreasing_latency_pb || ...
                    (d_para.num_all_train_groups>1 && (gcbo==STC.increasing_latency_within_pb || gcbo==STC.decreasing_latency_within_pb))
                latency_onset_str_in=get(STC.latency_onset_edit,'String');
-               latency_onset_in=str2num(regexprep(latency_onset_str_in,'[^1234567890e- \.]',''));
+               latency_onset_in=str2num(regexprep(latency_onset_str_in,f_para.regexp_str_scalar_float,''));
                if ~isempty(latency_onset_in)
                    latency_onset_str_out=num2str(latency_onset_in(1));
                else

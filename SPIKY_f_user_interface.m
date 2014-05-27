@@ -1,34 +1,39 @@
 % This function is the only file you might need to deal with. It consists of two parts. 
 % The upper part can be used to define some of the standard parameters of SPIKY. The lower part
-% can be used to generate predefined spike train datasets which can then be called via the listbox in the ‘Selection: Data’ panel.
+% can be used to generate predefined spike train datasets which can then be called via the listbox in the ?Selection: Data? panel.
 % Always make sure that the variable 'listbox_str' labels correctly the datasets defined in the subsequent indices.
 
 function [spikes,d_para,f_para,d_para_default,f_para_default,s_para_default,p_para_default,listbox_str]=SPIKY_f_user_interface(d_para,f_para,calc)
 
 % structure 'd_para': parameters that describe the data, for a description see comments at the end of this file
-d_para_default=struct('tmin',[],'tmax',[],'dts',[],'dsf',1,'max_total_spikes',100000,'max_memo_init',10000000,'num_trains',[],...
+d_para_default=struct('tmin',[],'tmax',[],'dts',[],'max_total_spikes',100000,'max_memo_init',10000000,'num_trains',[],...
     'select_train_mode',1,'select_train_groups',[],'preselect_trains',[],'latency_onset',[],...
     'num_all_train_groups',1,'all_train_group_names',[],'all_train_group_sizes',[],...
     'thick_separators',[],'thin_separators',[],'thick_markers',[],'thin_markers',[],'interval_divisions',[],'interval_names','',...
     'instants_str','','selective_averages_str','','triggered_averages_str','','spikes_variable','',...
-    'comment_string','SPIKY_','example',1);
+    'comment_string','SPIKY','example',3);
 
 % structure 'f_para': parameters that determine the appearance of the figures (and the movie), for a description see comments at the end of this file
 f_para_default=struct('imagespath',['.',filesep],'moviespath',['.',filesep],...    % Default values
-    'matpath',['.',filesep],'print_mode',0,'movie_mode',0,'publication',0,'comment_string','',...
-    'num_fig',123,'pos_fig',[0.5 0.0342 0.5 0.8867],'supo1',[0.1 0.1 0.8 0.8],'edge_correction',0,...
-    'hints',0,'show_title',1,'time_unit_string','','x_offset',0,'x_scale',1,'x_realtime_mode',0,'extreme_spikes',1,...
-    'ma_mode',1,'pi_mao',20,'samp_mao',100,'psth_window',0,'psth_num_bins',100,'frames_per_second',1,'num_average_frames',1,...
-    'plot_mode',5,'profile_mode',1,'profile_norm_mode',1,'profile_average_line',0,'color_norm_mode',1,'colorbar',1,...
-    'group_matrices',0,'dendrograms',0,'histogram',0,'spike_train_color_coding_mode',1,'spike_col',2,'subplot_size',[],...
+    'matpath',['.',filesep],'print_mode',0,'movie_mode',0,'publication',0,'comment_string','','num_fig',123,...
+    'pos_fig',[0.5 0.01 0.5 0.8867],'supo1',[0.1 0.1 0.8 0.8],'hints',0,'show_title',1,'edge_correction',1,...
+    'time_unit_string','','x_offset',0,'x_scale',1,'x_realtime_mode',0,'extreme_spikes',1,'ma_mode',1,'mao',20,...
+    'psth_window',0,'psth_num_bins',1000,'frames_per_second',1,'num_average_frames',1,'profile_mode',1,...
+    'profile_norm_mode',1,'profile_average_line',0,'color_norm_mode',1,'colorbar',1,'group_matrices',0,'dendrograms',0,...
+    'histogram',0,'spike_train_color_coding_mode',1,'spike_col',2,'subplot_size',[],'plot_mode',5,...
     'subplot_posi',[0 1  0  0    2 0 0]);
-%    'subplot_posi',[0 1  0  5    2 3 4]);
 % subplot_posi: Stim Spikes    PSTH   ISI   SPIKE SPIKE-realtime SPIKE-future
 
-% SPIKE-samp SPIKE-rt-samp SPIKE-fut-samp SPIKE-pico SPIKE-rt-pico SPIKE-fut-pico    T1 T2 T3   Vic vR
-f_para_default.subplot_posi(8:18)=[0 0 0   0 0 0   0 0 0   0 0];  % please ignore, for testing purposes only
-f_para_default.subplot_size=ones(1,length(f_para_default.subplot_posi(f_para_default.subplot_posi>0)));
+% SPIKE-pico SPIKE-rt-pico SPIKE-fut-pico   Vic vR
+f_para_default.subplot_posi(8:12)=[0 0 0   0 0];  % please ignore, for testing purposes only
+f_para_default.rel_subplot_size=ones(1,length(f_para_default.subplot_posi(f_para_default.subplot_posi>0)));
+f_para_default.run_test=0;
 
+f_para_default.regexp_str_scalar_positive_integer='[^1234567890]'; f_para_default.regexp_str_scalar_integer='[^-1234567890]';
+f_para_default.regexp_str_scalar_positive_float='[^1234567890-e\.]'; f_para_default.regexp_str_scalar_float='[^-1234567890e\.]';
+f_para_default.regexp_str_vector_positive_integers='[^1234567890: ]'; f_para_default.regexp_str_vector_integers='[^-1234567890: ]';
+f_para_default.regexp_str_vector_positive_floats='[^1234567890:e \.]'; f_para_default.regexp_str_vector_floats='[^-1234567890:e \.]';
+f_para_default.regexp_str_cell_floats='[^-1234567890:e[]{},; \.]';
 % structure 's_para': parameters that describe the appearance of the individual subplots (measure time profiles)
 % for a description see comments at the end of this file
 % (this structure is less relevant for you since most of these parameters are set automatically)
@@ -80,7 +85,7 @@ p_para_default=struct(...
     'hist_max_vis','on','hist_max_col','k','hist_max_fs',12,'hist_max_fw','bold','hist_max_fa','normal',...               % texts: histogram maximum
     'mat_height',0.2,'mat_width',0.2,... % subplots: images
     'image_vis','on',...                 % subplots: images
-    'colpat_vis','on'...                % spike train group color patches
+    'colpat_vis','on'...                 % spike train group color patches
 );
 
 
@@ -96,8 +101,9 @@ listbox_str={'Frequency mismatch';...   % 1
     'Testfile-Mat-ca';...               % 9
     'Testfile-Mat-zp';...               % 10
     'Testfile-Mat-01';...               % 11
-    'paolo_spikes';...                  % 12
 };
+%    'Ladder';...                        % 12
+%    'paolo_spikes';...                  % 12
 
 if calc
     switch d_para.sel_index
@@ -107,21 +113,30 @@ if calc
             %d_para.tmin=1000;
             d_para.tmin=0;
             d_para.tmax=d_para.tmin+1300;
+            %d_para.tmax=d_para.tmin+600;
             d_para.dts=1;
-            d_para.dsf=1;
             
             num_trains=2;
             spikes=cell(1,num_trains);
             spikes{1}=d_para.tmin+(100:100:1200); %+rand(1,num_spikes)*50;
             spikes{2}=d_para.tmin+(100:110:1200);
+            %spikes{1}=d_para.tmin+(100:100:800); %+rand(1,num_spikes)*50;
+            %spikes{1}=[100 200 310 400 510 600 720 800 930 1000 1110 1200];
+            %spikes{2}=[100 210 330 410 530 640 760 870 970 1080 1200];
+            %spikes{1}=[100 200 310 400 510 600 720 800];
+            %spikes{2}=[100 210 330 410 530 640 760 870 970 1080 1200];
+            %spikes{1}=[100 200 310];
+            %spikes{2}=[100 210 330 410 530];
+            %spikes{1}=[310 400 510];
+            %spikes{2}=[100 210 330 410 530];
 
-            d_para.instants=d_para.tmin+[220 350 1070];
+            %d_para.instants=d_para.tmin+[220 350 1070];
 
-            d_para.selective_averages{1}=d_para.tmin+[250 350];
-            d_para.selective_averages{1}=[d_para.tmin d_para.tmax];
+            %d_para.selective_averages{1}=d_para.tmin+[250 350];
+            %d_para.selective_averages{1}=[d_para.tmin d_para.tmax];
             
-            d_para.triggered_averages=cell(1);
-            d_para.triggered_averages{1}=d_para.tmin+[280 730 900 1070];
+            %d_para.triggered_averages=cell(1);
+            %d_para.triggered_averages{1}=d_para.tmin+[280 730 900 1070];
             
             d_para.comment_string='SPIKY_Bi-Frequency-Mismatch';
             
@@ -132,19 +147,18 @@ if calc
             d_para.tmin=0;
             d_para.tmax=4000;
             d_para.dts=1;
-            d_para.dsf=1;
 
             num_trains=50; num_spikes=40;               % Set spikes
             noise=[1:-1/(num_spikes/4-1):0 0];
             num_noises=length(noise);
             num_events=5;
             spikes=cell(1,num_trains);
-            for trc=1:num_trains
-                spikes{trc}=sort(rand(1,num_spikes/2),2)*d_para.tmax/2;
+            for trac=1:num_trains
+                spikes{trac}=sort(rand(1,num_spikes/2),2)*d_para.tmax/2;
                 for nc=1:num_events
-                    spikes{trc}=[spikes{trc} nc*d_para.tmax/2/num_events+50*noise(ceil(num_noises-(nc-1)*num_noises/num_events)).*randn];
+                    spikes{trac}=[spikes{trac} nc*d_para.tmax/2/num_events+50*noise(ceil(num_noises-(nc-1)*num_noises/num_events)).*randn];
                 end
-                spikes{trc}=[spikes{trc} 100*(num_spikes/2-1)+200*(1:num_spikes/4+1)+50*noise.*randn(1,num_spikes/4+1)];
+                spikes{trac}=[spikes{trac} 100*(num_spikes/2-1)+200*(1:num_spikes/4+1)+50*noise.*randn(1,num_spikes/4+1)];
             end
 
             d_para.comment_string='SPIKY_Multi-Events';
@@ -156,7 +170,6 @@ if calc
             d_para.tmin=0;
             d_para.tmax=4000;
             d_para.dts=1;
-            d_para.dsf=1;
 
             d_para.all_train_group_names={'G1';'G2';'G3';'G4'};
             d_para.all_train_group_sizes=[10 10 10 10];
@@ -264,7 +277,7 @@ if calc
             tracs=1:num_trains;
             d_para.triggered_averages=cell(1,length(tracs));
             for trac=1:length(tracs)
-                num_spikes=length(spikes{tracs(trac)});
+                %num_spikes=length(spikes{tracs(trac)});
                 d_para.triggered_averages{trac}=round(spikes{tracs(trac)}/d_para.dts)*d_para.dts;       % Triggered averaging over all time instants when a certain neuron fires
             end
             %d_para.triggered_averages{trac}=d_para.triggered_averages{trac}(1:2);
@@ -276,13 +289,13 @@ if calc
             %d_para.triggered_averages_str='';
 
             %d_para.instants=[2740];
-            %d_para.selective_averages={2740+[0 5]};
+            %d_para.selective_averages={[0 4000]; 2740+[0 5]};
             %d_para.triggered_averages=cell(1);
             %d_para.triggered_averages{1}=2740;
 
             d_para.thin_separators=[];
             d_para.thick_separators=[];
-            d_para.thin_markers= (500:500:d_para.tmax-500);
+            d_para.thin_markers=500:500:d_para.tmax-500;
             d_para.thick_markers=[];
             %d_para.thick_markers=[];
             %d_para.thin_separators=[5 15 25 35];
@@ -302,7 +315,6 @@ if calc
             d_para.tmin=0;
             d_para.tmax=400;
             d_para.dts=1;
-            d_para.dsf=1;
 
             num_trains=50;
             num_spikes=7;
@@ -355,7 +367,6 @@ if calc
             d_para.tmin=0;
             d_para.tmax=100; %min(matspikes(:,num_all_spikes))*1.0001;
             d_para.dts=0.001;
-            d_para.dsf=1;
 
             matspikes=zeros(num_trains,num_all_spikes);
             for trac=setdiff(1:num_trains,trig_trac1)
@@ -410,7 +421,6 @@ if calc
             d_para.tmin=0;
             d_para.tmax=800;
             d_para.dts=1;
-            d_para.dsf=1;
 
             num_trains=20;
             num_spikes=10;
@@ -429,7 +439,6 @@ if calc
             d_para.tmin=0;
             d_para.tmax=1;
             d_para.dts=0.001;
-            d_para.dsf=1;
             num_trains=3;
             spikes=cell(1,num_trains);
             spikes{1}= [0.2 0.3 0.4 0.6 0.7 0.9];
@@ -458,7 +467,6 @@ if calc
             d_para.tmin=0;
             d_para.tmax=4000;
             d_para.dts=1;
-            d_para.dsf=1;
             d_para.comment_string='Testfile-Txt';
 
         case 9                                        % Testfile-Mat (cell arrays)
@@ -467,7 +475,6 @@ if calc
             d_para.tmin=0;
             d_para.tmax=4000;
             d_para.dts=1;
-            d_para.dsf=1;
             d_para.comment_string='Testfile-Mat-ca';
 
         case 10                                       % Testfile-Mat (matrix with zero padding)
@@ -476,7 +483,6 @@ if calc
             d_para.tmin=0;
             d_para.tmax=4000;
             d_para.dts=1;
-            d_para.dsf=1;
             d_para.comment_string='Testfile-Mat-zp';
 
         case 11                                       % Testfile-Mat (matrix with 0 and 1)
@@ -485,25 +491,41 @@ if calc
             d_para.tmin=0;
             d_para.tmax=4000;
             d_para.dts=1;
-            d_para.dsf=1;
             d_para.comment_string='Testfile-Mat-01';
 
-        case 12                                       % Paolo data (matrix with 0 and 1)
 
-            d_para.matfile='paolo_spikes.mat';
-            d_para.dts=0.025;
-            d_para.dsf=1;
+        case 12                                       % Ladder
+
             d_para.tmin=0;
-            d_para.tmax=70559*d_para.dts;
-            d_para.comment_string='Paolo';
+            d_para.tmax=10000;
+            d_para.dts=1;
+
+            num_trains=30;               % Set spikes
+            
+            spikes=cell(1,num_trains);
+            for trac=1:num_trains
+                spikes{trac}=d_para.tmin+(0:num_trains)/num_trains*(d_para.tmax-d_para.tmin);
+                spikes{trac}(num_trains+1+(1:trac))=d_para.tmin+(-0.5+(1:trac))/num_trains*(d_para.tmax-d_para.tmin);
+                spikes{trac}=sort(spikes{trac});
+            end
+
+            d_para.comment_string='Ladder';
+
+%         case 12                                       % Paolo data (matrix with 0 and 1)
+% 
+%             d_para.matfile='paolo_spikes.mat';
+%             d_para.dts=0.025;
+%             d_para.tmin=0;
+%             d_para.tmax=70559*d_para.dts;
+%             d_para.comment_string='Paolo';
 
         otherwise
 
             entries = d_para.entries;
             entry=char(entries(d_para.sel_index));
-            if strcmp(entry(length(entry)-3:length(entry)),'.mat')
+            if stracmp(entry(length(entry)-3:length(entry)),'.mat')
                 d_para.matfile=entry;
-            elseif strcmp(entry(length(entry)-3:length(entry)),'.txt')
+            elseif stracmp(entry(length(entry)-3:length(entry)),'.txt')
                 txtfile=entry;
                 spikes=dlmread(txtfile);
             end
@@ -530,7 +552,6 @@ end
 % tmin: Beginning of recording, will automatically be determined from the data 
 % tmax: End of recording, will automatically be determined from the data 
 % dts: Sampling interval, precision of spike times, will automatically be determined from the data 
-% dsf: Downsampling factor (positive integer)
 % max_total_spikes: Maximum number of spikes that will be plotted
 % max_memo_init: Memory management, should be big enough to hold the basic matrices but small enough to not run out of memory
 % num_trains: Number of spike trains, will automatically be determined from the data 
@@ -570,6 +591,7 @@ end
 % supo1: Position (in relative units) of the first subplot which contains spikes and dissimilarity profiles
 % hints: Determines whether short hints will be shown when hovering with the mouse cursor above the SPIKY elements of interest
 % show_title: Determines whether a figure title will be shown (above the first subplot containing the spikes) 
+% edge_correction: Determines whether the edge effect (spurious drop to zero dissimilarity at the edges caused by the auxiliary spikes) is corrected or not
 % time_unit_string: Time unit, used in labels
 % x_offset: Offset for time axis (useful for example if you select an intermediate interval but want to have the time scale start at t=0) 
 % x_scale: Scale factor of time unit
@@ -579,13 +601,12 @@ end
 %       (the last first spike and the first last spike which indicate the onset of the edge effects)
 % filename: Name under which images, movies and Matlab files will be stored
 % ma_mode: Moving average mode: (0-no,1-only,2-both)
-% pi_mao: Order of moving average (piecewise constant and piecewise linear dissimilarity profiles)
-% samp_mao: Order of moving average (sampled dissimilarity profiles)
+% mao: Order of moving average (piecewise constant and piecewise linear dissimilarity profiles)
 % psth_window: Kernel width of Gaussian filter for the Peristimulus time histogram. Set to 0 for no filtering.
 % psth_num_bins: Number of bins for the Peristimulus time histogram.
 % frames_per_second: Well, frames per second for the movie
 % num_average_frames: Number of frames the averages are shown at the end of the movie (if this is too small they are hardly visible)
-% plot_mode: +1:vs time,+2:different measures and cuts,+4:different measures,+8:different cuts,+16:different cuts-Movie (binary addition allows all combinations)
+% plot_mode: +1:profiles,+2:frame comparison,+4:frame sequence (the latter two are mutually exclusive, otherwise binary addition allows combinations)
 % profile_mode: Allows to additionally/exclusively show dissimilarity profiles averaged over certain spike train groups only
 % profile_norm_mode: Normalization of averaged bivariate dissimilarity profiles (1-Absolute maximum value 'one',2-Overall maximum value,3-Individual maximum value)
 % profile_average_line: Determines whether a line at the mean value is shown for each dissimilarity profile

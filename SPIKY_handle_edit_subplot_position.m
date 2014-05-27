@@ -1,4 +1,4 @@
-% This function which is called by ‘SPIKY_handle_subplot.m’ allows changing the position of individual subplots in the figure.
+% This function which is called by ?SPIKY_handle_subplot.m? allows changing the position of individual subplots in the figure.
 
 function [] = SPIKY_handle_edit_subplot_position(varargin)
 
@@ -37,28 +37,28 @@ uicontrol(Edit_pushbutton)
     function [] = Edit_pushbutton_callback(varargin)
         
         xpos_str_in=get(xpos_edit,'String');
-        xpos_in=str2num(regexprep(xpos_str_in,'[^1234567890e- \.]',''));
+        xpos_in=str2double(regexprep(xpos_str_in,f_para.regexp_str_scalar_positive_float,''));
         if ~isempty(xpos_in)
             xpos_str_out=num2str(xpos_in(1));
         else
             xpos_str_out='';
         end
         ypos_str_in=get(ypos_edit,'String');
-        ypos_in=str2num(regexprep(ypos_str_in,'[^1234567890e- \.]',''));
+        ypos_in=str2double(regexprep(ypos_str_in,f_para.regexp_str_scalar_positive_float,''));
         if ~isempty(ypos_in)
             ypos_str_out=num2str(ypos_in(1));
         else
             ypos_str_out='';
         end
         width_str_in=get(width_edit,'String');
-        width_in=str2num(regexprep(width_str_in,'[^1234567890e- \.]',''));
+        width_in=str2double(regexprep(width_str_in,f_para.regexp_str_scalar_positive_float,''));
         if ~isempty(width_in)
             width_str_out=num2str(width_in(1));
         else
             width_str_out='';
         end
         height_str_in=get(height_edit,'String');
-        height_in=str2num(regexprep(height_str_in,'[^1234567890e- \.]',''));
+        height_in=str2double(regexprep(height_str_in,f_para.regexp_str_scalar_positive_float,''));
         if ~isempty(height_in)
             height_str_out=num2str(height_in(1));
         else
@@ -96,8 +96,8 @@ uicontrol(Edit_pushbutton)
             return
         end
         
-        new_pos=[str2num(get(xpos_edit,'String')) str2num(get(ypos_edit,'String')) str2num(get(width_edit,'String')) ...
-            str2num(get(height_edit,'String'))];
+        new_pos=[str2double(get(xpos_edit,'String')) str2double(get(ypos_edit,'String')) str2double(get(width_edit,'String')) ...
+            str2double(get(height_edit,'String'))];
         set(varargin{4},'Position',new_pos)
         
         if ~strcmp(sph_str,'profs')

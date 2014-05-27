@@ -20,6 +20,7 @@ elseif f_para.select_train_mode==2                                   % Selected 
     f_para.select_train_groups=SPIKY_f_unique_not_sorted(f_para.group_vect(f_para.select_trains));
     f_para.num_select_train_groups=length(f_para.select_train_groups);
 elseif f_para.select_train_mode==3                                   % Selected groups
+    f_para.num_select_train_groups=length(f_para.select_train_groups);
     f_para.select_trains = [];
     for gc=1:f_para.num_select_train_groups
         f_para.select_trains=[f_para.select_trains find(f_para.group_vect==f_para.select_train_groups(gc))];
@@ -78,7 +79,7 @@ end
 doubles=intersect(setxor(1:length(f_para.subplot_posi),f_para.singles),find(f_para.subplot_posi>0));     % repeated subplot
 doublesref=f_para.singles(f_para.subplot_posi(doubles));                                                 % corresponding new subplot
 
-relsubplot_size=f_para.subplot_size(1:find(f_para.subplot_size>0,1,'last'));
+relsubplot_size=f_para.rel_subplot_size(1:find(f_para.rel_subplot_size>0,1,'last'));
 if length(relsubplot_size)~=max(f_para.subplot_posi)
     relsubplot_size=ones(1,max(f_para.subplot_posi));
 end
@@ -262,7 +263,7 @@ if mod((xtc(end)-xtc(1)),f_para.x_scale)==0 && mod((xtc(2)-xtc(1)),f_para.x_scal
     xtl=(xtc+f_para.x_offset)/f_para.x_scale;
     set(gca,'XTick',xtc,'XTickLabel',xtl)
 else
-    xxx=SPIKY_f_lab(xtc/f_para.x_scale,length(xtc),f_para.x_offset==0,0);
+    xxx=SPIKY_f_lab(xtc/f_para.x_scale,length(xtc)-(xtc(1)==s_para.itmin && xtc(end)==s_para.itmax),xtc(1)+f_para.x_offset==0,0);
     xxx2=xxx(xxx*f_para.x_scale>=s_para.itmin & xxx*f_para.x_scale<=s_para.itmax);
     set(gca,'XTick',xxx2*f_para.x_scale,'XTickLabel',xxx2+f_para.x_offset/f_para.x_scale)
 end
@@ -270,7 +271,7 @@ if f_para.x_realtime_mode>0
     set(gca,'XTickLabel',str2num(get(gca,'XTickLabel'))-s_para.itmax);
 end
 
-if (f_para.dendrograms==1 && f_para.spike_train_color_coding_mode>1) || (f_para.num_select_train_groups>1 && f_para.spike_train_color_coding_mode==2)
+%if (f_para.dendrograms==1 && f_para.spike_train_color_coding_mode>1) || (f_para.num_select_train_groups>1 && f_para.spike_train_color_coding_mode==2)
     cm=colormap;
     if f_para.spike_train_color_coding_mode==2
         dcol_indy=round(1:63/(d_para.num_all_train_groups-1):64);
@@ -295,9 +296,10 @@ if (f_para.dendrograms==1 && f_para.spike_train_color_coding_mode>1) || (f_para.
         ph_str='colpat';
         SPIKY_handle_patch
     end
-else
-    d_para.dcols=[0 0 0];
-end
+%else
+%    d_para.dcols=[0 0 0];
+%    dcols=[];
+%end
 
 num_spikes=cellfun('length',pspikes);
 f_para.num_total_spikes=sum(num_spikes);

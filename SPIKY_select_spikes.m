@@ -164,14 +164,14 @@ uiwait(gcf);
         else
             if gcbo==SSP.update_spike_number_pb || gcbo==SSP.increasing_spike_number_pb || gcbo==SSP.decreasing_spike_number_pb
                 wmin_str_in=get(SSP.wmin_edit,'String');
-                wmin_in=str2num(regexprep(wmin_str_in,'[^1234567890e- \.]',''));
+                wmin_in=str2num(regexprep(wmin_str_in,f_para.regexp_str_scalar_float,''));
                 if ~isempty(wmin_in)
                     wmin_str_out=num2str(wmin_in(1));
                 else
                     wmin_str_out='';
                 end
                 wmax_str_in=get(SSP.wmax_edit,'String');
-                wmax_in=str2num(regexprep(wmax_str_in,'[^1234567890e- \.]',''));
+                wmax_in=str2num(regexprep(wmax_str_in,f_para.regexp_str_scalar_float,''));
                 if ~isempty(wmax_in)
                     wmax_str_out=num2str(wmax_in(1));
                 else

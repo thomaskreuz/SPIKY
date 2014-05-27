@@ -16,7 +16,7 @@ eval([ 'fs_item = uimenu( ' fh_str '_cmenu, ''Label'', ''FontSize''); '])
 eval([ 'fw_item = uimenu( ' fh_str '_cmenu, ''Label'', ''FontWeight''); '])
 eval([ 'fa_item = uimenu( ' fh_str '_cmenu, ''Label'', ''FontAngle''); '])
 
-if ~strcmp(fh_str,'xlab') && ~strcmp(fh_str,'title') && ~strcmp(fh_str,'mat_title') && ~strcmp(fh_str,'mat_label') && numel(dummy(dummy>0))>1
+if ~strcmp(fh_str,'xlab') && ~strcmp(fh_str,'title') && ~strcmp(fh_str,'mat_title') && ~strcmp(fh_str,'mat_label') && ~strcmp(fh_str,'measure_label') && numel(dummy(dummy>0))>1
     eval([ 'fcol_all_item = uimenu( ' fh_str '_cmenu, ''Label'', ''All Color'', ''Separator'', ''on''); '])
     eval([ 'fs_all_item = uimenu( ' fh_str '_cmenu, ''Label'', ''All FontSize''); '])
     eval([ 'fw_all_item = uimenu( ' fh_str '_cmenu, ''Label'', ''All FontWeight''); '])
@@ -45,7 +45,7 @@ eval([ 'fypos_item8 = uimenu (fypos_item, ''Label'', ''-0.04'', ''ForegroundColo
 eval([ 'fypos_item9 = uimenu (fypos_item, ''Label'', ''-0.08'', ''ForegroundColor'', ''black'', ''Callback'', { @SPIKY_handle_change_font_position, ' fh_str '_fh, ''ypos'', ''-0.08'', 0 }); '])
 eval([ 'fypos_item10 = uimenu (fypos_item, ''Label'', ''-0.16'', ''ForegroundColor'', ''black'', ''Callback'', { @SPIKY_handle_change_font_position, ' fh_str '_fh, ''ypos'', ''-0.16'', 0 }); '])
 
-if ~strcmp(fh_str,'xlab') && ~strcmp(fh_str,'title') && ~strcmp(fh_str,'mat_title') && ~strcmp(fh_str,'mat_label') && numel(dummy(dummy>0))>1
+if ~strcmp(fh_str,'xlab') && ~strcmp(fh_str,'title') && ~strcmp(fh_str,'mat_title') && ~strcmp(fh_str,'mat_label') && ~strcmp(fh_str,'measure_label') && numel(dummy(dummy>0))>1
     eval([ 'fxpos_all_item1 = uimenu (fxpos_all_item, ''Label'', ''+0.16'', ''ForegroundColor'', ''black'', ''Callback'', { @SPIKY_handle_change_font_position, ' fh_str '_fh, ''xpos'', ''+0.16'', 1 }); '])
     eval([ 'fxpos_all_item2 = uimenu (fxpos_all_item, ''Label'', ''+0.08'', ''ForegroundColor'', ''black'', ''Callback'', { @SPIKY_handle_change_font_position, ' fh_str '_fh, ''xpos'', ''+0.08'', 1 }); '])
     eval([ 'fxpos_all_item3 = uimenu (fxpos_all_item, ''Label'', ''+0.04'', ''ForegroundColor'', ''black'', ''Callback'', { @SPIKY_handle_change_font_position, ' fh_str '_fh, ''xpos'', ''+0.04'', 1 }); '])
@@ -100,7 +100,7 @@ eval([ 'fa_item1 = uimenu( fa_item, ''Label'', ''normal'', ''Callback'', { @SPIK
 eval([ 'fa_item2 = uimenu( fa_item, ''Label'', ''italic'', ''Callback'', { @SPIKY_handle_change_property, handles,' fh_str '_fh, ''FontAngle'', ''italic'', 0, ''' fh_str '_fa'' }); '])
 eval([ 'fa_item3 = uimenu( fa_item, ''Label'', ''oblique'', ''Callback'', { @SPIKY_handle_change_property, handles,' fh_str '_fh, ''FontAngle'', ''oblique'', 0, ''' fh_str '_fa'' }); '])
 
-if ~strcmp(fh_str,'xlab') && ~strcmp(fh_str,'title') && ~strcmp(fh_str,'mat_title') && ~strcmp(fh_str,'mat_label') && numel(dummy(dummy>0))>1
+if ~strcmp(fh_str,'xlab') && ~strcmp(fh_str,'title') && ~strcmp(fh_str,'mat_title') && ~strcmp(fh_str,'mat_label') && ~strcmp(fh_str,'measure_label') && numel(dummy(dummy>0))>1
     eval([ 'fcol_all_item1 = uimenu( fcol_all_item, ''Label'', ''black'', ''ForegroundColor'', ''black'', ''Callback'', { @SPIKY_handle_change_property, handles,' fh_str '_fh, ''Color'', ''k'', 1, ''' fh_str '_col'' }); '])
     eval([ 'fcol_all_item2 = uimenu( fcol_all_item, ''Label'', ''blue'', ''ForegroundColor'', ''blue'', ''Callback'', { @SPIKY_handle_change_property, handles,' fh_str '_fh, ''Color'', ''b'', 1, ''' fh_str '_col'' }); '])
     eval([ 'fcol_all_item3 = uimenu( fcol_all_item, ''Label'', ''red'', ''ForegroundColor'', ''red'', ''Callback'', { @SPIKY_handle_change_property, handles,' fh_str '_fh, ''Color'', ''r'', 1, ''' fh_str '_col'' }); '])

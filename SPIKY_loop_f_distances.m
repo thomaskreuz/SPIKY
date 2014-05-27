@@ -95,6 +95,8 @@ m_para.realtime_spike_pili=3;
 m_para.future_spike_pili=4;
 m_para.psth=5;
 
+max_memo_init=100000000;      % memory management, should be big enough to hold the basic matrices but small enough to not run out of memory
+
 m_para.pico_measures=m_para.isi_pico;
 m_para.pili_measures=[m_para.spike_pili m_para.realtime_spike_pili m_para.future_spike_pili];
 m_para.realtime_measures=m_para.realtime_spike_pili;
@@ -103,7 +105,7 @@ m_para.bi_measures=[m_para.pico_measures m_para.pili_measures];
 
 m_para.num_all_measures=length(d_para.select_measures);
 select_measures=intersect(1:m_para.num_all_measures,find(d_para.select_measures));
-[dummy,ms_indy]=sort(d_para.select_measures(select_measures));
+[~,ms_indy]=sort(d_para.select_measures(select_measures));
 m_para.select_measures=select_measures(ms_indy);
 m_para.select_bi_measures=m_para.select_measures(ismember(m_para.select_measures,m_para.bi_measures));
 m_para.num_sel_measures=length(m_para.select_measures);
@@ -189,80 +191,28 @@ if m_para.num_sel_bi_measures>0     % num_sel_measures>0
         error(['m_res.pili_len 2*m_res.num_isi =',num2str([m_res.pili_len 2*m_res.num_isi])])   % ###############
     end
     m_res.pili_supi_indy=round((m_res.pili_supi-d_para.tmin)/d_para.dts);
-    %isi_pili=reshape(repmat(m_res.isi,2,1),1,2*m_res.num_isi);
-    isi_indy_pili=reshape(repmat(1:m_res.num_isi,2,1),1,2*m_res.num_isi);
-
-
-    isis=cell(1,d_para.num_trains);
-    ints=zeros(d_para.num_trains,num_all_isi,'single');
-    for trac=1:d_para.num_trains
-        isis{trac}=diff(uspikes{trac});
-        %isis{trac}=isis{trac}(isis{trac}~=0)./double(num_coins{trac}(isis{trac}~=0));
-        if num_uspikes(trac)>4                                                                 % $$$$$$$$$$$$
-            isis{trac}(1)=max(isis{trac}(1:2));
-            isis{trac}(end)=max(isis{trac}(end-1:end));
-        end
-        ivs=[1 find(all_trains==trac)];
-        ive=[ivs(2:length(ivs))-1 num_all_isi];
-        for ic=1:num_uspikes(trac)-1
-            ints(trac,ivs(ic):ive(ic))=isis{trac}(ic);
-        end
-    end
-    ints=ints(:,all_isi>0);
-    clear isis % num_coins
 
     % ###########################################################################################################################################
     % ############################################################## Memory management ##########################################################
     % ###########################################################################################################################################
 
-    max_memo_init=100000000;      % memory management, should be big enough to hold the basic matrices but small enough to not run out of memory
-    udists_memo=sum(num_uspikes)*(d_para.num_trains-1);
-    if max_memo_init<udists_memo
-        set(0,'DefaultUIControlFontSize',16);
-        mbh=msgbox(sprintf('Dataset might be too large.\nPlease increase the value of the variable ''max_memo_init''!!!'),'Warning','warn','modal');
-        htxt = findobj(mbh,'Type','text');
-        set(htxt,'FontSize',12,'FontWeight','bold')
-        mb_pos=get(mbh,'Position');
-        set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
-        uiwait(mbh);
-        return
-    else
-        if exist('SPIKY_udists_MEX.mexw32','file')
-            udists = SPIKY_udists_MEX (int32(d_para.num_trains), int32(num_uspikes), uspikes);
-        else
-            udists=cell(d_para.num_trains);
-            for trac1=1:d_para.num_trains
-                if d_para.num_trains>=100 && max_num_uspikes>1000
-                    disp(['udistc = ',num2str([1 trac1])])
-                end
-                for trac2=setdiff(1:d_para.num_trains,trac1)
-                    udists{trac1,trac2}=zeros(1,num_uspikes(trac1));
-                end
-            end
-            for trac1=1:d_para.num_trains
-                if d_para.num_trains>=100 && max_num_uspikes>1000
-                    disp(['udistc = ',num2str([2 trac1])])
-                end
-                for trac2=setdiff(1:d_para.num_trains,trac1)
-                    for spc=1:num_uspikes(trac1)
-                        udists{trac1,trac2}(spc)=min(abs(uspikes{trac1}(spc)-uspikes{trac2}(1:num_uspikes(trac2))));
-                    end
-                end
-            end
-        end
-    end
-
     d_para.num_pairs=d_para.num_trains*(d_para.num_trains-1)/2;
-    m_para.memo_num_pi_measures=m_para.num_pili_measures+2*m_para.num_pico_measures;
-    memo=m_para.memo_num_pi_measures*m_res.num_isi*d_para.num_pairs;
-    max_memo=max_memo_init-udists_memo;
-
-    r_para.num_pi_runs=1;
+    m_para.memo_num_measures=2*m_para.num_pili_measures+m_para.num_pico_measures;    
+    memo_fact=m_para.memo_num_measures*d_para.num_pairs;
+    memo=memo_fact*m_res.num_isi;
+    
+    max_memo=max_memo_init;
+    %max_memo=300;
+        
+    r_para.num_runs=1;
     if memo>max_memo
-        max_pi_len=2000000; % in isi
-        if m_para.memo_num_pi_measures>0
-            r_para.num_pi_runs=ceil(m_res.num_isi/max_pi_len);
-            if r_para.num_pi_runs==0
+        num_init_runs=ceil(memo/max_memo);
+        max_pico_len=fix(m_res.num_isi/num_init_runs);
+        %max_pico_len=150
+        
+        if m_para.memo_num_measures>0
+            r_para.num_runs=ceil(m_res.num_isi/max_pico_len);
+            if r_para.num_runs==0
                 set(0,'DefaultUIControlFontSize',16);
                 mbh=msgbox(sprintf('Dataset might be too large.\nPlease increase the value of the variable ''max_memo'' !!!'),'Warning','warn','modal');
                 htxt = findobj(mbh,'Type','text');
@@ -270,11 +220,12 @@ if m_para.num_sel_bi_measures>0     % num_sel_measures>0
                 mb_pos=get(mbh,'Position');
                 set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
                 uiwait(mbh);
+                ret=1;
                 return
             end
         end
-
-        r_para.run_pico_ends=cumsum(fix([max_pi_len*ones(1,r_para.num_pi_runs-1) m_res.num_isi-max_pi_len*(r_para.num_pi_runs-1)]));
+        
+        r_para.run_pico_ends=cumsum(fix([max_pico_len*ones(1,r_para.num_runs-1) m_res.num_isi-max_pico_len*(r_para.num_runs-1)]));
         r_para.run_pico_starts=[1 r_para.run_pico_ends(1:end-1)+1];
         r_para.run_pico_lengths=r_para.run_pico_ends-r_para.run_pico_starts+1;
         if m_para.num_pili_measures>0
@@ -283,7 +234,8 @@ if m_para.num_sel_bi_measures>0     % num_sel_measures>0
             r_para.run_pili_lengths=r_para.run_pili_ends-r_para.run_pili_starts+1;
         end
     end
-    if r_para.num_pi_runs==1
+    
+    if r_para.num_runs==1
         r_para.run_pico_lengths=m_res.num_isi;
         r_para.run_pico_starts=1;
         r_para.run_pico_ends=m_res.num_isi;
@@ -294,236 +246,396 @@ if m_para.num_sel_bi_measures>0     % num_sel_measures>0
         end
     end
 
+    empties=find(all_isi==0);
+    ivs=cell(1,d_para.num_trains);
+    ive=cell(1,d_para.num_trains);
+    for trac=1:d_para.num_trains
+        dummy1=[1 find(all_trains==trac)];
+        dummy2=[dummy1(2:length(dummy1))-1 num_all_isi];
+        len=dummy2-dummy1+1-histc(empties,dummy1);
+        ive{trac}=cumsum(len);
+        ivs{trac}=[1 ive{trac}(1:end-1)+1];
+    end
+    clear all_isi all_trains empties
+
     ave_bi_vect=zeros(m_para.num_sel_bi_measures,d_para.num_pairs);
-    if r_para.num_pi_runs>1
+    if r_para.num_runs>1
         disp(' ');
         disp('Large data set. Please be patient.')
         disp(' ');
-        disp(['Number of runs: ',num2str(r_para.num_pi_runs)])
-        disp(' ');
+        disp(['Number of calculation loop runs: ',num2str(r_para.num_runs)])
+        pwbh = waitbar(0,'Large data set. Please be patient.','CreateCancelBtn','setappdata(gcbf,''canceling'',1)');
+        setappdata(pwbh,'canceling',0)
+    end
+    
+    if f_para.edge_correction 
+        if r_para.num_runs>1    % Edge-correction for many runs
+            fl_isis=repmat({zeros(1,4)},1,d_para.num_trains);
+            for trac=1:d_para.num_trains
+                if num_uspikes(trac)>3
+                    fl_isis{trac}(1:2)=diff(uspikes{trac}(1:3));
+                    fl_isis{trac}(3:4)=diff(uspikes{trac}(end-2:end));
+                end
+            end
+        end
+        if any(d_para.select_measures([m_para.spike_pili m_para.realtime_spike_pili]))
+            prev_edge_cor_indy=cell(1,d_para.num_trains);
+        end
+        if any(d_para.select_measures([m_para.spike_pili m_para.future_spike_pili]))
+            foll_edge_cor_indy=cell(1,d_para.num_trains);
+        end
     end
 
-    % #####################################################################################################################################
-    % ################################################################# Pi-Measures #######################################################
-    % #####################################################################################################################################
-
-    for pi_ruc=r_para.num_pi_runs:-1:1
-
+    run_ivs=cell(1,d_para.num_trains);
+    run_ive=cell(1,d_para.num_trains);
+    for ruc=r_para.num_runs:-1:1
+        if r_para.num_runs>1 && getappdata(pwbh,'canceling')
+            delete(pwbh)
+            ret=1;
+            return
+        end
+        
         % ###########################################################################################################################################
         % ################################################################# Pico-Pili-Quantities #####################################################
         % ###########################################################################################################################################
 
+        if any(d_para.select_measures(m_para.bi_measures))
+            firsts=zeros(1,d_para.num_trains);
+            lasts=zeros(1,d_para.num_trains);
+            for trac=1:d_para.num_trains
+                firsts(trac)=find(uspikes{trac}(1:num_uspikes(trac))<=m_res.cum_isi(r_para.run_pico_starts(ruc)),1,'last');
+                lasts(trac)=find(uspikes{trac}(1:num_uspikes(trac))<m_res.cum_isi(r_para.run_pico_ends(ruc)+1),1,'last');
+                run_ivs{trac}=ivs{trac}(firsts(trac):lasts(trac))-r_para.run_pico_starts(ruc)+1;
+                run_ive{trac}=ive{trac}(firsts(trac):lasts(trac))-r_para.run_pico_starts(ruc)+1;
+                run_ivs{trac}(run_ivs{trac}<1)=1;
+                run_ive{trac}(run_ive{trac}>r_para.run_pico_lengths(ruc))=r_para.run_pico_lengths(ruc);
+            end
+            run_num_ints=lasts-firsts+1;
+        end
+        
         if any(d_para.select_measures([m_para.spike_pili m_para.realtime_spike_pili]))  % SPIKE-Pre-Pico
-            if max_num_uspikes<256                                                % integers relative to data sampling
-                previs_indy=zeros(d_para.num_trains,max_num_uspikes-1,'uint8');
-                prev_spikes_indy=zeros(d_para.num_trains,num_all_isi,'uint8');
-            elseif max_num_uspikes<65536
-                previs_indy=zeros(d_para.num_trains,max_num_uspikes-1,'uint16');
-                prev_spikes_indy=zeros(d_para.num_trains,num_all_isi,'uint16');
-            elseif max_num_uspikes<2^32
-                previs_indy=zeros(d_para.num_trains,max_num_uspikes-1,'uint32');
-                prev_spikes_indy=zeros(d_para.num_trains,num_all_isi,'uint32');
-            else
-                previs_indy=zeros(d_para.num_trains,max_num_uspikes-1,'uint64');
-                prev_spikes_indy=zeros(d_para.num_trains,num_all_isi,'uint64');
-            end
+            previs_indy=zeros(d_para.num_trains,max(run_num_ints),'uint32');
+            previs=zeros(d_para.num_trains,max(run_num_ints),'single');
+            prev_spikes_indy=zeros(d_para.num_trains,r_para.run_pico_lengths(ruc),'uint32');
+            prev_spikes=zeros(d_para.num_trains,r_para.run_pico_lengths(ruc),'single');
             for trac=1:d_para.num_trains
-                previs_indy(trac,1:num_uspikes(trac)-1)=1:num_uspikes(trac)-1;
-                ivs=[1 find(all_trains==trac)];
-                ive=[ivs(2:length(ivs))-1 num_all_isi];
-                for ic=1:num_uspikes(trac)-1
-                    prev_spikes_indy(trac,ivs(ic):ive(ic))=previs_indy(trac,ic);
+                previs_indy(trac,1:run_num_ints(trac))=firsts(trac):lasts(trac);
+                previs(trac,1:run_num_ints(trac))=uspikes{trac}(previs_indy(trac,1:run_num_ints(trac)));
+                for ic=1:run_num_ints(trac)
+                    prev_spikes_indy(trac,run_ivs{trac}(ic):run_ive{trac}(ic))=previs_indy(trac,ic);
+                    prev_spikes(trac,run_ivs{trac}(ic):run_ive{trac}(ic))=previs(trac,ic);
                 end
-                if d_para.edge_correction && num_uspikes(trac)>3                                                                 % $$$$$$$$$$$$
-                    prev_spikes_indy(trac,prev_spikes_indy(trac,:)==1)=2;
+                if f_para.edge_correction && num_uspikes(trac)>3 && firsts(trac)==1
+                    prev_edge_cor_indy{trac}=find(prev_spikes_indy(trac,:)==1);
                 end
+                prev_spikes_indy(trac,:)=prev_spikes_indy(trac,:)-uint32(firsts(trac)-1);
             end
-            prev_spikes_indy=prev_spikes_indy(:,all_isi>0);
-            clear previs_indy
-
-            previs=zeros(d_para.num_trains,max_num_uspikes-1,'single');
-            prev_spikes=zeros(d_para.num_trains,num_all_isi,'single');
-            for trac=1:d_para.num_trains
-                previs(trac,1:num_uspikes(trac)-1)=uspikes{trac}(1:num_uspikes(trac)-1);
-                ivs=[1 find(all_trains==trac)];
-                ive=[ivs(2:length(ivs))-1 num_all_isi];
-                for ic=1:num_uspikes(trac)-1
-                    prev_spikes(trac,ivs(ic):ive(ic))=previs(trac,ic);
-                end
-            end
-            prev_spikes=prev_spikes(:,all_isi>0);
-            clear previs
-
-            if any(d_para.select_measures([m_para.spike_pili m_para.realtime_spike_pili]))  % SPIKE-Pre-Pili ***************
-                prev_spikes_indy_pili=zeros(d_para.num_trains,m_res.pili_len,'uint64');
-                prev_spikes_pili=zeros(d_para.num_trains,m_res.pili_len,'single');
+            clear previs_indy previs
+            
+            if any(d_para.select_measures([m_para.spike_pili m_para.realtime_spike_pili]))  % SPIKE-Pre-Pili
+                prev_spikes_indy_pili=zeros(d_para.num_trains,r_para.run_pili_lengths(ruc),'uint64');
+                prev_spikes_pili=zeros(d_para.num_trains,r_para.run_pili_lengths(ruc),'single');
                 for trac=1:d_para.num_trains
-                    prev_spikes_indy_pili(trac,:)=reshape(repmat(prev_spikes_indy(trac,1:m_res.num_isi),2,1),1,m_res.pili_len);
-                    if d_para.edge_correction && num_uspikes(trac)>3                                                                 % $$$$$$$$$$$$
-                        prev_spikes_indy_pili(trac,prev_spikes_indy_pili(trac,:)==1)=2;
-                    end
-                    prev_spikes_pili(trac,:)=m_res.pili_supi-reshape([prev_spikes(trac,1:m_res.num_isi); prev_spikes(trac,1:m_res.num_isi)],1,m_res.pili_len);
+                    prev_spikes_indy_pili(trac,:)=reshape(repmat(prev_spikes_indy(trac,1:r_para.run_pico_lengths(ruc)),2,1),1,r_para.run_pili_lengths(ruc));
+                    prev_spikes_pili(trac,:)=m_res.pili_supi(r_para.run_pili_starts(ruc):r_para.run_pili_ends(ruc))-...
+                        reshape([prev_spikes(trac,1:r_para.run_pico_lengths(ruc)); prev_spikes(trac,1:r_para.run_pico_lengths(ruc))],...
+                        1,r_para.run_pili_lengths(ruc));
                 end
             end
         end
-
+        
         if any(d_para.select_measures([m_para.spike_pili m_para.future_spike_pili]))  % SPIKE-Future-Pico
-            if max_num_uspikes<256                                                % integers relative to data sampling
-                follis_indy=zeros(d_para.num_trains,max_num_uspikes-1,'uint8');
-                foll_spikes_indy=zeros(d_para.num_trains,num_all_isi,'uint8');
-            elseif max_num_uspikes<65536
-                follis_indy=zeros(d_para.num_trains,max_num_uspikes-1,'uint16');
-                foll_spikes_indy=zeros(d_para.num_trains,num_all_isi,'uint16');
-            elseif max_num_uspikes<2^32
-                follis_indy=zeros(d_para.num_trains,max_num_uspikes-1,'uint32');
-                foll_spikes_indy=zeros(d_para.num_trains,num_all_isi,'uint32');
-            else
-                follis_indy=zeros(d_para.num_trains,max_num_uspikes-1,'uint64');
-                foll_spikes_indy=zeros(d_para.num_trains,num_all_isi,'uint64');
-            end
+            follis_indy=zeros(d_para.num_trains,max(run_num_ints),'uint32');
+            follis=zeros(d_para.num_trains,max(run_num_ints),'single');
+            foll_spikes_indy=zeros(d_para.num_trains,r_para.run_pico_lengths(ruc),'uint32');
+            foll_spikes=zeros(d_para.num_trains,r_para.run_pico_lengths(ruc),'single');
             for trac=1:d_para.num_trains
-                follis_indy(trac,1:num_uspikes(trac)-1)=2:num_uspikes(trac);
-                ivs=[1 find(all_trains==trac)];
-                ive=[ivs(2:length(ivs))-1 num_all_isi];
-                for ic=1:num_uspikes(trac)-1
-                    foll_spikes_indy(trac,ivs(ic):ive(ic))=follis_indy(trac,ic);
+                follis_indy(trac,1:run_num_ints(trac))=(firsts(trac):lasts(trac))+1;
+                follis(trac,1:run_num_ints(trac))=uspikes{trac}(follis_indy(trac,1:run_num_ints(trac)));
+                for ic=1:run_num_ints(trac)
+                    foll_spikes_indy(trac,run_ivs{trac}(ic):run_ive{trac}(ic))=follis_indy(trac,ic);
+                    foll_spikes(trac,run_ivs{trac}(ic):run_ive{trac}(ic))=follis(trac,ic);
                 end
-                if d_para.edge_correction && num_uspikes(trac)>3                                                      % $$$$$$$$$$$$
-                    foll_spikes_indy(trac,foll_spikes_indy(trac,:)==num_uspikes(trac))=num_uspikes(trac)-1;
+                if f_para.edge_correction && num_uspikes(trac)>3 && lasts(trac)==num_uspikes(trac)-1
+                    foll_edge_cor_indy{trac}=find(foll_spikes_indy(trac,:)==num_uspikes(trac));
                 end
+                foll_spikes_indy(trac,:)=foll_spikes_indy(trac,:)-uint32(firsts(trac)-1);
             end
-            foll_spikes_indy=foll_spikes_indy(:,all_isi>0);
-            clear follis_indy
-
-            follis=zeros(d_para.num_trains,max_num_uspikes-1,'single');
-            foll_spikes=zeros(d_para.num_trains,num_all_isi,'single');
-            for trac=1:d_para.num_trains
-                follis(trac,1:num_uspikes(trac)-1)=uspikes{trac}(2:num_uspikes(trac));
-                ivs=[1 find(all_trains==trac)];
-                ive=[ivs(2:length(ivs))-1 num_all_isi];
-                for ic=1:num_uspikes(trac)-1
-                    foll_spikes(trac,ivs(ic):ive(ic))=follis(trac,ic);
-                end
-            end
-            foll_spikes=foll_spikes(:,all_isi>0);
-            clear follis
-
-            if any(d_para.select_measures([m_para.spike_pili m_para.future_spike_pili]))   % SPIKE-Future-Pili **************
-                foll_spikes_indy_pili=zeros(d_para.num_trains,m_res.pili_len,'single');
-                foll_spikes_pili=zeros(d_para.num_trains,m_res.pili_len,'single');
+            clear follis_indy follis
+            
+            if any(d_para.select_measures([m_para.spike_pili m_para.future_spike_pili]))  % SPIKE-Future-Pili
+                foll_spikes_indy_pili=zeros(d_para.num_trains,r_para.run_pili_lengths(ruc),'uint64');
+                foll_spikes_pili=zeros(d_para.num_trains,r_para.run_pili_lengths(ruc),'single');
                 for trac=1:d_para.num_trains
-                    foll_spikes_indy_pili(trac,:)=reshape(repmat(foll_spikes_indy(trac,1:m_res.num_isi),2,1),1,m_res.pili_len);
-                    if d_para.edge_correction && num_uspikes(trac)>3                                                                 % $$$$$$$$$$$$
-                        foll_spikes_indy_pili(trac,foll_spikes_indy_pili(trac,:)==num_uspikes(trac))=num_uspikes(trac)-1;
-                    end
-                    foll_spikes_pili(trac,:)=reshape([foll_spikes(trac,1:m_res.num_isi); foll_spikes(trac,1:m_res.num_isi)],1,m_res.pili_len)-m_res.pili_supi;
+                    foll_spikes_indy_pili(trac,:)=reshape(repmat(foll_spikes_indy(trac,1:r_para.run_pico_lengths(ruc)),2,1),1,r_para.run_pili_lengths(ruc));
+                    foll_spikes_pili(trac,:)=reshape([foll_spikes(trac,1:r_para.run_pico_lengths(ruc)); foll_spikes(trac,1:r_para.run_pico_lengths(ruc))],...
+                        1,r_para.run_pili_lengths(ruc))-m_res.pili_supi(r_para.run_pili_starts(ruc):r_para.run_pili_ends(ruc));
                 end
             end
         end
 
+        run_uspikes=cell(1,d_para.num_trains);
+        for trac=1:d_para.num_trains
+            run_uspikes{trac}=uspikes{trac}(int32(firsts(trac)):int32(lasts(trac)+1));
+        end
+        run_num_uspikes=run_num_ints+1;
+        if exist(['SPIKY_udists_MEX777.',mexext],'file')
+            run_udists=SPIKY_udists_MEX(int32(d_para.num_trains),int32(run_num_uspikes),run_uspikes);
+        else
+            run_udists=cell(d_para.num_trains);
+            for trac1=1:d_para.num_trains
+                for trac2=setdiff(1:d_para.num_trains,trac1)
+                    run_udists{trac1,trac2}=zeros(1,run_num_uspikes(trac1),'single');
+                    for spc=1:run_num_uspikes(trac1)
+                        run_udists{trac1,trac2}(spc)=min(abs(run_uspikes{trac1}(spc)-run_uspikes{trac2}));
+                    end
+                end
+            end
+        end        
+        for trac=1:d_para.num_trains
+            for trac2=1:d_para.num_trains
+                if (trac~=trac2)
+                    run_udists{trac,trac2}(1)=min(abs(uspikes{trac}(firsts(trac))-uspikes{trac2}));
+                    run_udists{trac,trac2}(end)=min(abs(uspikes{trac}(lasts(trac)+1)-uspikes{trac2}));
+                end
+            end
+        end
+        
+        if any(d_para.select_measures([m_para.isi_pico m_para.spike_pili]))
+            isis=cell(1,d_para.num_trains);
+            ints=zeros(d_para.num_trains,r_para.run_pico_lengths(ruc),'single');
+            for trac=1:d_para.num_trains
+                isis{trac}=diff(uspikes{trac}(firsts(trac):lasts(trac)+1));
+                for ic=1:run_num_ints(trac)
+                    ints(trac,run_ivs{trac}(ic):run_ive{trac}(ic))=isis{trac}(ic);
+                end
+            end
+        end
+        
         % #####################################################################################################################################
-        % ################################################################# Pico-Measures #####################################################
+        % ########################################################### Pico-Measures I (ISI) ###################################################
         % #####################################################################################################################################
 
-        if m_para.num_pico_measures>0                                                         % Pico
-            m_res.pico_measures_mat=zeros(m_para.num_pico_measures,d_para.num_pairs,r_para.run_pico_lengths(pi_ruc),'single');
-
-            if d_para.select_measures(m_para.isi_pico)                                                 % ISI
-                if exist('SPIKY_ISI_MEX.mexw32','file')
-                   m_res.pico_measures_mat(m_para.measure_indy(m_para.isi_pico),1:d_para.num_pairs,1:r_para.run_pico_lengths(pi_ruc)) = ...
-                        abs(SPIKY_ISI_MEX(int32(d_para.num_pairs),int32(r_para.run_pico_lengths(pi_ruc)),int32(d_para.num_trains),...
-                        ints(:,r_para.run_pico_starts(pi_ruc):r_para.run_pico_ends(pi_ruc))));
-
+        if m_para.num_pico_measures>0                                                                                                   % Pico
+            m_res.pico_measures_mat=zeros(m_para.num_pico_measures,d_para.num_pairs,r_para.run_pico_lengths(ruc),'single');
+            
+            if d_para.select_measures(m_para.isi_pico)                        % ISI (calculated first, then edge-correction of ints for SPIKE)
+                if exist(['SPIKY_ISI_MEX.',mexext],'file')
+                    m_res.pico_measures_mat(m_para.measure_indy(m_para.isi_pico),1:d_para.num_pairs,1:r_para.run_pico_lengths(ruc)) = ...
+                        abs(SPIKY_ISI_MEX(int32(d_para.num_pairs),int32(r_para.run_pico_lengths(ruc)),int32(d_para.num_trains),ints));
                 else
                     pac=0;
-                    run_pico_range=r_para.run_pico_starts(pi_ruc):r_para.run_pico_ends(pi_ruc);
                     for trac1=1:d_para.num_trains-1
                         for trac2=trac1+1:d_para.num_trains
                             pac=pac+1;
-                            dummy1=find(ints(trac1,run_pico_range)<ints(trac2,run_pico_range));
-                            m_res.pico_measures_mat(m_para.measure_indy(m_para.isi_pico),pac,dummy1)=abs(ints(trac1,run_pico_range(dummy1))./ints(trac2,run_pico_range(dummy1))-1);
-                            dummy2=find(ints(trac1,run_pico_range)>=ints(trac2,run_pico_range) & ints(trac1,run_pico_range)~=0);
-                            m_res.pico_measures_mat(m_para.measure_indy(m_para.isi_pico),pac,dummy2)=abs(ints(trac2,run_pico_range(dummy2))./ints(trac1,run_pico_range(dummy2))-1);
+                            dummy1=find(ints(trac1,:)<ints(trac2,:));
+                            m_res.pico_measures_mat(m_para.measure_indy(m_para.isi_pico),pac,dummy1)=abs(ints(trac1,dummy1)./ints(trac2,dummy1)-1);
+                            dummy2=find(ints(trac1,:)>=ints(trac2,:) & ints(trac1,:)~=0);
+                            m_res.pico_measures_mat(m_para.measure_indy(m_para.isi_pico),pac,dummy2)=abs(ints(trac2,dummy2)./ints(trac1,dummy2)-1);
                         end
                     end
                 end
             end
-            ave_bi_vect(m_para.pico_bi_measures_indy,:)=ave_bi_vect(m_para.pico_bi_measures_indy,:)+sum(m_res.pico_measures_mat.*...
-                repmat(shiftdim(m_res.isi(r_para.run_pico_starts(pi_ruc):r_para.run_pico_ends(pi_ruc)),-1),[m_para.num_pico_measures,...
-                d_para.num_pairs]),3);
         end
-
-
+        
         % #####################################################################################################################################
         % ################################################################# Pili-Measures #####################################################
         % #####################################################################################################################################
 
         if m_para.num_pili_measures>0
-            odds=1:2:r_para.run_pili_lengths(pi_ruc);
+            odds=1:2:r_para.run_pili_lengths(ruc);
             evens=odds+1;
-            m_res.pili_measures_mat=zeros(m_para.num_pili_measures,d_para.num_pairs,r_para.run_pili_lengths(pi_ruc),'single');
-            if d_para.select_measures(m_para.spike_pili)                                                   % SPIKE-Pili
-                if exist('SPIKY_SPIKE_MEX.mexw32','file')
-                    m_res.pili_measures_mat(m_para.measure_indy(m_para.spike_pili),1:d_para.num_pairs,1:r_para.run_pili_lengths(pi_ruc)) = ...
-                        SPIKY_SPIKE_MEX(int32(d_para.num_pairs),int32(r_para.run_pili_lengths(pi_ruc)),int32(d_para.num_trains),...
-                        foll_spikes_pili(:,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc)),...
-                        prev_spikes_pili(:,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc)),...
-                        int32(isi_indy_pili(:,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))),...
-                        int32(prev_spikes_indy_pili(:,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))),...
-                        int32(foll_spikes_indy_pili(:,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))),...
-                        int32(r_para.run_pico_starts(pi_ruc)),ints(:,r_para.run_pico_starts(pi_ruc):r_para.run_pico_ends(pi_ruc)),udists);
+            m_res.pili_measures_mat=zeros(m_para.num_pili_measures,d_para.num_pairs,r_para.run_pili_lengths(ruc),'single');
+
+            if d_para.select_measures(m_para.realtime_spike_pili)                                           % REALTIME-Pili
+                if exist(['SPIKY_realtimeSPIKE_MEX.',mexext],'file')
+                   m_res.pili_measures_mat(m_para.measure_indy(m_para.realtime_spike_pili),1:d_para.num_pairs,1:r_para.run_pili_lengths(ruc)) = ...
+                        SPIKY_realtimeSPIKE_MEX(int32(d_para.num_pairs),int32(r_para.run_pili_lengths(ruc)),int32(d_para.num_trains),...
+                        prev_spikes_pili,int32(prev_spikes_indy_pili),run_udists);
                 else
-                    run_pico_range=r_para.run_pico_starts(pi_ruc):r_para.run_pico_ends(pi_ruc);
                     pac=0;
                     for trac1=1:d_para.num_trains-1
                         for trac2=trac1+1:d_para.num_trains
                             pac=pac+1;
-                            dummy=double(isi_indy_pili(r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc)))-r_para.run_pico_starts(pi_ruc)+1;
-                            m_res.pili_measures_mat(m_para.measure_indy(m_para.spike_pili),pac,1:r_para.run_pili_lengths(pi_ruc)) = ...
-                                ((udists{trac1,trac2}(prev_spikes_indy_pili(trac1,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))).*...
-                                foll_spikes_pili(trac1,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))+...
-                                udists{trac1,trac2}(foll_spikes_indy_pili(trac1,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))).*...
-                                prev_spikes_pili(trac1,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc)))./...
-                                ints(trac1,isi_indy_pili(r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))).*...
-                                ints(trac2,isi_indy_pili(r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc)))+...
-                                (udists{trac2,trac1}(prev_spikes_indy_pili(trac2,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))).*...
-                                foll_spikes_pili(trac2,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))+...
-                                udists{trac2,trac1}(foll_spikes_indy_pili(trac2,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))).*...
-                                prev_spikes_pili(trac2,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc)))./...
-                                ints(trac2,isi_indy_pili(r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))).*...
-                                ints(trac1,isi_indy_pili(r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))))./...
-                                ((ints(trac1,run_pico_range(dummy))+ints(trac2,run_pico_range(dummy))).^2/2);
+                            normy=(prev_spikes_pili(trac1,:)+prev_spikes_pili(trac2,:));
+                            dummy=(prev_spikes_pili(trac1,:)<prev_spikes_pili(trac2,:)-0.00000001);
+                            dummy1=trac1*(1-dummy)+trac2*dummy;   % index of spike train with earlier spike
+                            dummy2=trac2*(1-dummy)+trac1*dummy;   % index of spike train with later spike
+                            for sc=1:r_para.run_pili_lengths(ruc)
+                                m_res.pili_measures_mat(m_para.measure_indy(m_para.realtime_spike_pili),pac,sc)= ...
+                                    (abs(prev_spikes_pili(trac1,sc)-prev_spikes_pili(trac2,sc))+...   % later spike
+                                    run_udists{dummy1(sc),dummy2(sc)}(prev_spikes_indy_pili(dummy1(sc),sc)))...      % earlier spike
+                                    /(2*normy(sc)+(normy(sc)==0));
+                            end
+                        end
+                    end
+                    clear dummy dummy1 dummy2
+                end
+                aves=(log(1./m_res.pili_measures_mat(m_para.measure_indy(m_para.realtime_spike_pili),:,evens))-...
+                    log(1./m_res.pili_measures_mat(m_para.measure_indy(m_para.realtime_spike_pili),:,odds)))./...
+                    (1./m_res.pili_measures_mat(m_para.measure_indy(m_para.realtime_spike_pili),:,evens)-...
+                    1./m_res.pili_measures_mat(m_para.measure_indy(m_para.realtime_spike_pili),:,odds));
+                aves(isnan(aves))=0;
+                ave_bi_vect(logical(m_para.select_bi_measures==m_para.realtime_spike_pili),:)=...
+                    sum(aves.*repmat(shiftdim(m_res.isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc)),-1),...
+                    [1,d_para.num_pairs]),3)/sum(m_res.isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc)));
+            end
+            
+            if d_para.select_measures(m_para.future_spike_pili)                                             % FUTURE-Pili
+                if exist(['SPIKY_futureSPIKE_MEX.',mexext],'file')
+                    m_res.pili_measures_mat(m_para.measure_indy(m_para.future_spike_pili),1:d_para.num_pairs,1:r_para.run_pili_lengths(ruc)) = ...
+                        SPIKY_futureSPIKE_MEX(int32(d_para.num_pairs),int32(r_para.run_pili_lengths(ruc)),int32(d_para.num_trains),...
+                        foll_spikes_pili,int32(foll_spikes_indy_pili),run_udists);
+                else
+                    pac=0;
+                    for trac1=1:d_para.num_trains-1
+                        for trac2=trac1+1:d_para.num_trains
+                            pac=pac+1;
+                            normy=(foll_spikes_pili(trac1,:)+foll_spikes_pili(trac2,:));
+                            dummy=(foll_spikes_pili(trac1,:)<foll_spikes_pili(trac2,:)-0.00000001);
+                            dummy1=trac1*(1-dummy)+trac2*dummy;   % index of spike train with earlier spike
+                            dummy2=trac2*(1-dummy)+trac1*dummy;   % index of spike train with later spike
+                            for sc=1:r_para.run_pili_lengths(ruc)
+                                m_res.pili_measures_mat(m_para.measure_indy(m_para.future_spike_pili),pac,sc)= ...
+                                    (abs(foll_spikes_pili(trac1,sc)-foll_spikes_pili(trac2,sc))+...   % later spike
+                                    run_udists{dummy1(sc),dummy2(sc)}(foll_spikes_indy_pili(dummy1(sc),sc)))...      % earlier spike
+                                    /(2*normy(sc)+(normy(sc)==0));
+                            end
+                        end
+                    end
+                    clear dummy dummy1 dummy2
+                end
+                aves=(log(1./m_res.pili_measures_mat(m_para.measure_indy(m_para.future_spike_pili),:,evens))-...
+                    log(1./m_res.pili_measures_mat(m_para.measure_indy(m_para.future_spike_pili),:,odds)))./...
+                    (1./m_res.pili_measures_mat(m_para.measure_indy(m_para.future_spike_pili),:,evens)-...
+                    1./m_res.pili_measures_mat(m_para.measure_indy(m_para.future_spike_pili),:,odds));
+                aves(isnan(aves))=0;
+                ave_bi_vect(logical(m_para.select_bi_measures==m_para.future_spike_pili),:)=...
+                    sum(aves.*repmat(shiftdim(m_res.isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc)),-1),...
+                    [1,d_para.num_pairs]),3)/sum(m_res.isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc)));
+            end
+            
+            if d_para.select_measures(m_para.spike_pili)                                                   % SPIKE-Pili
+                if f_para.edge_correction
+                    for trac=1:d_para.num_trains
+                        if num_uspikes(trac)>3
+                            if r_para.num_runs==1
+                                isis{trac}(1)=max(isis{trac}(1:2));
+                                isis{trac}(end)=max(isis{trac}(end-1:end));
+                            else
+                                if firsts(trac)==1
+                                    isis{trac}(1)=max(fl_isis{trac}(1:2));
+                                end
+                                if lasts(trac)==num_uspikes(trac)-1
+                                    isis{trac}(end)=max(fl_isis{trac}(3:4));
+                                end
+                            end
+                            for ic=1:run_num_ints(trac)
+                                ints(trac,run_ivs{trac}(ic):run_ive{trac}(ic))=isis{trac}(ic);
+                            end
+                        end
+                        if firsts(trac)==1
+                            %prev_spikes_indy(prev_edge_cor_indy{trac})=prev_spikes_indy(prev_edge_cor_indy{trac})+1;
+                            prev_spikes_indy_pili(trac,[prev_edge_cor_indy{trac}*2-1 prev_edge_cor_indy{trac}*2])=...
+                                prev_spikes_indy_pili(trac,[prev_edge_cor_indy{trac}*2-1 prev_edge_cor_indy{trac}*2])+1;
+                        end
+                        if lasts(trac)==num_uspikes(trac)-1
+                            %foll_spikes_indy(foll_edge_cor_indy{trac})=foll_spikes_indy(foll_edge_cor_indy{trac})-1;
+                            foll_spikes_indy_pili(trac,[foll_edge_cor_indy{trac}*2-1 foll_edge_cor_indy{trac}*2])=...
+                                foll_spikes_indy_pili(trac,[foll_edge_cor_indy{trac}*2-1 foll_edge_cor_indy{trac}*2])-1;
+                        end
+                    end                    
+                end
+                clear isis
+                isi_indy_pili=reshape(repmat(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc),2,1),1,2*r_para.run_pico_lengths(ruc))-...
+                    r_para.run_pico_starts(ruc)+1;
+
+                if exist(['SPIKY_SPIKE_MEX.',mexext],'file')
+                    m_res.pili_measures_mat(m_para.measure_indy(m_para.spike_pili),1:d_para.num_pairs,1:r_para.run_pili_lengths(ruc)) = ...
+                        SPIKY_SPIKE_MEX(int32(d_para.num_pairs),int32(r_para.run_pili_lengths(ruc)),int32(d_para.num_trains),...
+                        foll_spikes_pili,prev_spikes_pili,int32(isi_indy_pili-1),int32(prev_spikes_indy_pili),int32(foll_spikes_indy_pili),...
+                        ints,run_udists);
+                else
+                    pac=0;
+                    for trac1=1:d_para.num_trains-1
+                        for trac2=trac1+1:d_para.num_trains
+                            pac=pac+1;
+                            m_res.pili_measures_mat(m_para.measure_indy(m_para.spike_pili),pac,1:r_para.run_pili_lengths(ruc)) = ...
+                                ((run_udists{trac1,trac2}(prev_spikes_indy_pili(trac1,:)).*foll_spikes_pili(trac1,:)+...
+                                run_udists{trac1,trac2}(foll_spikes_indy_pili(trac1,:)).*prev_spikes_pili(trac1,:))./...
+                                ints(trac1,isi_indy_pili).*ints(trac2,isi_indy_pili)+...
+                                (run_udists{trac2,trac1}(prev_spikes_indy_pili(trac2,:)).*foll_spikes_pili(trac2,:)+...
+                                run_udists{trac2,trac1}(foll_spikes_indy_pili(trac2,:)).*prev_spikes_pili(trac2,:))./...
+                                ints(trac2,isi_indy_pili).*ints(trac1,isi_indy_pili))./...
+                                ((ints(trac1,isi_indy_pili)+ints(trac2,isi_indy_pili)).^2/2);
                         end
                     end
                 end
                 ave_bi_vect(logical(m_para.select_bi_measures==m_para.spike_pili),:)=...
                     sum((m_res.pili_measures_mat(m_para.measure_indy(m_para.spike_pili),:,odds)+...
                     m_res.pili_measures_mat(m_para.measure_indy(m_para.spike_pili),:,evens))/2.*...
-                    repmat(shiftdim(m_res.isi(r_para.run_pico_starts(pi_ruc):r_para.run_pico_ends(pi_ruc)),-1),[1,d_para.num_pairs]),3)/...
-                    sum(m_res.isi(r_para.run_pico_starts(pi_ruc):r_para.run_pico_ends(pi_ruc)));
+                    repmat(shiftdim(m_res.isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc)),-1),[1,d_para.num_pairs]),3)/...
+                    sum(m_res.isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc)));
             end
+        end
+        
+        
+        
+        % #####################################################################################################################################
+        % ########################################################### Pico-Measures I (ISI) ###################################################
+        % #####################################################################################################################################
 
-            if d_para.select_measures(m_para.realtime_spike_pili)                                           % REALTIME-Pili
-                if exist('SPIKY_realtimeSPIKE_MEX.mexw32','file')
-                    m_res.pili_measures_mat(m_para.measure_indy(m_para.realtime_spike_pili),1:d_para.num_pairs,1:r_para.run_pili_lengths(pi_ruc)) = ...
-                        SPIKY_realtimeSPIKE_MEX(int32(d_para.num_pairs),int32(r_para.run_pili_lengths(pi_ruc)),int32(d_para.num_trains),...
-                        prev_spikes_pili(:,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc)),...
-                        int32(prev_spikes_indy_pili(:,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))),udists);
+        if m_para.num_pili_measures>0
+            odds=1:2:r_para.run_pili_lengths(ruc);
+            evens=odds+1;
+            m_res.pili_measures_mat=zeros(m_para.num_pili_measures,d_para.num_pairs,r_para.run_pili_lengths(ruc),'single');
+            if d_para.select_measures(m_para.spike_pili)                                                   % SPIKE-Pili
+                if exist(['SPIKY_SPIKE_MEX.',mexext],'file')
+                    m_res.pili_measures_mat(m_para.measure_indy(m_para.spike_pili),1:d_para.num_pairs,1:r_para.run_pili_lengths(ruc)) = ...
+                        SPIKY_SPIKE_MEX(int32(d_para.num_pairs),int32(r_para.run_pili_lengths(ruc)),int32(d_para.num_trains),...
+                        foll_spikes_pili,prev_spikes_pili,int32(isi_indy_pili-1),int32(prev_spikes_indy_pili),int32(foll_spikes_indy_pili),...
+                        ints,run_udists);
                 else
-                    run_pili_range=r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc);
                     pac=0;
                     for trac1=1:d_para.num_trains-1
                         for trac2=trac1+1:d_para.num_trains
                             pac=pac+1;
-                            normy=(prev_spikes_pili(trac1,run_pili_range)+prev_spikes_pili(trac2,run_pili_range));
-                            dummy=(prev_spikes_pili(trac1,run_pili_range)<prev_spikes_pili(trac2,run_pili_range)-0.00000001);
+                            m_res.pili_measures_mat(m_para.measure_indy(m_para.spike_pili),pac,1:r_para.run_pili_lengths(ruc)) = ...
+                                ((run_udists{trac1,trac2}(prev_spikes_indy_pili(trac1,:)).*foll_spikes_pili(trac1,:)+...
+                                run_udists{trac1,trac2}(foll_spikes_indy_pili(trac1,:)).*prev_spikes_pili(trac1,:))./...
+                                ints(trac1,isi_indy_pili).*ints(trac2,isi_indy_pili)+...
+                                (run_udists{trac2,trac1}(prev_spikes_indy_pili(trac2,:)).*foll_spikes_pili(trac2,:)+...
+                                run_udists{trac2,trac1}(foll_spikes_indy_pili(trac2,:)).*prev_spikes_pili(trac2,:))./...
+                                ints(trac2,isi_indy_pili).*ints(trac1,isi_indy_pili))./...
+                                ((ints(trac1,isi_indy_pili)+ints(trac2,isi_indy_pili)).^2/2);
+                        end
+                    end
+                end
+                ave_bi_vect(logical(m_para.select_bi_measures==m_para.spike_pili),:)=...
+                    sum((m_res.pili_measures_mat(m_para.measure_indy(m_para.spike_pili),:,odds)+...
+                    m_res.pili_measures_mat(m_para.measure_indy(m_para.spike_pili),:,evens))/2.*...
+                    repmat(shiftdim(m_res.isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc)),-1),[1,d_para.num_pairs]),3)/...
+                    sum(m_res.isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc)));
+            end
+            
+            if d_para.select_measures(m_para.realtime_spike_pili)                                           % REALTIME-Pili
+                if exist(['SPIKY_realtimeSPIKE_MEX.',mexext],'file')
+                   m_res.pili_measures_mat(m_para.measure_indy(m_para.realtime_spike_pili),1:d_para.num_pairs,1:r_para.run_pili_lengths(ruc)) = ...
+                        SPIKY_realtimeSPIKE_MEX(int32(d_para.num_pairs),int32(r_para.run_pili_lengths(ruc)),int32(d_para.num_trains),...
+                        prev_spikes_pili,int32(prev_spikes_indy_pili),run_udists);
+                else
+                    pac=0;
+                    for trac1=1:d_para.num_trains-1
+                        for trac2=trac1+1:d_para.num_trains
+                            pac=pac+1;
+                            normy=(prev_spikes_pili(trac1,:)+prev_spikes_pili(trac2,:));
+                            dummy=(prev_spikes_pili(trac1,:)<prev_spikes_pili(trac2,:)-0.00000001);
                             dummy1=trac1*(1-dummy)+trac2*dummy;   % index of spike train with earlier spike
                             dummy2=trac2*(1-dummy)+trac1*dummy;   % index of spike train with later spike
-                            for sc=1:r_para.run_pili_lengths(pi_ruc)
+                            for sc=1:r_para.run_pili_lengths(ruc)
                                 m_res.pili_measures_mat(m_para.measure_indy(m_para.realtime_spike_pili),pac,sc)= ...
-                                    (abs(prev_spikes_pili(trac1,run_pili_range(sc))-...
-                                    prev_spikes_pili(trac2,run_pili_range(sc)))+...   % later spike
-                                    udists{dummy1(sc),dummy2(sc)}(prev_spikes_indy_pili(dummy1(sc),run_pili_range(sc))))...      % earlier spike
+                                    (abs(prev_spikes_pili(trac1,sc)-prev_spikes_pili(trac2,sc))+...   % later spike
+                                    run_udists{dummy1(sc),dummy2(sc)}(prev_spikes_indy_pili(dummy1(sc),sc)))...      % earlier spike
                                     /(2*normy(sc)+(normy(sc)==0));
                             end
                         end
@@ -536,31 +648,28 @@ if m_para.num_sel_bi_measures>0     % num_sel_measures>0
                     1./m_res.pili_measures_mat(m_para.measure_indy(m_para.realtime_spike_pili),:,odds));
                 aves(isnan(aves))=0;
                 ave_bi_vect(logical(m_para.select_bi_measures==m_para.realtime_spike_pili),:)=...
-                    sum(aves.*repmat(shiftdim(m_res.isi(r_para.run_pico_starts(pi_ruc):r_para.run_pico_ends(pi_ruc)),-1),...
-                    [1,d_para.num_pairs]),3)/sum(m_res.isi(r_para.run_pico_starts(pi_ruc):r_para.run_pico_ends(pi_ruc)));
+                    sum(aves.*repmat(shiftdim(m_res.isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc)),-1),...
+                    [1,d_para.num_pairs]),3)/sum(m_res.isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc)));
             end
-
+            
             if d_para.select_measures(m_para.future_spike_pili)                                             % FUTURE-Pili
-                if exist('SPIKY_futureSPIKE_MEX.mexw32','file')
-                    m_res.pili_measures_mat(m_para.measure_indy(m_para.future_spike_pili),1:d_para.num_pairs,1:r_para.run_pili_lengths(pi_ruc)) = ...
-                        SPIKY_futureSPIKE_MEX(int32(d_para.num_pairs),int32(r_para.run_pili_lengths(pi_ruc)),int32(d_para.num_trains),...
-                        foll_spikes_pili(:,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc)),...
-                        int32(foll_spikes_indy_pili(:,r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))),udists);
+                if exist(['SPIKY_futureSPIKE_MEX.',mexext],'file')
+                    m_res.pili_measures_mat(m_para.measure_indy(m_para.future_spike_pili),1:d_para.num_pairs,1:r_para.run_pili_lengths(ruc)) = ...
+                        SPIKY_futureSPIKE_MEX(int32(d_para.num_pairs),int32(r_para.run_pili_lengths(ruc)),int32(d_para.num_trains),...
+                        foll_spikes_pili,int32(foll_spikes_indy_pili),run_udists);
                 else
-                    run_pili_range=r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc);
                     pac=0;
                     for trac1=1:d_para.num_trains-1
                         for trac2=trac1+1:d_para.num_trains
                             pac=pac+1;
-                            normy=(foll_spikes_pili(trac1,run_pili_range)+foll_spikes_pili(trac2,run_pili_range));
-                            dummy=(foll_spikes_pili(trac1,run_pili_range)<foll_spikes_pili(trac2,run_pili_range)-0.00000001);
+                            normy=(foll_spikes_pili(trac1,:)+foll_spikes_pili(trac2,:));
+                            dummy=(foll_spikes_pili(trac1,:)<foll_spikes_pili(trac2,:)-0.00000001);
                             dummy1=trac1*(1-dummy)+trac2*dummy;   % index of spike train with earlier spike
                             dummy2=trac2*(1-dummy)+trac1*dummy;   % index of spike train with later spike
-                            for sc=1:r_para.run_pili_lengths(pi_ruc)
+                            for sc=1:r_para.run_pili_lengths(ruc)
                                 m_res.pili_measures_mat(m_para.measure_indy(m_para.future_spike_pili),pac,sc)= ...
-                                    (abs(foll_spikes_pili(trac1,run_pili_range(sc))-...
-                                    foll_spikes_pili(trac2,run_pili_range(sc)))+...   % later spike
-                                    udists{dummy1(sc),dummy2(sc)}(foll_spikes_indy_pili(dummy1(sc),run_pili_range(sc))))...      % earlier spike
+                                    (abs(foll_spikes_pili(trac1,sc)-foll_spikes_pili(trac2,sc))+...   % later spike
+                                    run_udists{dummy1(sc),dummy2(sc)}(foll_spikes_indy_pili(dummy1(sc),sc)))...      % earlier spike
                                     /(2*normy(sc)+(normy(sc)==0));
                             end
                         end
@@ -573,19 +682,62 @@ if m_para.num_sel_bi_measures>0     % num_sel_measures>0
                     1./m_res.pili_measures_mat(m_para.measure_indy(m_para.future_spike_pili),:,odds));
                 aves(isnan(aves))=0;
                 ave_bi_vect(logical(m_para.select_bi_measures==m_para.future_spike_pili),:)=...
-                    sum(aves.*repmat(shiftdim(m_res.isi(r_para.run_pico_starts(pi_ruc):r_para.run_pico_ends(pi_ruc)),-1),...
-                    [1,d_para.num_pairs]),3)/sum(m_res.isi(r_para.run_pico_starts(pi_ruc):r_para.run_pico_ends(pi_ruc)));
+                    sum(aves.*repmat(shiftdim(m_res.isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc)),-1),...
+                    [1,d_para.num_pairs]),3)/sum(m_res.isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc)));
             end
-
         end
-        if r_para.num_pi_runs>1
-            disp(['pi_save_run_info = ',num2str(pi_ruc),'  (',num2str(r_para.num_pi_runs),')'])
-            save (['SPIKY_pi_AZBYCX_',num2str(pi_ruc)],'-struct','m_res','pi*_measures_mat')
+
+        % #####################################################################################################################################
+        % ################################################################# Pico-Measures #####################################################
+        % #####################################################################################################################################
+        
+        if m_para.num_pico_measures>0                                                         % Pico
+            m_res.pico_measures_mat=zeros(m_para.num_pico_measures,d_para.num_pairs,r_para.run_pico_lengths(ruc),'single');
+            
+            if d_para.select_measures(m_para.isi_pico)                                                 % ISI
+                if exist(['SPIKY_ISI_MEX.',mexext],'file')
+                    m_res.pico_measures_mat(m_para.measure_indy(m_para.isi_pico),1:d_para.num_pairs,1:r_para.run_pico_lengths(ruc)) = ...
+                        abs(SPIKY_ISI_MEX(int32(d_para.num_pairs),int32(r_para.run_pico_lengths(ruc)),int32(d_para.num_trains),ints));
+                else
+                    pac=0;
+                    for trac1=1:d_para.num_trains-1
+                        for trac2=trac1+1:d_para.num_trains
+                            pac=pac+1;
+                            dummy1=find(ints(trac1,:)<ints(trac2,:));
+                            m_res.pico_measures_mat(m_para.measure_indy(m_para.isi_pico),pac,dummy1)=abs(ints(trac1,dummy1)./ints(trac2,dummy1)-1);
+                            dummy2=find(ints(trac1,:)>=ints(trac2,:) & ints(trac1,:)~=0);
+                            m_res.pico_measures_mat(m_para.measure_indy(m_para.isi_pico),pac,dummy2)=abs(ints(trac2,dummy2)./ints(trac1,dummy2)-1);
+                        end
+                    end
+                end
+            end
+            ave_bi_vect(m_para.pico_bi_measures_indy,:)=ave_bi_vect(m_para.pico_bi_measures_indy,:)+sum(m_res.pico_measures_mat.*...
+                repmat(shiftdim(m_res.isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc)),-1),[m_para.num_pico_measures,...
+                d_para.num_pairs]),3);
+        end
+        
+        if r_para.num_runs>1
+            disp(['Calculation-Loop-Info: = ',num2str(r_para.num_runs+1-ruc),'  (',num2str(r_para.num_runs),')'])
+            if m_para.num_pico_measures>0
+                eval(['pico' num2str(ruc) '= m_res.pico_measures_mat;']);
+            end
+            if m_para.num_pili_measures>0
+                eval(['pili' num2str(ruc) '= m_res.pili_measures_mat;']);
+            end
+            if ruc==r_para.num_runs
+                save('SPIKY_AZBYCX',['pi*' num2str(ruc)])
+            else
+                save('SPIKY_AZBYCX',['pi*' num2str(ruc)],'-append')
+            end
+            waitbar((r_para.num_runs+1-ruc)/r_para.num_runs,pwbh,['Calculation-Loop-Info: ',...
+                num2str(r_para.num_runs+1-ruc),'  (',num2str(r_para.num_runs),')'])
+            if ruc==1
+                delete(pwbh)
+            end
         end
     end
-    r_para.pi_ruc=pi_ruc;
-
-    clear uspikes all_isi all_trains
+    r_para.ruc=ruc;
+    clear uspikes
 
     if m_para.num_pico_measures>0
         ave_bi_vect(m_para.pico_bi_measures_indy,:)=ave_bi_vect(m_para.pico_bi_measures_indy,:)/sum(m_res.isi);
@@ -652,7 +804,7 @@ if m_para.num_sel_bi_measures>0     % num_sel_measures>0
 end
 
 
-if m_para.memo_num_pi_measures>0                                               % ##### pico & pili #####
+if m_para.memo_num_measures>0                                               % ##### pico & pili #####
     cum_isi2=d_para.tmin+cumsum([0 m_res.isi]);
     first_winspike_ind=find(cum_isi2>=f_para.tmin,1,'first');
     last_winspike_ind=find(cum_isi2<=f_para.tmax,1,'last');
@@ -695,9 +847,9 @@ if m_para.num_sel_measures>0
     spike_diffs_realtime_l_ave=zeros(1,num_profiles);
     spike_diffs_future_l_ave=zeros(1,num_profiles);
 
-    if m_para.memo_num_pi_measures>0                                               % ##### pico & pili #####
+    if m_para.memo_num_measures>0                                               % ##### pico & pili #####
 
-        if r_para.num_pi_runs>1 || num_profiles>0
+        if r_para.num_runs>1 || num_profiles>0
             if m_para.num_pico_measures>0
                 if d_para.select_measures(m_para.isi_pico)
                     isi_ratio=zeros(num_profiles,num_isi,'single');
@@ -717,7 +869,7 @@ if m_para.num_sel_measures>0
             end
         end
 
-        if r_para.num_pi_runs==1
+        if r_para.num_runs==1
             if mod(f_para.profile_mode,2)==1                     % All
                 if m_para.num_pico_measures>0
                     if d_para.select_measures(m_para.isi_pico)
@@ -846,44 +998,62 @@ if m_para.num_sel_measures>0
             end
         else
             if m_para.num_pico_measures>0
-                min_pi_ruc=find(m_res.cum_isi(r_para.run_pico_ends+1)>=f_para.tmin,1,'first');
-                max_pi_ruc=find(m_res.cum_isi(r_para.run_pico_ends+1)<=f_para.tmax,1,'last');
+                min_ruc=find(m_res.cum_isi(r_para.run_pico_ends+1)>=f_para.tmin,1,'first');
+                max_ruc=find(m_res.cum_isi(r_para.run_pico_ends+1)<=f_para.tmax,1,'last');
             else
-                min_pi_ruc=find(m_res.pili_supi(r_para.run_pili_ends)>=f_para.tmin,1,'first');
-                max_pi_ruc=find(m_res.pili_supi(r_para.run_pili_ends)<=f_para.tmax,1,'last');
+                min_ruc=find(m_res.pili_supi(r_para.run_pili_ends)>=f_para.tmin,1,'first');
+                max_ruc=find(m_res.pili_supi(r_para.run_pili_ends)<=f_para.tmax,1,'last');
             end
 
-            for pi_ruc=min_pi_ruc:max_pi_ruc
+            num_runs=max_ruc-min_ruc+1;
+            if num_runs>1
+                disp(' ')
+                disp(['Number of profile loop runs: ',num2str(num_runs)])
+                pwbh = waitbar(0,'Large data set. Please be patient.','CreateCancelBtn','setappdata(gcbf,''canceling'',1)');
+                setappdata(pwbh,'canceling',0)
+            end
+            for ruc=min_ruc:max_ruc
 
-                if pi_ruc~=r_para.pi_ruc
-                    if min_pi_ruc~=1 || max_pi_ruc~=r_para.num_pi_runs
-                        disp(['pi_profile_load_run_info = ',num2str(pi_ruc),'  (',num2str(r_para.num_pi_runs),') --- ',...
-                            num2str(pi_ruc-min_pi_ruc+1  ),'  (',num2str(max_pi_ruc-min_pi_ruc+1),')'])
+                if r_para.num_runs>1 && getappdata(pwbh,'canceling')
+                    delete(pwbh)
+                    return
+                end
+                if num_runs>1
+                    if min_ruc~=1 || max_ruc~=r_para.num_runs
+                        disp(['Profile-Loop-Info = ',num2str(ruc),'  (',num2str(r_para.num_runs),') --- ',...
+                            num2str(ruc-min_ruc+1  ),'  (',num2str(max_ruc-min_ruc+1),')'])
                     else
-                        disp(['pi_profile_load_run_info = ',num2str(pi_ruc),'  (',num2str(r_para.num_pi_runs),')'])
+                        disp(['Profile-Loop-Info = ',num2str(ruc),'  (',num2str(r_para.num_runs),')'])
                     end
-                    load (['SPIKY_pi_AZBYCX_',num2str(pi_ruc)],'pi*_measures_mat')
+                end
+                if ruc~=r_para.ruc
                     if m_para.num_pico_measures>0
-                        m_res.pico_measures_mat=pico_measures_mat;
-                        clear pico_measures_mat
+                        load('SPIKY_AZBYCX',['pico',num2str(ruc)]);
+                        eval(['m_res.pico_measures_mat = pico',num2str(ruc),';']);
+                        eval(['clear pico',num2str(ruc),';']);
                     end
                     if m_para.num_pili_measures>0
-                        m_res.pili_measures_mat=pili_measures_mat;
-                        clear pili_measures_mat
+                        load('SPIKY_AZBYCX',['pili',num2str(ruc)]);
+                        eval(['m_res.pili_measures_mat = pili',num2str(ruc) ';']);
+                        eval(['clear pili',num2str(ruc),';']);
                     end
-                    r_para.pi_ruc=pi_ruc;
+                    r_para.ruc=ruc;
+                    waitbar((ruc-min_ruc+1)/num_runs,pwbh,['Profile-Loop-Info: ',num2str(ruc-min_ruc+1),'  (',num2str(num_runs),')'])
+                    if ruc==max_ruc
+                        delete(pwbh)
+                    end
                 end
 
                 if m_para.num_pico_measures>0
-                    pico_load_run_indy=(max([r_para.run_pico_starts(pi_ruc) first_winspike_ind]):min(...
-                        [r_para.run_pico_ends(pi_ruc) last_winspike_ind]))-r_para.run_pico_starts(pi_ruc)+1;
-                    pico_prof_run_indy=pico_load_run_indy+r_para.run_pico_starts(pi_ruc)-first_winspike_ind;
+                    pico_load_run_indy=(max([r_para.run_pico_starts(ruc) first_winspike_ind]):min(...
+                        [r_para.run_pico_ends(ruc) last_winspike_ind]))-r_para.run_pico_starts(ruc)+1;
+                    pico_prof_run_indy=pico_load_run_indy+r_para.run_pico_starts(ruc)-first_winspike_ind;
                 end
 
                 if m_para.num_pili_measures>0
-                    pili_load_run_indy=(max([r_para.run_pili_starts(pi_ruc) first_pili_supi_ind]):min(...
-                        [r_para.run_pili_ends(pi_ruc) last_pili_supi_ind]))-r_para.run_pili_starts(pi_ruc)+1;
-                    pili_prof_run_indy=pili_load_run_indy+r_para.run_pili_starts(pi_ruc)-first_pili_supi_ind;
+                    pili_load_run_indy=(max([r_para.run_pili_starts(ruc) first_pili_supi_ind]):min(...
+                        [r_para.run_pili_ends(ruc) last_pili_supi_ind]))-r_para.run_pili_starts(ruc)+1;
+                    pili_prof_run_indy=pili_load_run_indy+r_para.run_pili_starts(ruc)-first_pili_supi_ind;
                 end
 
                 if mod(f_para.profile_mode,2)==1                     % All

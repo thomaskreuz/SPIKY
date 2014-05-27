@@ -191,14 +191,14 @@ STP.ok_pb=uicontrol('style','pushbutton','units','normalized','position',[0.55 0
             if gcbo==STP.increasing_spike_number_pb || gcbo==STP.decreasing_spike_number_pb || ...
                    (f_para.num_all_train_groups>1 && (gcbo==STP.increasing_spike_number_within_pb || gcbo==STP.decreasing_spike_number_within_pb))
                onset_str_in=get(STP.spike_number_onset_edit,'String');
-               onset_in=str2num(regexprep(onset_str_in,'[^1234567890e- \.]',''));
+               onset_in=str2num(regexprep(onset_str_in,f_para.regexp_str_scalar_float,''));
                if ~isempty(onset_in)
                    onset_str_out=num2str(onset_in(1));
                else
                    onset_str_out='';
                end
                offset_str_in=get(STP.spike_number_offset_edit,'String');
-               offset_in=str2num(regexprep(offset_str_in,'[^1234567890e- \.]',''));
+               offset_in=str2num(regexprep(offset_str_in,f_para.regexp_str_scalar_float,''));
                if ~isempty(offset_in)
                    offset_str_out=num2str(offset_in(1));
                else
@@ -253,7 +253,7 @@ STP.ok_pb=uicontrol('style','pushbutton','units','normalized','position',[0.55 0
             elseif gcbo==STP.increasing_latency_pb || gcbo==STP.decreasing_latency_pb || ...
                    (f_para.num_all_train_groups>1 && (gcbo==STP.increasing_latency_within_pb || gcbo==STP.decreasing_latency_within_pb))
                latency_onset_str_in=get(STP.latency_onset_edit,'String');
-               latency_onset_in=str2num(regexprep(latency_onset_str_in,'[^1234567890e- \.]',''));
+               latency_onset_in=str2num(regexprep(latency_onset_str_in,f_para.regexp_str_scalar_float,''));
                if ~isempty(latency_onset_in)
                    latency_onset_str_out=num2str(latency_onset_in(1));
                else

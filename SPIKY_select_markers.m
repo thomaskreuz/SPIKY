@@ -462,10 +462,11 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
 
     function SM1_Load_markers(varargin)
         if isfield(d_para,'matfile') && ischar(d_para.matfile)
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
         else
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file');
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
         end
+        d_para.matfile=[d_para.path d_para.filename];
         if d_para.matfile~=0
             SM1_UserData=get(f_para.num_fig,'UserData');
             data.matfile=d_para.matfile;
@@ -481,7 +482,7 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 if ~strcmp(variable,'A9ZB1YC8X')
                     set(0,'DefaultUIControlFontSize',16);
                     mbh=msgbox(sprintf('No vector has been chosen. Please try again!'),'Warning','warn','modal');
-                    htxt = findobj(mbh,'Type','text');
+                    htxt=findobj(mbh,'Type','text');
                     set(htxt,'FontSize',12,'FontWeight','bold')
                     mb_pos=get(mbh,'Position');
                     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -547,19 +548,27 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(handles.figure1,'Visible','on')
             end
         elseif gcbo==SM1_OK_pushbutton || gcbo==SM1_Apply_pushbutton
-            [new_values,conv_ok]=str2num(get(SM1_edit,'String'));
-            if conv_ok==0 && ~isempty(new_values)
+            thick_markers_str_in=regexprep(get(SM1_edit,'String'),'\s+',' ');
+            thick_markers=unique(str2num(regexprep(thick_markers_str_in,f_para.regexp_str_vector_floats,'')));
+            thick_markers=thick_markers(thick_markers>=d_para.tmin & thick_markers<=d_para.tmax);
+            thick_markers_str_out=regexprep(num2str(thick_markers),'\s+',' ');
+            
+            if ~strcmp(thick_markers_str_in,thick_markers_str_out)
+                if ~isempty(thick_markers_str_out)
+                    set(SM1_edit,'String',thick_markers_str_out)
+                else
+                    set(SM1_edit,'String',regexprep(num2str(d_para.thick_markers),'\s+',' '))
+                end
                 set(0,'DefaultUIControlFontSize',16);
-                mbh=msgbox(sprintf('The values entered are not numeric!'),'Warning','warn','modal');
-                htxt = findobj(mbh,'Type','text');
+                mbh=msgbox(sprintf('The input has been corrected !'),'Warning','warn','modal');
+                htxt=findobj(mbh,'Type','text');
                 set(htxt,'FontSize',12,'FontWeight','bold')
                 mb_pos=get(mbh,'Position');
                 set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
                 uiwait(mbh);
                 return
             end
-            SM1_UserData.thick_markers=unique(round([new_values SM1_UserData.thick_markers]/d_para.dts)*d_para.dts);
-            set(SM1_edit,'String',regexprep(num2str(SM1_UserData.thick_markers),'\s+',' '))
+            SM1_UserData.thick_markers=unique(round(str2num(get(SM1_edit,'String'))/d_para.dts)*d_para.dts);
             delete(SM1_UserData.lh)
             SM1_UserData=rmfield(SM1_UserData,'lh');
 
@@ -1040,10 +1049,11 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
 
     function SM2_Load_markers(varargin)
         if isfield(d_para,'matfile') && ischar(d_para.matfile)
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
         else
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file');
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
         end
+        d_para.matfile=[d_para.path d_para.filename];
         if d_para.matfile~=0
             SM2_UserData=get(f_para.num_fig,'UserData');
             data.matfile=d_para.matfile;
@@ -1059,7 +1069,7 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 if ~strcmp(variable,'A9ZB1YC8X')
                     set(0,'DefaultUIControlFontSize',16);
                     mbh=msgbox(sprintf('No vector has been chosen. Please try again!'),'Warning','warn','modal');
-                    htxt = findobj(mbh,'Type','text');
+                    htxt=findobj(mbh,'Type','text');
                     set(htxt,'FontSize',12,'FontWeight','bold')
                     mb_pos=get(mbh,'Position');
                     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -1125,19 +1135,26 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(handles.figure1,'Visible','on')
             end
         elseif gcbo==SM2_OK_pushbutton || gcbo==SM2_Apply_pushbutton
-            [new_values,conv_ok]=str2num(get(SM2_edit,'String'));
-            if conv_ok==0 && ~isempty(new_values)
+            thin_markers_str_in=regexprep(get(SM2_edit,'String'),'\s+',' ');
+            thin_markers=unique(str2num(regexprep(thin_markers_str_in,f_para.regexp_str_vector_floats,'')));
+            thin_markers=thin_markers(thin_markers>=d_para.tmin & thin_markers<=d_para.tmax);
+            thin_markers_str_out=regexprep(num2str(thin_markers),'\s+',' ');
+            if ~strcmp(thin_markers_str_in,thin_markers_str_out)
+                if ~isempty(thin_markers_str_out)
+                    set(SM2_edit,'String',thin_markers_str_out)
+                else
+                    set(SM2_edit,'String',regexprep(num2str(d_para.thin_markers),'\s+',' '))
+                end
                 set(0,'DefaultUIControlFontSize',16);
-                mbh=msgbox(sprintf('The values entered are not numeric!'),'Warning','warn','modal');
-                htxt = findobj(mbh,'Type','text');
+                mbh=msgbox(sprintf('The input has been corrected !'),'Warning','warn','modal');
+                htxt=findobj(mbh,'Type','text');
                 set(htxt,'FontSize',12,'FontWeight','bold')
                 mb_pos=get(mbh,'Position');
                 set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
                 uiwait(mbh);
                 return
             end
-            SM2_UserData.thin_markers=unique(round([new_values SM2_UserData.thin_markers]/d_para.dts)*d_para.dts);
-            set(SM2_edit,'String',regexprep(num2str(SM2_UserData.thin_markers),'\s+',' '))
+            SM2_UserData.thin_markers=unique(round(str2num(get(SM2_edit,'String'))/d_para.dts)*d_para.dts);
             delete(SM2_UserData.lh)
             SM2_UserData=rmfield(SM2_UserData,'lh');
 

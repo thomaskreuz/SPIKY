@@ -295,6 +295,7 @@ if (f_para.dendrograms==1 && f_para.spike_train_color_coding_mode>1) || (d_para.
     end
 else
     d_para.dcols=[0 0 0];
+    dcols=[];
 end
 
 spike_cmenu = uicontextmenu;

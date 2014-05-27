@@ -33,14 +33,15 @@ elseif para.choice==3 % keep pooled spike train
        surro_spikes{trac}=all_spikes(surro_labels==trac);
    end
 elseif para.choice==4 % keep PSTH
-   % PSTH
-   num_bins = 100;
-   bins = min([spikes{:}]):(max([spikes{:}])-min([spikes{:}]))/num_bins:max([spikes{:}]);
-   psth = histc([spikes{:}], bins);
-   
-   % ICDF
-   lambda = 2;
-   ipsth = icdf(psth, 2);
-   
-   %Generating (still working on)
+    
+    cdf = sort([spikes{:}]);
+    cdf = [cdf; 1/length(cdf)*[1:length(cdf)]];
+    
+    for i = 1 : num_trains
+        surro_spikes{i} = sort(rand(1, num_spikes(i))); %notice the difference rand -> uniform
+    end
+    
+    for i = 1 : num_trains
+        surro_spikes{i} = interp1(cdf(2,:), cdf(1,:), surro_spikes{i});
+    end
 end

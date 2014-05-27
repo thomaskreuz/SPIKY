@@ -3,7 +3,7 @@
 ret=0;
 
 tmin_str_in=get(handles.fpara_tmin_edit,'String');
-tmin_in=str2num(regexprep(tmin_str_in,'[^1234567890- \.]',''));
+tmin_in=str2double(regexprep(tmin_str_in,f_para.regexp_str_scalar_float,''));
 if ~isempty(tmin_in)
     tmin_str_out=num2str(tmin_in(1));
 else
@@ -11,7 +11,7 @@ else
 end
 
 tmax_str_in=get(handles.fpara_tmax_edit,'String');
-tmax_in=str2num(regexprep(tmax_str_in,'[^1234567890- \.]',''));
+tmax_in=str2double(regexprep(tmax_str_in,f_para.regexp_str_scalar_float,''));
 if ~isempty(tmin_in)
     tmax_in=tmax_in(tmax_in>tmin_in);
 end
@@ -22,7 +22,7 @@ else
 end
 
 x_offset_str_in=get(handles.fpara_x_offset_edit,'String');
-x_offset_in=str2num(regexprep(x_offset_str_in,'[^1234567890- \.]',''));
+x_offset_in=str2double(regexprep(x_offset_str_in,f_para.regexp_str_scalar_float,''));
 if ~isempty(x_offset_in)
     x_offset_str_out=num2str(x_offset_in(1));
 else
@@ -30,7 +30,7 @@ else
 end
 
 x_scale_str_in=get(handles.fpara_x_scale_edit,'String');
-x_scale_in=str2num(regexprep(x_scale_str_in,'[^1234567890 \.]',''));
+x_scale_in=str2double(regexprep(x_scale_str_in,f_para.regexp_str_scalar_positive_float,''));
 x_scale_in=x_scale_in(x_scale_in>0);
 if ~isempty(x_scale_in)
     x_scale_str_out=num2str(x_scale_in(1));
@@ -38,17 +38,17 @@ else
     x_scale_str_out='';
 end
 
-pi_mao_str_in=get(handles.fpara_pi_mao_edit,'String');
-pi_mao_in=round(str2num(regexprep(pi_mao_str_in,'[^1234567890 \.]','')));
-pi_mao_in=pi_mao_in(pi_mao_in>0);
-if ~isempty(pi_mao_in)
-    pi_mao_str_out=num2str(pi_mao_in(1));
+mao_str_in=get(handles.fpara_mao_edit,'String');
+mao_in=round(str2double(regexprep(mao_str_in,f_para.regexp_str_scalar_positive_integer,'')));
+mao_in=mao_in(mao_in>0);
+if ~isempty(mao_in)
+    mao_str_out=num2str(mao_in(1));
 else
-    pi_mao_str_out='';
+    mao_str_out='';
 end
 
 psth_window_str_in=get(handles.fpara_psth_window_edit,'String');
-psth_window_in=round(str2num(regexprep(psth_window_str_in,'[^1234567890 \.]','')));
+psth_window_in=round(str2double(regexprep(psth_window_str_in,f_para.regexp_str_scalar_positive_integer,'')));
 psth_window_in=psth_window_in(psth_window_in>=0);
 if ~isempty(psth_window_in)
     psth_window_str_out=num2str(psth_window_in(1));
@@ -59,17 +59,23 @@ end
 f_para.select_train_mode=get(handles.fpara_select_train_mode_popupmenu,'Value');
 if f_para.select_train_mode==2
     select_trains_str_in=regexprep(get(handles.fpara_trains_edit,'String'),'\s+',' ');
-    select_trains_str_out=regexprep(num2str(SPIKY_f_unique_not_sorted(round(str2num(regexprep(select_trains_str_in,'[^1234567890 \.]',''))))),'\s+',' ');
+    select_trains_str_out=regexprep(num2str(SPIKY_f_unique_not_sorted(round(str2num(regexprep(select_trains_str_in,f_para.regexp_str_vector_positive_integers,''))))),'\s+',' ');
 elseif f_para.select_train_mode==3
     select_train_groups_str_in=regexprep(get(handles.fpara_train_groups_edit,'String'),'\s+',' ');
-    select_train_groups_str_out=regexprep(num2str(SPIKY_f_unique_not_sorted(round(str2num(regexprep(select_train_groups_str_in,'[^1234567890 \.]',''))))),'\s+',' ');
+    select_train_groups_str_out=regexprep(num2str(SPIKY_f_unique_not_sorted(round(str2num(regexprep(select_train_groups_str_in,f_para.regexp_str_vector_positive_integers,''))))),'\s+',' ');
 end
+
+interval_divisions_str_in=regexprep(get(handles.dpara_interval_divisions_edit,'String'),'\s+',' ');
+interval_divisions=unique(str2num(regexprep(interval_divisions_str_in,f_para.regexp_str_vector_floats,'')));
+interval_divisions=interval_divisions(interval_divisions>=d_para.tmin & interval_divisions<=d_para.tmax);
+interval_divisions_str_out=regexprep(num2str(interval_divisions),'\s+',' ');
 
 if ~strcmp(tmin_str_in,tmin_str_out) || ~strcmp(tmax_str_in,tmax_str_out) || ...
         ~strcmp(x_offset_str_in,x_offset_str_out) || ~strcmp(x_scale_str_in,x_scale_str_out) || ...
-        ~strcmp(pi_mao_str_in,pi_mao_str_out) || ~strcmp(psth_window_str_in,psth_window_str_out) ||...
+        ~strcmp(mao_str_in,mao_str_out) || ~strcmp(psth_window_str_in,psth_window_str_out) ||...
         (f_para.select_train_mode==2 && ~strcmp(select_trains_str_in,select_trains_str_out)) ||...
-        (f_para.select_train_mode==3 && ~strcmp(select_train_groups_str_in,select_train_groups_str_out))
+        (f_para.select_train_mode==3 && ~strcmp(select_train_groups_str_in,select_train_groups_str_out)) || ...
+        ~strcmp(interval_divisions_str_in,interval_divisions_str_out)
     
     if ~isempty(tmin_str_out)
         set(handles.fpara_tmin_edit,'String',tmin_str_out)
@@ -95,10 +101,10 @@ if ~strcmp(tmin_str_in,tmin_str_out) || ~strcmp(tmax_str_in,tmax_str_out) || ...
         set(handles.fpara_x_scale_edit,'String',num2str(f_para.x_scale))
     end
     
-    if ~isempty(pi_mao_str_out)
-        set(handles.fpara_pi_mao_edit,'String',pi_mao_str_out)
+    if ~isempty(mao_str_out)
+        set(handles.fpara_mao_edit,'String',mao_str_out)
     else
-        set(handles.fpara_pi_mao_edit,'String',num2str(f_para.pi_mao))
+        set(handles.fpara_mao_edit,'String',num2str(f_para.mao))
     end
     
     if ~isempty(psth_window_str_out)
@@ -121,6 +127,12 @@ if ~strcmp(tmin_str_in,tmin_str_out) || ~strcmp(tmax_str_in,tmax_str_out) || ...
         end
     end
 
+    if strcmp(interval_divisions_str_in,interval_divisions_str_out) || ~isempty(interval_divisions_str_out)
+        set(handles.dpara_interval_divisions_edit,'String',interval_divisions_str_out)
+    else
+        set(handles.dpara_interval_divisions_edit,'String',regexprep(num2str(d_para.interval_divisions),'\s+',' '))
+    end
+    
     set(0,'DefaultUIControlFontSize',16);
     mbh=msgbox('The input has been corrected !','Warning','warn','modal');
     htxt = findobj(mbh,'Type','text');

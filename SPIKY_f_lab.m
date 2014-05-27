@@ -14,7 +14,7 @@ interval=range/num_values;
 min_unit=fix(interval*10^(ceil(-log10(interval))))/10^(ceil(-log10(interval)));
 
 xsep=round((range+min_unit)/num_values/min_unit)*min_unit;
-lab=round(min(vect2)/min_unit)*min_unit+(xsep:xsep:(range+min_unit));
+lab=round(min(vect2)/min_unit)*min_unit+(0:xsep:(range+min_unit));
 if origin==1
     lab=unique([0 lab]);
 end

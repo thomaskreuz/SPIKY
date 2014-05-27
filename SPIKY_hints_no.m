@@ -21,10 +21,7 @@ set(handles.dpara_tmax_text,'TooltipString',get(handles.dpara_tmax_edit,'Tooltip
 
 set(handles.dpara_dts_edit,'TooltipString','')
 set(handles.dpara_dts_text1,'TooltipString',get(handles.dpara_dts_edit,'TooltipString'))
-set(handles.dpara_dsf_text2,'TooltipString',get(handles.dpara_dts_edit,'TooltipString'))
-set(handles.dpara_dsf_edit,'TooltipString','')
-set(handles.dpara_dsf_text1,'TooltipString',get(handles.dpara_dsf_edit,'TooltipString'))
-set(handles.dpara_dsf_text2,'TooltipString',get(handles.dpara_dsf_edit,'TooltipString'))
+set(handles.dpara_dts_text2,'TooltipString',get(handles.dpara_dts_edit,'TooltipString'))
 
 set(handles.dpara_thick_markers_edit,'TooltipString','')
 set(handles.dpara_thick_markers_text,'TooltipString',get(handles.dpara_thick_markers_edit,'TooltipString'))
@@ -161,8 +158,8 @@ set(handles.fpara_x_scale_text,'TooltipString',get(handles.fpara_x_scale_edit,'T
 %
 set(handles.fpara_moving_average_mode_popupmenu,'TooltipString','')
 set(handles.fpara_moving_average_mode_text,'TooltipString',get(handles.fpara_moving_average_mode_popupmenu,'TooltipString'))
-set(handles.fpara_pi_mao_edit,'TooltipString','')
-set(handles.fpara_pi_mao_text,'TooltipString',get(handles.fpara_pi_mao_edit,'TooltipString'))
+set(handles.fpara_mao_edit,'TooltipString','')
+set(handles.fpara_mao_text,'TooltipString',get(handles.fpara_mao_edit,'TooltipString'))
 set(handles.fpara_psth_window_edit,'TooltipString','')
 set(handles.fpara_psth_window_text,'TooltipString',get(handles.fpara_psth_window_edit,'TooltipString'))
 %
@@ -202,10 +199,10 @@ set(handles.dpara_interval_names_text,'TooltipString',get(handles.dpara_interval
 % ######################################
 %
 set(handles.Movie_frame_slider,'TooltipString','')
-set(handles.Movie_beginning_pushbutton,'TooltipString','')
-set(handles.Movie_run_pushbutton,'TooltipString','')
+set(handles.Movie_first_pushbutton,'TooltipString','')
+set(handles.Movie_play_pushbutton,'TooltipString','')
 set(handles.Movie_stop_pushbutton,'TooltipString','')
-set(handles.Movie_end_pushbutton,'TooltipString','')
+set(handles.Movie_last_pushbutton,'TooltipString','')
 
 set(handles.Movie_speed_slider,'TooltipString','')
 

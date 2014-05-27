@@ -600,10 +600,11 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
 
     function SI_Load_instants(varargin)
         if isfield(d_para,'matfile') && ischar(d_para.matfile)
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
         else
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file');
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
         end
+        d_para.matfile=[d_para.path d_para.filename];
         if d_para.matfile~=0
             SI_UserData=get(f_para.num_fig,'UserData');
             data.matfile=d_para.matfile;
@@ -613,13 +614,13 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             variable=getappdata(handles.figure1,'variable');
             if ~isempty(variable) && ~strcmp(variable,'A9ZB1YC8X')
                 data=getappdata(handles.figure1,'data');
-                SI_UserData.instants=squeeze(data.(variable));
+                SI_UserData.instants=squeeze(eval(['data.',variable]));
             end
             if ~isnumeric(SI_UserData.instants) || ndims(SI_UserData.instants)~=2 || ~any(size(SI_UserData.instants)==1)
                 if ~strcmp(variable,'A9ZB1YC8X')
                     set(0,'DefaultUIControlFontSize',16);
                     mbh=msgbox(sprintf('No vector has been chosen. Please try again!'),'Warning','warn','modal');
-                    htxt = findobj(mbh,'Type','text');
+                    htxt=findobj(mbh,'Type','text');
                     set(htxt,'FontSize',12,'FontWeight','bold')
                     mb_pos=get(mbh,'Position');
                     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -716,7 +717,7 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             if conv_ok==0 && ~isempty(new_values)
                 set(0,'DefaultUIControlFontSize',16);
                 mbh=msgbox(sprintf('The values entered are not numeric!'),'Warning','warn','modal');
-                htxt = findobj(mbh,'Type','text');
+                htxt=findobj(mbh,'Type','text');
                 set(htxt,'FontSize',12,'FontWeight','bold')
                 mb_pos=get(mbh,'Position');
                 set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -865,7 +866,7 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                         set(SSA_listbox,'Value',prob(1))
                         set(0,'DefaultUIControlFontSize',16);
                         mbh=msgbox(sprintf('Intervals for one group (row) of selective averages\nmust not overlap. Please fix this!'),'Warning','warn','modal');
-                        htxt = findobj(mbh,'Type','text');
+                        htxt=findobj(mbh,'Type','text');
                         set(htxt,'FontSize',12,'FontWeight','bold')
                         mb_pos=get(mbh,'Position');
                         set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -993,7 +994,7 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 if conv_ok==0
                     set(0,'DefaultUIControlFontSize',16);
                     mbh=msgbox(sprintf('The values entered are not numeric!'),'Warning','warn','modal');
-                    htxt = findobj(mbh,'Type','text');
+                    htxt=findobj(mbh,'Type','text');
                     set(htxt,'FontSize',12,'FontWeight','bold')
                     mb_pos=get(mbh,'Position');
                     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -1010,7 +1011,7 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 if conv_ok==0
                     set(0,'DefaultUIControlFontSize',16);
                     mbh=msgbox(sprintf('The values entered are not numeric!'),'Warning','warn','modal');
-                    htxt = findobj(mbh,'Type','text');
+                    htxt=findobj(mbh,'Type','text');
                     set(htxt,'FontSize',12,'FontWeight','bold')
                     mb_pos=get(mbh,'Position');
                     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -1057,7 +1058,7 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             set(SSA_listbox,'Value',prob(1))
             set(0,'DefaultUIControlFontSize',16);
             mbh=msgbox(sprintf('Intervals for one group (row) of selective averages\nmust not overlap. Please fix this!'),'Warning','warn','modal');
-            htxt = findobj(mbh,'Type','text');
+            htxt=findobj(mbh,'Type','text');
             set(htxt,'FontSize',12,'FontWeight','bold')
             mb_pos=get(mbh,'Position');
             set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -1883,10 +1884,11 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
 
     function SSA_Load_selave(varargin)
         if isfield(d_para,'matfile') && ischar(d_para.matfile)
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
         else
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file');
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
         end
+        d_para.matfile=[d_para.path d_para.filename];
         if d_para.matfile~=0
             SSA_UserData=get(f_para.num_fig,'UserData');
             data.matfile=d_para.matfile;
@@ -1896,14 +1898,14 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             variable=getappdata(handles.figure1,'variable');
             if ~isempty(variable) && ~strcmp(variable,'A9ZB1YC8X')
                 data=getappdata(handles.figure1,'data');
-                SSA_UserData.selave=squeeze(data.(variable));
+                SSA_UserData.selave=squeeze(eval(['data.',variable]));
             end
             if ~isfield(SSA_UserData,'selave') || isempty(SSA_UserData.selave) || ~((iscell(SSA_UserData.selave) && length(SSA_UserData.selave)>1 && isnumeric(SSA_UserData.selave{1})) || ...
                     (isnumeric(SSA_UserData.selave) && ndims(SSA_UserData.selave)==2 && size(SSA_UserData.selave,1)>1))
                 if ~strcmp(variable,'A9ZB1YC8X')
                     set(0,'DefaultUIControlFontSize',16);
                     mbh=msgbox(sprintf('The format of the variable is not correct. Please try again!'),'Warning','warn','modal');
-                    htxt = findobj(mbh,'Type','text');
+                    htxt=findobj(mbh,'Type','text');
                     set(htxt,'FontSize',12,'FontWeight','bold')
                     mb_pos=get(mbh,'Position');
                     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -1968,7 +1970,7 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                     set(SSA_listbox,'Value',prob(1))
                     set(0,'DefaultUIControlFontSize',16);
                     mbh=msgbox(sprintf('Intervals for one group (row) of selective averages\nmust not overlap. Please fix this!'),'Warning','warn','modal');
-                    htxt = findobj(mbh,'Type','text');
+                    htxt=findobj(mbh,'Type','text');
                     set(htxt,'FontSize',12,'FontWeight','bold')
                     mb_pos=get(mbh,'Position');
                     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -2050,7 +2052,7 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 if conv_ok==0 && ~isempty(lb_strings{sac})
                     set(0,'DefaultUIControlFontSize',16);
                     mbh=msgbox(sprintf('The values entered are not numeric!'),'Warning','warn','modal');
-                    htxt = findobj(mbh,'Type','text');
+                    htxt=findobj(mbh,'Type','text');
                     set(htxt,'FontSize',12,'FontWeight','bold')
                     mb_pos=get(mbh,'Position');
                     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -2093,7 +2095,7 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set(SSA_listbox,'Value',prob(1))
                 set(0,'DefaultUIControlFontSize',16);
                 mbh=msgbox(sprintf('Intervals for one group (row) of selective averages\nmust not overlap. Please fix this!'),'Warning','warn','modal');
-                htxt = findobj(mbh,'Type','text');
+                htxt=findobj(mbh,'Type','text');
                 set(htxt,'FontSize',12,'FontWeight','bold')
                 mb_pos=get(mbh,'Position');
                 set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -2309,7 +2311,7 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 if conv_ok==0
                     set(0,'DefaultUIControlFontSize',16);
                     mbh=msgbox(sprintf('The values entered are not numeric!'),'Warning','warn','modal');
-                    htxt = findobj(mbh,'Type','text');
+                    htxt=findobj(mbh,'Type','text');
                     set(htxt,'FontSize',12,'FontWeight','bold')
                     mb_pos=get(mbh,'Position');
                     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -2326,7 +2328,7 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 if conv_ok==0
                     set(0,'DefaultUIControlFontSize',16);
                     mbh=msgbox(sprintf('The values entered are not numeric!'),'Warning','warn','modal');
-                    htxt = findobj(mbh,'Type','text');
+                    htxt=findobj(mbh,'Type','text');
                     set(htxt,'FontSize',12,'FontWeight','bold')
                     mb_pos=get(mbh,'Position');
                     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -2945,10 +2947,11 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
 
     function STA_Load_trigave(varargin)
         if isfield(d_para,'matfile') && ischar(d_para.matfile)
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
         else
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file');
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
         end
+        d_para.matfile=[d_para.path d_para.filename];
         if d_para.matfile~=0
             STA_UserData=get(f_para.num_fig,'UserData');
             data.matfile=d_para.matfile;
@@ -2958,14 +2961,14 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             variable=getappdata(handles.figure1,'variable');
             if ~isempty(variable) && ~strcmp(variable,'A9ZB1YC8X')
                 data=getappdata(handles.figure1,'data');
-                STA_UserData.trigave=squeeze(data.(variable));
+                STA_UserData.trigave=squeeze(eval(['data.',variable]));
             end
             if ~isfield(STA_UserData,'trigave') || isempty(STA_UserData.trigave) || ~((iscell(STA_UserData.trigave) && length(STA_UserData.trigave)>1 && isnumeric(STA_UserData.trigave{1})) || ...
                     (isnumeric(STA_UserData.trigave) && ndims(STA_UserData.trigave)==2 && size(STA_UserData.trigave,1)>1))
                 if ~strcmp(variable,'A9ZB1YC8X')
                     set(0,'DefaultUIControlFontSize',16);
                     mbh=msgbox(sprintf('The format of the variable is not correct. Please try again!'),'Warning','warn','modal');
-                    htxt = findobj(mbh,'Type','text');
+                    htxt=findobj(mbh,'Type','text');
                     set(htxt,'FontSize',12,'FontWeight','bold')
                     mb_pos=get(mbh,'Position');
                     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -3068,7 +3071,7 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 if conv_ok==0 && ~isempty(lb_strings{trac})
                     set(0,'DefaultUIControlFontSize',16);
                     mbh=msgbox(sprintf('The values entered are not numeric!'),'Warning','warn','modal');
-                    htxt = findobj(mbh,'Type','text');
+                    htxt=findobj(mbh,'Type','text');
                     set(htxt,'FontSize',12,'FontWeight','bold')
                     mb_pos=get(mbh,'Position');
                     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])

@@ -110,10 +110,6 @@ if isfield(d_para,'matfile')
         if exist('dts','var') && isnumeric(dts) && numel(dts)==1
             d_para.dts=dts;
         end
-        load(d_para.matfile,'dsf')
-        if exist('dsf','var') && isnumeric(dsf) && numel(dsf)==1
-            d_para.dsf=dsf;
-        end
         load(d_para.matfile,'thick_markers')
         if exist('thick_markers','var')
             dummy=squeeze(thick_markers);
@@ -196,9 +192,6 @@ spikes=SPIKY_f_convert_matrix(spikes,d_para.dts,d_para.tmin);
 if ~isfield(d_para,'dts') || isempty(d_para.dts)
     d_para.dts=SPIKY_f_get_dt(unique([spikes{:}])');
 end
-if ~isfield(d_para,'dsf') || isempty(d_para.dsf)
-    d_para.dsf=1;
-end
 if ~isfield(d_para,'max_total_spikes') || isempty(d_para.max_total_spikes)
     d_para.max_total_spikes=100000;
 end
@@ -260,12 +253,8 @@ end
 
 num_spikes=cellfun('length',spikes);
 d_para.num_total_spikes=sum(num_spikes);
-if d_para.num_total_spikes>d_para.max_total_spikes
+if d_para.num_total_spikes>d_para.max_total_spikes && exist('f_para','var')
     data.spikes=spikes;
-%     numi=[7 9 11 13 15 8 10 12 14 16];
-%     for trac=1:10
-%         data.spikes{trac}=data.spikes{trac}(1:numi(trac));
-%     end
     SPIKY('SPIKY_select_spikes',gcbo,data,d_para,guidata(gcbo))
     handy=guidata(gcbo);
     ss_para=getappdata(handy.figure1,'ss_para');

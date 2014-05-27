@@ -506,10 +506,11 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
 
     function SGS_Load_group_separators(varargin)
         if isfield(d_para,'matfile') && ischar(d_para.matfile)
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
         else
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file');
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
         end
+        d_para.matfile=[d_para.path d_para.filename];
         if d_para.matfile~=0
             SGS_UserData=get(f_para.num_fig,'UserData');
             data.matfile=d_para.matfile;
@@ -595,19 +596,26 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
                 set(handles.figure1,'Visible','on')
             end
         elseif gcbo==SGS_OK_pushbutton || gcbo==SGS_Apply_pushbutton
-            [new_values,conv_ok]=str2num(get(SGS_edit,'String'));
-            if conv_ok==0 && ~isempty(new_values)
+            group_separators_str_in=regexprep(get(SGS_edit,'String'),'\s+',' ');
+            group_separators=unique(str2num(regexprep(group_separators_str_in,f_para.regexp_str_vector_integers,'')));
+            group_separators=group_separators(group_separators>0 & group_separators<d_para.num_trains);
+            group_separators_str_out=regexprep(num2str(group_separators),'\s+',' ');
+            if ~strcmp(group_separators_str_in,group_separators_str_out)
+                if ~isempty(group_separators_str_out)
+                    set(SGS_edit,'String',group_separators_str_out)
+                else
+                    set(SGS_edit,'String',regexprep(num2str(SGS_UserData.group_separators),'\s+',' '))
+                end
                 set(0,'DefaultUIControlFontSize',16);
-                mbh=msgbox(sprintf('The values entered are not numeric!'),'Warning','warn','modal');
-                htxt = findobj(mbh,'Type','text');
+                mbh=msgbox(sprintf('The input has been corrected !'),'Warning','warn','modal');
+                htxt=findobj(mbh,'Type','text');
                 set(htxt,'FontSize',12,'FontWeight','bold')
                 mb_pos=get(mbh,'Position');
                 set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
                 uiwait(mbh);
                 return
             end
-            SGS_UserData.group_separators=unique([new_values SGS_UserData.group_separators]);
-            set(SGS_edit,'String',num2str(SGS_UserData.group_separators))
+            SGS_UserData.group_separators=unique(str2num(get(SGS_edit,'String')));
             delete(SGS_UserData.lh)
             SGS_UserData=rmfield(SGS_UserData,'lh');
 
@@ -745,10 +753,11 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
 
     function SGN_Load_group_names(varargin)
         if isfield(d_para,'matfile') && ischar(d_para.matfile)
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
         else
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file');
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
         end
+        d_para.matfile=[d_para.path d_para.filename];
         if d_para.matfile~=0
             SGN_UserData=get(f_para.num_fig,'UserData');
             data.matfile=d_para.matfile;

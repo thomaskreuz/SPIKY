@@ -1,6 +1,6 @@
 % SPIKY_loop_surro --- Copyright Thomas Kreuz, Nebojsa Bozanic; March 2014
 %
-% This is similar to ‘SPIKY_loop.m’ only that you don’t look at different datasets;
+% This is similar to "SPIKY_loop.m" only that you do not look at different datasets;
 % rather you can compare the results obtained for one dataset against the results
 % obtained for spike train surrogates generated from that dataset.  
 % [This program is not yet completely finished, there will be some refinements soon.]
@@ -63,12 +63,12 @@ dataset=2;            % 1-Frequency mismatch,2-Spiking events,3-Random
 
 m_para.all_measures_string={'ISI';'SPIKE';'SPIKE_realtime';'SPIKE_future';'PSTH';};  % order of select_measures
 
-para.select_measures=[0 1 0 0 0];  % Select measures (0-calculate,1-do not calculate)
+para.select_measures=[0 1 0 0 1];  % Select measures (0-calculate,1-do not calculate)
 
-num_surros=5;
-para.choice=1;   % 1-keep spike train numbers,2-keep interval distribution,3-keep pooled spike train
+num_surros=2;
+para.choice=4;   % 1-keep spike train numbers,2-keep interval distribution,3-keep pooled spike train,4-keep PSTH
 
-plotting=7;           % +1:spikes,+2:dissimilarity profile,+4:dissimilarity matrix
+plotting=3;           % +1:spikes,+2:dissimilarity profile,+4:dissimilarity matrix
 
 
 % ################################################### Example spike trains
@@ -186,11 +186,13 @@ for sc=1:num_surros+1
                     plot(x,y(1,:),'LineWidth',1.5)
                 end
                 xlim([para.tmin para.tmax])
-                line([para.tmin para.tmax],SPIKY_results.(measure_var).distance*ones(1,2),'LineWidth',2)
-                if sc==num_surros+1
-                    line([para.tmin para.tmax],(mean_surro_distance+std_surro_distance)*ones(1,2),'Color','g','LineWidth',1)                    
-                    line([para.tmin para.tmax],(mean_surro_distance-std_surro_distance)*ones(1,2),'Color','g','LineWidth',1)                    
-                    line([para.tmin para.tmax],mean_surro_distance*ones(1,2),'Color','r','LineWidth',2)                    
+                if measure~=5
+                    line([para.tmin para.tmax],SPIKY_results.(measure_var).distance*ones(1,2),'LineWidth',2)
+                    if sc==num_surros+1
+                        line([para.tmin para.tmax],(mean_surro_distance+std_surro_distance)*ones(1,2),'Color','g','LineWidth',1)
+                        line([para.tmin para.tmax],(mean_surro_distance-std_surro_distance)*ones(1,2),'Color','g','LineWidth',1)
+                        line([para.tmin para.tmax],mean_surro_distance*ones(1,2),'Color','r','LineWidth',2)
+                    end
                 end
                 title ([measure_name,'   ---   Dissimilarity profile'],'FontWeight','bold','FontSize',14)
             end

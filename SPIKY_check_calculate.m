@@ -3,7 +3,7 @@
 ret=0;
 
 stimulus_str_in=get(handles.subplot_stimulus_posi_edit,'String');
-stimulus_in=unique(round(str2num(regexprep(stimulus_str_in,'[^1234567890 \.]',''))));
+stimulus_in=unique(round(str2num(regexprep(stimulus_str_in,f_para.regexp_str_scalar_positive_integer,''))));
 if ~isempty(stimulus_in)
     stimulus_str_out=num2str(stimulus_in(1));
 else
@@ -11,7 +11,7 @@ else
 end
 
 spikes_str_in=get(handles.subplot_spikes_posi_edit,'String');
-spikes_in=unique(round(str2num(regexprep(spikes_str_in,'[^1234567890 \.]',''))));
+spikes_in=unique(round(str2num(regexprep(spikes_str_in,f_para.regexp_str_scalar_positive_integer,''))));
 if ~isempty(spikes_in)
     spikes_str_out=num2str(spikes_in(1));
 else
@@ -19,7 +19,7 @@ else
 end
 
 isi_str_in=get(handles.subplot_isi_posi_edit,'String');
-isi_in=unique(round(str2num(regexprep(isi_str_in,'[^1234567890 \.]',''))));
+isi_in=unique(round(str2num(regexprep(isi_str_in,f_para.regexp_str_scalar_positive_integer,''))));
 if ~isempty(isi_in)
     isi_str_out=num2str(isi_in(1));
 else
@@ -27,7 +27,7 @@ else
 end
 
 spike_str_in=get(handles.subplot_spike_posi_edit,'String');
-spike_in=unique(round(str2num(regexprep(spike_str_in,'[^1234567890 \.]',''))));
+spike_in=unique(round(str2num(regexprep(spike_str_in,f_para.regexp_str_scalar_positive_integer,''))));
 if ~isempty(spike_in)
     spike_str_out=num2str(spike_in(1));
 else
@@ -35,7 +35,7 @@ else
 end
 
 spike_realtime_str_in=get(handles.subplot_spike_realtime_posi_edit,'String');
-spike_realtime_in=unique(round(str2num(regexprep(spike_realtime_str_in,'[^1234567890 \.]',''))));
+spike_realtime_in=unique(round(str2num(regexprep(spike_realtime_str_in,f_para.regexp_str_scalar_positive_integer,''))));
 if ~isempty(spike_realtime_in)
     spike_realtime_str_out=num2str(spike_realtime_in(1));
 else
@@ -43,7 +43,7 @@ else
 end
 
 spike_future_str_in=get(handles.subplot_spike_future_posi_edit,'String');
-spike_future_in=unique(round(str2num(regexprep(spike_future_str_in,'[^1234567890 \.]',''))));
+spike_future_in=unique(round(str2num(regexprep(spike_future_str_in,f_para.regexp_str_scalar_positive_integer,''))));
 if ~isempty(spike_future_in)
     spike_future_str_out=num2str(spike_future_in(1));
 else
@@ -57,33 +57,33 @@ end
 if exist(instants_str_in,'file')
     instants_str_out=instants_str_in;
 else
-    instants_str_out=regexprep(num2str(unique(str2num(regexprep(instants_str_in,'[^1234567890 \.]','')))),'\s+',' ');
+    instants_str_out=regexprep(num2str(unique(str2num(regexprep(instants_str_in,f_para.regexp_str_vector_floats,'')))),'\s+',' ');
     if isempty(instants_str_out)
         instants_str_out='';
     end
 end
 
-selave_str_in=get(handles.dpara_selective_averages_edit,'String');
+selave_str_in=regexprep(get(handles.dpara_selective_averages_edit,'String'),'\s+',' ');
 if isempty(selave_str_in)
     selave_str_in='';
 end
 if exist(selave_str_in,'file')
     selave_str_out=selave_str_in;
 else
-    selave_str_out=regexprep(regexprep(selave_str_in,'[^1234567890[]{},; \.]',''),'\s+',' ');
+    selave_str_out=regexprep(regexprep(selave_str_in,f_para.regexp_str_cell_floats,''),'\s+',' ');
     if isempty(selave_str_out)
         selave_str_out='';
     end
 end
 
-trigave_str_in=get(handles.dpara_triggered_averages_edit,'String');
+trigave_str_in=regexprep(get(handles.dpara_triggered_averages_edit,'String'),'\s+',' ');
 if isempty(trigave_str_in)
     trigave_str_in='';
 end
 if exist(trigave_str_in,'file')
     trigave_str_out=trigave_str_in;
 else
-    trigave_str_out=regexprep(regexprep(trigave_str_in,'[^1234567890[]{},; \.]',''),'\s+',' ');
+    trigave_str_out=regexprep(regexprep(trigave_str_in,f_para.regexp_str_cell_floats,''),'\s+',' ');
     if isempty(trigave_str_out)
         trigave_str_out='';
     end

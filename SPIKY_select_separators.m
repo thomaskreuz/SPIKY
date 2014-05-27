@@ -495,10 +495,11 @@ set(SS1_UserData.fh,'Userdata',SS1_UserData)
 
     function SS1_Load_separators(varargin)
         if isfield(d_para,'matfile') && ischar(d_para.matfile)
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
         else
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file');
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
         end
+        d_para.matfile=[d_para.path d_para.filename];
         if d_para.matfile~=0
             SS1_UserData=get(f_para.num_fig,'UserData');
             data.matfile=d_para.matfile;
@@ -514,7 +515,7 @@ set(SS1_UserData.fh,'Userdata',SS1_UserData)
                 if ~strcmp(variable,'A9ZB1YC8X')
                     set(0,'DefaultUIControlFontSize',16);
                     mbh=msgbox(sprintf('No vector has been chosen. Please try again!'),'Warning','warn','modal');
-                    htxt = findobj(mbh,'Type','text');
+                    htxt=findobj(mbh,'Type','text');
                     set(htxt,'FontSize',12,'FontWeight','bold')
                     mb_pos=get(mbh,'Position');
                     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -580,19 +581,26 @@ set(SS1_UserData.fh,'Userdata',SS1_UserData)
                 set(handles.figure1,'Visible','on')
             end
         elseif gcbo==SS1_OK_pushbutton || gcbo==SS1_Apply_pushbutton
-            [new_values,conv_ok]=str2num(get(SS1_edit,'String'));
-            if conv_ok==0 && ~isempty(new_values)
+            thick_separators_str_in=regexprep(get(SS1_edit,'String'),'\s+',' ');
+            thick_separators=unique(str2num(regexprep(thick_separators_str_in,f_para.regexp_str_vector_integers,'')));
+            thick_separators=thick_separators(thick_separators>0 & thick_separators<d_para.num_trains);
+            thick_separators_str_out=regexprep(num2str(thick_separators),'\s+',' ');
+            if ~strcmp(thick_separators_str_in,thick_separators_str_out)
+                if ~isempty(thick_separators_str_out)
+                    set(SS1_edit,'String',thick_separators_str_out)
+                else
+                    set(SS1_edit,'String',regexprep(num2str(d_para.thick_separators),'\s+',' '))
+                end
                 set(0,'DefaultUIControlFontSize',16);
-                mbh=msgbox(sprintf('The values entered are not numeric!'),'Warning','warn','modal');
-                htxt = findobj(mbh,'Type','text');
+                mbh=msgbox(sprintf('The input has been corrected !'),'Warning','warn','modal');
+                htxt=findobj(mbh,'Type','text');
                 set(htxt,'FontSize',12,'FontWeight','bold')
                 mb_pos=get(mbh,'Position');
                 set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
                 uiwait(mbh);
                 return
             end
-            SS1_UserData.thick_separators=unique([new_values SS1_UserData.thick_separators]);
-            set(SS1_edit,'String',num2str(SS1_UserData.thick_separators))
+            SS1_UserData.thick_separators=unique(str2num(get(SS1_edit,'String')));
             delete(SS1_UserData.lh)
             SS1_UserData=rmfield(SS1_UserData,'lh');
 
@@ -1087,10 +1095,11 @@ set(SS1_UserData.fh,'Userdata',SS1_UserData)
 
     function SS2_Load_separators(varargin)
         if isfield(d_para,'matfile') && ischar(d_para.matfile)
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
         else
-            d_para.matfile=uigetfile('*.mat','Pick a .mat-file');
+            [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
         end
+        d_para.matfile=[d_para.path d_para.filename];
         if d_para.matfile~=0
             SS2_UserData=get(f_para.num_fig,'UserData');
             data.matfile=d_para.matfile;
@@ -1106,7 +1115,7 @@ set(SS1_UserData.fh,'Userdata',SS1_UserData)
                 if ~strcmp(variable,'A9ZB1YC8X')
                     set(0,'DefaultUIControlFontSize',16);
                     mbh=msgbox(sprintf('No vector has been chosen. Please try again!'),'Warning','warn','modal');
-                    htxt = findobj(mbh,'Type','text');
+                    htxt=findobj(mbh,'Type','text');
                     set(htxt,'FontSize',12,'FontWeight','bold')
                     mb_pos=get(mbh,'Position');
                     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
@@ -1172,19 +1181,26 @@ set(SS1_UserData.fh,'Userdata',SS1_UserData)
                 set(handles.figure1,'Visible','on')
             end
         elseif gcbo==SS2_OK_pushbutton || gcbo==SS2_Apply_pushbutton
-            [new_values,conv_ok]=str2num(get(SS2_edit,'String'));
-            if conv_ok==0 && ~isempty(new_values)
+            thin_separators_str_in=regexprep(get(SS2_edit,'String'),'\s+',' ');
+            thin_separators=unique(str2num(regexprep(thin_separators_str_in,f_para.regexp_str_vector_integers,'')));
+            thin_separators=thin_separators(thin_separators>0 & thin_separators<d_para.num_trains);
+            thin_separators_str_out=regexprep(num2str(thin_separators),'\s+',' ');
+            if ~strcmp(thin_separators_str_in,thin_separators_str_out)
+                if ~isempty(thin_separators_str_out)
+                    set(SS2_edit,'String',thin_separators_str_out)
+                else
+                    set(SS2_edit,'String',regexprep(num2str(d_para.thin_separators),'\s+',' '))
+                end
                 set(0,'DefaultUIControlFontSize',16);
-                mbh=msgbox(sprintf('The values entered are not numeric!'),'Warning','warn','modal');
-                htxt = findobj(mbh,'Type','text');
+                mbh=msgbox(sprintf('The input has been corrected !'),'Warning','warn','modal');
+                htxt=findobj(mbh,'Type','text');
                 set(htxt,'FontSize',12,'FontWeight','bold')
                 mb_pos=get(mbh,'Position');
                 set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
                 uiwait(mbh);
                 return
             end
-            SS2_UserData.thin_separators=unique([new_values SS2_UserData.thin_separators]);
-            set(SS2_edit,'String',num2str(SS2_UserData.thin_separators))
+            SS2_UserData.thin_separators=unique(str2num(get(SS2_edit,'String')));
             delete(SS2_UserData.lh)
             SS2_UserData=rmfield(SS2_UserData,'lh');
 

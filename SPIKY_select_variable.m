@@ -12,10 +12,8 @@ end
 %data=rmfield(data,'content');
 data=load(data.matfile);
 
-%SSVN.fig = figure('Units','normalized','menubar','none','Position',[0.15 0.15 0.7 0.7],'Name','Name of variable / field','NumberTitle','off',...
-%     'Color',[0.9294 0.9176 0.851],'DeleteFcn',{@SPIKY_select_variable_Close},'WindowStyle','modal','UserData','');
 SSVN.fig = figure('Units','normalized','menubar','none','Position',[0.15 0.15 0.7 0.7],'Name','Name of variable / field','NumberTitle','off',...
-    'Color',[0.9294 0.9176 0.851],'DeleteFcn',{@SPIKY_select_variable_Close},'UserData','');
+     'Color',[0.9294 0.9176 0.851],'DeleteFcn',{@SPIKY_select_variable_Close},'WindowStyle','modal','UserData','');
 uicontrol('style','text','Units','normalized','Position',[0.1 0.89 0.8 0.05],'FontWeight','bold','FontSize',16,...
     'String','Please select the name of the variable / field:')
 uicontrol('style','text','Units','normalized','Position',[0.1 0.84 0.8 0.05],'FontWeight','bold','FontSize',16,...
@@ -183,7 +181,8 @@ uiwait(gcf);
     end
 
     function [] = Load_pushbutton_callback(varargin)
-        dummy=uigetfile('*.mat','Pick a .mat-file');
+        [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
+        dummy=[d_para.path d_para.filename];
         if ~isequal(dummy,0)
             %d_para.matfile=dummy;
             data=load(dummy);

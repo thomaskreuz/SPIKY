@@ -1,4 +1,4 @@
-% This compares the dissimilarity matrices selected in the panel ‘Selection: Measures’ for different time instants
+% This compares the dissimilarity matrices selected in the panel ?Selection: Measures? for different time instants
 % and/or selected or triggered averages (once the 'Plot' button is pressed and if 'Frame comparison' is checked).
 
 fig=figure(f_para.num_fig);
@@ -50,6 +50,8 @@ mat_title_cmenu = uicontextmenu;
 mat_title_fh=zeros(h_para.num_all_subplots,1+h_para.dendrograms);
 mat_label_cmenu = uicontextmenu;
 mat_label_fh=zeros(h_para.num_all_subplots,2*(1+h_para.dendrograms));
+measure_label_cmenu = uicontextmenu;
+measure_label_fh=zeros(1,h_para.num_measures*(1+f_para.group_matrices));
 if f_para.num_select_train_groups>1
     mat_sgs_cmenu = uicontextmenu;
     mat_sgs_lh=zeros(h_para.num_all_subplots,f_para.num_select_train_groups-1,2);
@@ -122,13 +124,9 @@ for frc=1:h_para.num_frames
                 if frc<=f_para.num_instants
                     plot_mat=squeeze(m_res.group_movie_mat(matc-h_para.num_measures,:,:,frc));
                 elseif frc<=f_para.num_instants+f_para.num_selective_averages*f_para.num_average_frames
-                    if savc2==1
-                        plot_mat=squeeze(m_res.group_movie_mat_sa(matc-h_para.num_measures,:,:,savc));
-                    end
+                    plot_mat=squeeze(m_res.group_movie_mat_sa(matc-h_para.num_measures,:,:,savc));
                 else
-                    if tavc2==1
-                        plot_mat=squeeze(m_res.group_movie_mat_ta(matc-h_para.num_measures,:,:,tavc));
-                    end
+                    plot_mat=squeeze(m_res.group_movie_mat_ta(matc-h_para.num_measures,:,:,tavc));
                 end
                 if frc==1 && matc==h_para.num_measures+1
                     results.group_matrices=zeros(h_para.num_frames*h_para.num_measures,f_para.num_select_train_groups,f_para.num_select_train_groups);
@@ -213,8 +211,8 @@ for frc=1:h_para.num_frames
             end
         end
         if h_para.cols(spc)==1 %||
-            text(xl(1)-(0.43-0.1*(max(h_para.cols)>2))*(xl(2)-xl(1)),yl(1)+0.46*(yl(2)-yl(1)),m_res.bi_mat_str{matc},'Visible',p_para.mat_label_vis,...
-                'Color',p_para.mat_label_col,'FontSize',p_para.mat_label_fs,'FontWeight',p_para.mat_label_fw,'FontAngle',p_para.mat_label_fa)
+            measure_label_fh(h_para.rows(spc))=text(xl(1)-(0.43-0.1*(max(h_para.cols)>2))*(xl(2)-xl(1)),yl(1)+0.46*(yl(2)-yl(1)),m_res.bi_mat_str{matc},'Visible',p_para.mat_label_vis,...
+                'Color',p_para.mat_label_col,'FontSize',p_para.mat_label_fs+2,'FontWeight','bold','FontAngle',p_para.mat_label_fa,'UIContextMenu',measure_label_cmenu)
         end
         if matc<=h_para.num_measures % || max(h_para.rows)==1
             if frc<=f_para.num_instants
@@ -324,6 +322,11 @@ for frc=1:h_para.num_frames
                         xtln(trac)=str2double(xtl(trac,:));
                     end
 
+                    if size(sdm_linkage,1)>30 || (h_para.num_all_matrices>1 && size(sdm_linkage,1)>20) || (h_para.num_all_matrices>2 && size(sdm_linkage,1)>10)
+                        dlw=1;
+                    else
+                        dlw=p_para.dendrol_lw;
+                    end
                     trac=0;
                     for lic=1:size(sdm_linkage,1)
                         for cc=1:2
@@ -331,7 +334,7 @@ for frc=1:h_para.num_frames
                                 trac=trac+1;
                                 dendrol_lh(matc,lic,cc)=line(find(xtln==sdm_linkage(lic,cc))*ones(1,2),[yl(1) sdm_linkage(lic,3)],...
                                     'Visible',p_para.dendrol_vis,'Color',dh_para.cols(sdm_linkage(lic,cc),:),'LineStyle',p_para.dendrol_ls,...
-                                    'LineWidth',p_para.dendrol_lw,'UIContextMenu',dendrol_cmenu);
+                                    'LineWidth',dlw,'UIContextMenu',dendrol_cmenu);
                             end
                         end
                     end
@@ -389,6 +392,8 @@ end
 fh_str='mat_title';
 SPIKY_handle_font
 fh_str='mat_label';
+SPIKY_handle_font
+fh_str='measure_label';
 SPIKY_handle_font
 if f_para.num_select_train_groups>1
     lh_str='mat_sgs';

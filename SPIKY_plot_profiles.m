@@ -1,15 +1,7 @@
 % This plots the time profiles of the selected measures (given that 'Dissimilarity profiles' is checked in 'Selection: Plots' 
 % and after the 'Plot' button has been pressed).
 
-if m_para.num_samp_measures>0
-    time_indy_start=ceil((f_para.tmin-d_para.tmin)/d_para.dtm)+(f_para.tmin==d_para.tmin);
-    time_indy_end=fix((f_para.tmax-d_para.tmin)/d_para.dtm)+(f_para.tmax==d_para.tmin);
-    samp_length=time_indy_end-time_indy_start+1;
-    time_start=d_para.tmin+time_indy_start*d_para.dtm;
-    time_end=d_para.tmin+time_indy_end*d_para.dtm;
-    time_sampling_interval=d_para.dtm;
-end
-if m_para.memo_num_pi_measures>0                                               % ##### pico & pili #####
+if m_para.memo_num_measures>0                                               % ##### pico & pili #####
     cum_isi2=d_para.tmin+cumsum([0 m_res.isi]);
     first_winspike_ind=find(cum_isi2>=f_para.tmin,1,'first');
     last_winspike_ind=find(cum_isi2<=f_para.tmax,1,'last');
@@ -71,9 +63,9 @@ end
 spike_diffs_realtime_l_ave=zeros(1,num_profiles);
 spike_diffs_future_l_ave=zeros(1,num_profiles);
 
-if m_para.memo_num_pi_measures>0                                               % ##### pico & pili #####
+if m_para.memo_num_measures>0                                               % ##### pico & pili #####
     
-    if r_para.num_pi_runs>1 || num_profiles>0
+    if r_para.num_runs>1 || num_profiles>0
         if m_para.num_pico_measures>0
             if f_para.subplot_posi(m_para.isi_pico)
                 isi_ratio=zeros(num_profiles,num_isi,'single');
@@ -99,19 +91,10 @@ if m_para.memo_num_pi_measures>0                                               %
             if f_para.subplot_posi(m_para.future_spike_pili)
                 spike_diffs_future_l=zeros(num_profiles,2*num_isi,'single');
             end
-            if f_para.subplot_posi(m_para.test_pili_1)
-                spike_diffs_test1_l=zeros(num_profiles,2*num_isi,'single');
-            end
-            if f_para.subplot_posi(m_para.test_pili_2)
-                spike_diffs_test2_l=zeros(num_profiles,2*num_isi,'single');
-            end
-            if f_para.subplot_posi(m_para.test_pili_3)
-                spike_diffs_test3_l=zeros(num_profiles,2*num_isi,'single');
-            end
         end
     end
 
-    if r_para.num_pi_runs==1
+    if r_para.num_runs==1
         if mod(f_para.profile_mode,2)==1                     % All
             if m_para.num_pico_measures>0
                 if f_para.subplot_posi(m_para.isi_pico)
@@ -158,18 +141,6 @@ if m_para.memo_num_pi_measures>0                                               %
                     aves(isnan(aves))=0;
                     spike_diffs_future_l_ave(1)=mean(sum(aves.*repmat(isi,f_para.num_select_pairs,1),2)/sum(isi));
                     clear profi
-                end
-                if f_para.subplot_posi([m_para.test_pili_1])
-                    spike_diffs_test1_l(1,1:2*num_isi)=mean(shiftdim(m_res.pili_measures_mat(m_para.measure_indy(...
-                        m_para.test_pili_1),f_para.select_pairs,2*first_winspike_ind-1:2*last_winspike_ind),1),1);
-                end
-                if f_para.subplot_posi([m_para.test_pili_2])
-                    spike_diffs_test2_l(1,1:2*num_isi)=mean(shiftdim(m_res.pili_measures_mat(m_para.measure_indy(...
-                        m_para.test_pili_2),f_para.select_pairs,2*first_winspike_ind-1:2*last_winspike_ind),1),1);
-                end
-                if f_para.subplot_posi([m_para.test_pili_3])
-                    spike_diffs_test3_l(1,1:2*num_isi)=mean(shiftdim(m_res.pili_measures_mat(m_para.measure_indy(...
-                        m_para.test_pili_3),f_para.select_pairs,2*first_winspike_ind-1:2*last_winspike_ind),1),1);
                 end
             end
         end
@@ -276,53 +247,60 @@ if m_para.memo_num_pi_measures>0                                               %
         end
     else
         if m_para.num_pico_measures>0
-            min_pi_ruc=find(m_res.cum_isi(r_para.run_pico_ends+1)>=f_para.tmin,1,'first');
-            max_pi_ruc=find(m_res.cum_isi(r_para.run_pico_ends+1)<=f_para.tmax,1,'last');
+            min_ruc=find(m_res.cum_isi(r_para.run_pico_ends+1)>=f_para.tmin,1,'first');
+            max_ruc=find(m_res.cum_isi(r_para.run_pico_ends+1)<=f_para.tmax,1,'last');
         else
-            min_pi_ruc=find(m_res.pili_supi(r_para.run_pili_ends)>=f_para.tmin,1,'first');
-            max_pi_ruc=find(m_res.pili_supi(r_para.run_pili_ends)<=f_para.tmax,1,'last');
+            min_ruc=find(m_res.pili_supi(r_para.run_pili_ends)>=f_para.tmin,1,'first');
+            max_ruc=find(m_res.pili_supi(r_para.run_pili_ends)<=f_para.tmax,1,'last');
         end
         
-        num_pi_runs=max_pi_ruc-min_pi_ruc+1;
-        if num_pi_runs>1
-            disp(['Number of profile loop runs: ',num2str(num_pi_runs)])
-            pwbh = waitbar(0,'Large data set. Please be patient.');
+        num_runs=max_ruc-min_ruc+1;
+        if num_runs>1
+            disp(' ')
+            disp(['Number of profile loop runs: ',num2str(num_runs)])
+            pwbh = waitbar(0,'Large data set. Please be patient.','CreateCancelBtn','setappdata(gcbf,''canceling'',1)');
+            setappdata(pwbh,'canceling',0)
         end
-        for pi_ruc=min_pi_ruc:max_pi_ruc
+        for ruc=min_ruc:max_ruc
+            if r_para.num_runs>1 && getappdata(pwbh,'canceling')
+                delete(pwbh)
+                return
+            end
 
-            if pi_ruc~=r_para.pi_ruc
-                if min_pi_ruc~=1 || max_pi_ruc~=r_para.num_pi_runs
-                    disp(['Profile-Loop-Info = ',num2str(pi_ruc),'  (',num2str(r_para.num_pi_runs),') --- ',...
-                        num2str(pi_ruc-min_pi_ruc+1  ),'  (',num2str(max_pi_ruc-min_pi_ruc+1),')'])
+            if ruc~=r_para.ruc
+                if min_ruc~=1 || max_ruc~=r_para.num_runs
+                    disp(['Profile-Loop-Info = ',num2str(ruc),'  (',num2str(r_para.num_runs),') --- ',...
+                        num2str(ruc-min_ruc+1  ),'  (',num2str(max_ruc-min_ruc+1),')'])
                 else
-                    disp(['Profile-Loop-Info = ',num2str(pi_ruc),'  (',num2str(r_para.num_pi_runs),')'])
+                    disp(['Profile-Loop-Info = ',num2str(ruc),'  (',num2str(r_para.num_runs),')'])
                 end
-                load (['SPIKY_pi_AZBYCX_',num2str(pi_ruc)],'pi*_measures_mat')
                 if m_para.num_pico_measures>0
-                    m_res.pico_measures_mat=pico_measures_mat;
-                    clear pico_measures_mat
+                    load('SPIKY_AZBYCX',['pico',num2str(ruc)]);
+                    eval(['m_res.pico_measures_mat = pico',num2str(ruc),';']);
+                    eval(['clear pico',num2str(ruc),';']);
                 end
                 if m_para.num_pili_measures>0
-                    m_res.pili_measures_mat=pili_measures_mat;
-                    clear pili_measures_mat
+                    load('SPIKY_AZBYCX',['pili',num2str(ruc)]);
+                    eval(['m_res.pili_measures_mat = pili',num2str(ruc) ';']);
+                    eval(['clear pili',num2str(ruc),';']);
                 end
-                r_para.pi_ruc=pi_ruc;
-                waitbar((pi_ruc-min_pi_ruc+1)/num_pi_runs,pwbh,['Profile-Loop-Info: ',num2str(pi_ruc-min_pi_ruc+1),'  (',num2str(num_pi_runs),')'])
-                if pi_ruc==max_pi_ruc
+                r_para.ruc=ruc;
+                waitbar((ruc-min_ruc+1)/num_runs,pwbh,['Profile-Loop-Info: ',num2str(ruc-min_ruc+1),'  (',num2str(num_runs),')'])
+                if ruc==max_ruc
                     delete(pwbh)
                 end
             end
            
             if m_para.num_pico_measures>0
-                pico_load_run_indy=(max([r_para.run_pico_starts(pi_ruc) first_winspike_ind]):min(...
-                    [r_para.run_pico_ends(pi_ruc) last_winspike_ind]))-r_para.run_pico_starts(pi_ruc)+1;
-                pico_prof_run_indy=pico_load_run_indy+r_para.run_pico_starts(pi_ruc)-first_winspike_ind;
+                pico_load_run_indy=(max([r_para.run_pico_starts(ruc) first_winspike_ind]):min(...
+                    [r_para.run_pico_ends(ruc) last_winspike_ind]))-r_para.run_pico_starts(ruc)+1;
+                pico_prof_run_indy=pico_load_run_indy+r_para.run_pico_starts(ruc)-first_winspike_ind;
             end
 
             if m_para.num_pili_measures>0
-                pili_load_run_indy=(max([r_para.run_pili_starts(pi_ruc) first_pili_supi_ind]):min(...
-                    [r_para.run_pili_ends(pi_ruc) last_pili_supi_ind]))-r_para.run_pili_starts(pi_ruc)+1;
-                pili_prof_run_indy=pili_load_run_indy+r_para.run_pili_starts(pi_ruc)-first_pili_supi_ind;
+                pili_load_run_indy=(max([r_para.run_pili_starts(ruc) first_pili_supi_ind]):min(...
+                    [r_para.run_pili_ends(ruc) last_pili_supi_ind]))-r_para.run_pili_starts(ruc)+1;
+                pili_prof_run_indy=pili_load_run_indy+r_para.run_pili_starts(ruc)-first_pili_supi_ind;
             end
 
             if mod(f_para.profile_mode,2)==1                     % All
@@ -412,131 +390,6 @@ if m_para.memo_num_pi_measures>0                                               %
 end
 
 
-
-% #####################################################################################################################################
-% ################################################################# Samp-Profiles #####################################################
-% #####################################################################################################################################
-
-if m_para.num_samp_measures>0
-
-    if r_para.num_samp_runs>1 || num_profiles>0
-        if m_para.num_samp_measures>0
-            if f_para.subplot_posi(m_para.spike_samp)
-                spike_diffs_t=zeros(num_profiles,samp_length,'single');
-            end
-            if f_para.subplot_posi(m_para.realtime_spike_samp)
-                spike_diffs_realtime_t=zeros(num_profiles,samp_length,'single');
-            end
-            if f_para.subplot_posi(m_para.future_spike_samp)
-                spike_diffs_future_t=zeros(num_profiles,samp_length,'single');
-            end
-        end
-    end
-
-    if r_para.num_samp_runs==1
-        if mod(f_para.profile_mode,2)==1                     % All
-            if f_para.subplot_posi(m_para.spike_samp)
-                spike_diffs_t(1,1:samp_length)=mean(shiftdim(m_res.samp_measures_mat(m_para.measure_indy(...
-                    m_para.spike_samp),f_para.select_pairs,time_indy_start:time_indy_end),1),1);
-            end
-            if f_para.subplot_posi(m_para.realtime_spike_samp)
-                spike_diffs_realtime_t(1,1:samp_length)=mean(shiftdim(m_res.samp_measures_mat(m_para.measure_indy(...
-                    m_para.realtime_spike_samp),f_para.select_pairs,time_indy_start:time_indy_end),1),1);
-            end
-            if f_para.subplot_posi(m_para.future_spike_samp)
-                spike_diffs_future_t(1,1:samp_length)=mean(shiftdim(m_res.samp_measures_mat(m_para.measure_indy(...
-                    m_para.future_spike_samp),f_para.select_pairs,time_indy_start:time_indy_end),1),1);
-            end
-        end
-
-        if f_para.profile_mode>1                            % Groups
-
-            gsgz=mod(f_para.profile_mode,2);
-            for sgc=1:f_para.num_select_train_groups
-                if f_para.num_select_group_trains(sgc)>1
-                    gsgz=gsgz+1;
-                    select_group=f_para.select_train_groups(sgc);
-                    gm_indy=find(f_para.group_vect(d_para.mat_indy(:,1))==select_group & f_para.group_vect(d_para.mat_indy(:,2))==select_group & ...
-                        ismember(d_para.mat_indy(:,1),f_para.select_trains)' & ismember(d_para.mat_indy(:,2),f_para.select_trains)');
-                    if f_para.subplot_posi(m_para.spike_samp)
-                        spike_diffs_t(gsgz,1:samp_length)=mean(shiftdim(m_res.samp_measures_mat(m_para.measure_indy(...
-                            m_para.spike_samp),gm_indy,time_indy_start:time_indy_end),1),1);
-                    end
-                    if f_para.subplot_posi(m_para.realtime_spike_samp)
-                        spike_diffs_realtime_t(gsgz,1:samp_length)=mean(shiftdim(m_res.samp_measures_mat(m_para.measure_indy(...
-                            m_para.realtime_spike_samp),gm_indy,time_indy_start:time_indy_end),1),1);
-                    end
-                    if f_para.subplot_posi(m_para.future_spike_samp)
-                        spike_diffs_future_t(gsgz,1:samp_length)=mean(shiftdim(m_res.samp_measures_mat(m_para.measure_indy(...
-                            m_para.future_spike_samp),gm_indy,time_indy_start:time_indy_end),1),1);
-                    end
-                end
-            end
-        end
-    else
-        min_samp_ruc=find(d_para.tmin+r_para.run_samp_ends*d_para.dtm>=f_para.tmin,1,'first');
-        max_samp_ruc=find(d_para.tmin+r_para.run_samp_starts*d_para.dtm<=f_para.tmax,1,'last');
-
-        for samp_ruc=min_samp_ruc:max_samp_ruc
-
-            if samp_ruc~=r_para.samp_ruc
-                if min_samp_ruc~=1 || max_samp_ruc~=r_para.num_samp_runs
-                    disp(['samp_profile_load_run_info = ',num2str(samp_ruc),'  (',num2str(r_para.num_samp_runs),') --- ',...
-                        num2str(samp_ruc-min_samp_ruc+1  ),'  (',num2str(max_samp_ruc-min_samp_ruc+1),')'])
-                else
-                    disp(['samp_profile_load_run_info = ',num2str(samp_ruc),'  (',num2str(r_para.num_samp_runs),')'])
-                end
-                load (['SPIKY_samp_AZBYCX_',num2str(samp_ruc)],'samp_measures_mat')
-                m_res.samp_measures_mat=samp_measures_mat;
-                clear samp_measures_mat
-                r_para.samp_ruc=samp_ruc;
-            end
-
-            samp_load_run_indy=(max([r_para.run_samp_starts(samp_ruc) time_indy_start]):min(...
-                [r_para.run_samp_ends(samp_ruc) time_indy_end]))-r_para.run_samp_starts(samp_ruc)+1;
-            samp_prof_run_indy=samp_load_run_indy+r_para.run_samp_starts(samp_ruc)-time_indy_start;
-
-            if mod(f_para.profile_mode,2)==1                     % All
-                if f_para.subplot_posi(m_para.spike_samp)
-                    spike_diffs_t(1,samp_prof_run_indy)=mean(shiftdim(m_res.samp_measures_mat(m_para.measure_indy...
-                        (m_para.spike_samp),f_para.select_pairs,samp_load_run_indy),1),1);
-                end
-                if f_para.subplot_posi(m_para.realtime_spike_samp)
-                    spike_diffs_realtime_t(1,samp_prof_run_indy)=mean(shiftdim(m_res.samp_measures_mat(m_para.measure_indy...
-                        (m_para.realtime_spike_samp),f_para.select_pairs,samp_load_run_indy),1),1);
-                end
-                if f_para.subplot_posi(m_para.future_spike_samp)
-                    spike_diffs_future_t(1,samp_prof_run_indy)=mean(shiftdim(m_res.samp_measures_mat(m_para.measure_indy(...
-                        m_para.future_spike_samp),f_para.select_pairs,samp_load_run_indy),1),1);
-                end
-            end
-            if f_para.profile_mode>1                            % Groups
-                gsgz=mod(f_para.profile_mode,2);
-                for sgc=1:f_para.num_select_train_groups
-                    if f_para.num_select_group_trains(sgc)>1
-                        gsgz=gsgz+1;
-                        select_group=f_para.select_train_groups(sgc);
-                        gm_indy=find(f_para.group_vect(d_para.mat_indy(:,1))==select_group & f_para.group_vect(d_para.mat_indy(:,2))==select_group & ...
-                            ismember(d_para.mat_indy(:,1),f_para.select_trains)' & ismember(d_para.mat_indy(:,2),f_para.select_trains)');
-                        if f_para.subplot_posi(m_para.spike_samp)
-                            spike_diffs_t(gsgz,samp_prof_run_indy)=mean(shiftdim(m_res.samp_measures_mat(...
-                                m_para.measure_indy(m_para.spike_samp),gm_indy,samp_load_run_indy),1),1);
-                        end
-                        if f_para.subplot_posi(m_para.realtime_spike_samp)
-                            spike_diffs_realtime_t(gsgz,samp_prof_run_indy)=mean(shiftdim(m_res.samp_measures_mat(...
-                                m_para.measure_indy(m_para.realtime_spike_samp),gm_indy,samp_load_run_indy),1),1);
-                        end
-                        if f_para.subplot_posi(m_para.future_spike_samp)
-                            spike_diffs_future_t(gsgz,samp_prof_run_indy)=mean(shiftdim(m_res.samp_measures_mat(m_para.measure_indy(...
-                                m_para.future_spike_samp),gm_indy,samp_load_run_indy),1),1);
-                        end
-                    end
-                end
-            end
-        end
-    end
-end
-
 % ##################################################################################################################################
 % ################################################################## PSTH ##########################################################
 % ##################################################################################################################################
@@ -600,9 +453,6 @@ if mod(f_para.plot_mode,2)>0
             m_para.maxbivals=ones(1,m_para.num_all_measures);
         else
             m_para.maxbivals=zeros(1,m_para.num_all_measures);
-            if f_para.subplot_posi(m_para.psth)
-                m_para.maxbivals(m_para.psth)=max(max(m_res.psth));
-            end
             if f_para.subplot_posi(m_para.isi_pico)
                 m_para.maxbivals(m_para.isi_pico)=max(max(isi_ratio));
             end
@@ -615,15 +465,6 @@ if mod(f_para.plot_mode,2)>0
             if f_para.subplot_posi(m_para.future_spike_pili)
                 m_para.maxbivals(m_para.future_spike_pili)=max(max(spike_diffs_future_l));
             end
-            if f_para.subplot_posi(m_para.spike_samp)
-                m_para.maxbivals(m_para.spike_samp)=max(max(spike_diffs_t));
-            end
-            if f_para.subplot_posi(m_para.realtime_spike_samp)
-                m_para.maxbivals(m_para.realtime_spike_samp)=max(max(spike_diffs_realtime_t));
-            end
-            if f_para.subplot_posi(m_para.future_spike_samp)
-                m_para.maxbivals(m_para.future_spike_samp)=max(max(spike_diffs_future_t));
-            end
             if f_para.subplot_posi(m_para.spike_pico)
                 m_para.maxbivals(m_para.spike_pico)=max(max(spike_diffs));
             end
@@ -633,15 +474,6 @@ if mod(f_para.plot_mode,2)>0
             if f_para.subplot_posi(m_para.future_spike_pico)
                 m_para.maxbivals(m_para.future_spike_pico)=max(max(spike_diffs_future));
             end
-            if f_para.subplot_posi(m_para.test_pili_1)
-                m_para.maxbivals(m_para.test_pili_1)=max(max(spike_diffs_test1_l));
-            end
-            if f_para.subplot_posi(m_para.test_pili_2)
-                m_para.maxbivals(m_para.test_pili_2)=max(max(spike_diffs_test2_l));
-            end
-            if f_para.subplot_posi(m_para.test_pili_3)
-                m_para.maxbivals(m_para.test_pili_3)=max(max(spike_diffs_test3_l));
-            end
             
             if f_para.profile_norm_mode==2
                 m_para.maxbivals=max(m_para.maxbivals)*ones(1,m_para.num_all_measures);
@@ -649,6 +481,9 @@ if mod(f_para.plot_mode,2)>0
         end
     else
         m_para.maxbivals=zeros(1,m_para.num_all_measures);
+    end
+    if f_para.subplot_posi(m_para.psth)
+        m_para.maxbivals(m_para.psth)=max(max(m_res.psth));
     end
 
 
@@ -744,18 +579,9 @@ measure_paras={...
     {'isi'; 'spike_diffs_realtime_l'; [m_para.all_measures_str{m_para.realtime_spike_pili},ab_str];     m_para.maxbivals(m_para.realtime_spike_pili); spike_diffs_realtime_l_ave; 2};... % 6
     {'isi'; 'spike_diffs_future_l';   [m_para.all_measures_str{m_para.future_spike_pili},ab_str];     m_para.maxbivals(m_para.future_spike_pili); spike_diffs_future_l_ave;  2};...   % 7
 
-    {'time_start:d_para.dtm:time_end'; 'spike_diffs_t';          [m_para.all_measures_str{m_para.spike_samp},ab_str];     m_para.maxbivals(m_para.spike_samp); 0;        3};...            % 8
-    {'time_start:d_para.dtm:time_end'; 'spike_diffs_realtime_t'; [m_para.all_measures_str{m_para.realtime_spike_samp},ab_str];     m_para.maxbivals(m_para.realtime_spike_samp); 0; 3};... % 9
-    {'time_start:d_para.dtm:time_end'; 'spike_diffs_future_t';   [m_para.all_measures_str{m_para.future_spike_samp},ab_str];     m_para.maxbivals(m_para.future_spike_samp); 0;   3};...  % 10
-
     {'isi';  'spike_diffs';          [m_para.all_measures_str{m_para.spike_pico},ab_str];           m_para.maxbivals(m_para.spike_pico); 0;          1};...    % 11
     {'isi';  'spike_diffs_realtime'; [m_para.all_measures_str{m_para.realtime_spike_pico},ab_str];  m_para.maxbivals(m_para.realtime_spike_pico); 0; 1};...    % 12
     {'isi';  'spike_diffs_future';   [m_para.all_measures_str{m_para.future_spike_pico},ab_str];    m_para.maxbivals(m_para.future_spike_pico); 0;   1};...    % 13
-
-    {'isi'; 'spike_diffs_test1_l'; [m_para.all_measures_str{m_para.test_pili_1},ab_str];     m_para.maxbivals(m_para.test_pili_1); 0;   2};...     % 14
-    {'isi'; 'spike_diffs_test2_l'; [m_para.all_measures_str{m_para.test_pili_2},ab_str];     m_para.maxbivals(m_para.test_pili_2); 0;   2};...     % 15
-    {'isi'; 'spike_diffs_test3_l'; [m_para.all_measures_str{m_para.test_pili_3},ab_str];     m_para.maxbivals(m_para.test_pili_3); 0;   2};...     % 16
-
 };
 %     Output                        X-input         Y-input                 Label               Max value       Datatype
 
@@ -836,7 +662,7 @@ for supc=m_para.num_diff_measures+1:m_para.num_all_measures
             eval(['results.',char(m_para.all_measures_string(supc)),'=rmfield(results.',char(m_para.all_measures_string(supc)),',''window_x'');'])
             eval(['results.',char(m_para.all_measures_string(supc)),'=rmfield(results.',char(m_para.all_measures_string(supc)),',''window_y'');'])
         end
-        if ismember(supc,m_para.select_bi_measures) && (~ismember(supc,m_para.samp_measures) || samp_length<1000000)
+        if ismember(supc,m_para.select_bi_measures)
             if d_para.tmin~=f_para.tmin || d_para.tmax~=f_para.tmax || d_para.num_trains~=f_para.num_trains
                 eval(['results.',char(m_para.all_measures_string(supc)),'.window_distance=distances(end);'])
                 if ismember(supc,m_para.pili_measures)

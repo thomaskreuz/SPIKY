@@ -38,8 +38,8 @@ else
 end
 
 ret=0;
-comparison=(mod(f_para.plot_mode,4)>1 && mod(f_para.plot_mode,16)<=3);
-sequence=mod(f_para.plot_mode,16)>3;
+comparison=(mod(f_para.plot_mode,4)>1 && mod(f_para.plot_mode,8)<=3);
+sequence=mod(f_para.plot_mode,8)>3;
 
 f_para.num_frames=f_para.num_instants+f_para.num_selective_averages+f_para.num_triggered_averages;
 if f_para.num_frames<1
@@ -92,13 +92,10 @@ end
 if f_para.num_selective_averages>0
     m_res.movie_vects_sa=zeros(m_para.num_sel_bi_measures,f_para.num_select_pairs,f_para.num_selective_averages,'single');
     if m_para.num_pili_measures>0
-        m_res.movie_vects_sa_pili_weight=zeros(f_para.num_selective_averages,r_para.num_pi_runs,'single');
-    end
-    if m_para.num_samp_measures>0
-        m_res.movie_vects_sa_samp_weight=zeros(f_para.num_selective_averages,r_para.num_samp_runs,'single');
+        m_res.movie_vects_sa_pili_weight=zeros(f_para.num_selective_averages,r_para.num_runs,'single');
     end
     if m_para.num_pico_measures>0
-        m_res.movie_vects_sa_pico_weight=zeros(f_para.num_selective_averages,r_para.num_pi_runs,'single');
+        m_res.movie_vects_sa_pico_weight=zeros(f_para.num_selective_averages,r_para.num_runs,'single');
     end
     f_para.num_sel_ave=zeros(1,f_para.num_selective_averages);
     for sac=1:f_para.num_selective_averages
@@ -115,13 +112,10 @@ end
 if f_para.num_triggered_averages>0
     m_res.movie_vects_ta=zeros(m_para.num_sel_bi_measures,f_para.num_select_pairs,f_para.num_triggered_averages,'single');
     if m_para.num_pili_measures>0
-        m_res.movie_vects_ta_pili_weight=zeros(f_para.num_triggered_averages,r_para.num_pi_runs,'single');
-    end
-    if m_para.num_samp_measures>0
-        m_res.movie_vects_ta_samp_weight=zeros(f_para.num_triggered_averages,r_para.num_samp_runs,'single');
+        m_res.movie_vects_ta_pili_weight=zeros(f_para.num_triggered_averages,r_para.num_runs,'single');
     end
     if m_para.num_pico_measures>0
-        m_res.movie_vects_ta_pico_weight=zeros(f_para.num_triggered_averages,r_para.num_pi_runs,'single');
+        m_res.movie_vects_ta_pico_weight=zeros(f_para.num_triggered_averages,r_para.num_runs,'single');
     end
 end
 
@@ -133,33 +127,40 @@ end
 
 
 
-if m_para.memo_num_pi_measures>0                                               % ##### pico & pili #####
+if m_para.memo_num_measures>0                                               % ##### pico & pili #####
 
-    if r_para.num_pi_runs>1
-        disp(['Number of matrix loop runs: ',num2str(r_para.num_pi_runs)])
-        pwbh = waitbar(0,'Large data set. Please be patient.');
+    if r_para.num_runs>1
+        disp(' ')
+        disp(['Number of matrix loop runs: ',num2str(r_para.num_runs)])
+        pwbh = waitbar(0,'Large data set. Please be patient.','CreateCancelBtn','setappdata(gcbf,''canceling'',1)');
+        setappdata(pwbh,'canceling',0)
     end
-    for pi_ruc=1:r_para.num_pi_runs
+    for ruc=1:r_para.num_runs
+        if r_para.num_runs>1 && getappdata(pwbh,'canceling')
+            delete(pwbh)
+            return
+        end
 
-        if pi_ruc~=r_para.pi_ruc
-            if min_pi_ruc~=1 || max_pi_ruc~=r_para.num_pi_runs
-                disp(['Matrix-Loop-Info = ',num2str(pi_ruc),'  (',num2str(r_para.num_pi_runs),') --- ',...
-                    num2str(pi_ruc-min_pi_ruc+1  ),'  (',num2str(max_pi_ruc-min_pi_ruc+1),')'])
+        if ruc~=r_para.ruc
+            if min_ruc~=1 || max_ruc~=r_para.num_runs
+                disp(['Matrix-Loop-Info = ',num2str(ruc),'  (',num2str(r_para.num_runs),') --- ',...
+                    num2str(ruc-min_ruc+1  ),'  (',num2str(max_ruc-min_ruc+1),')'])
             else
-                disp(['Matrix-Loop-Info = ',num2str(pi_ruc),'  (',num2str(r_para.num_pi_runs),')'])
+                disp(['Matrix-Loop-Info = ',num2str(ruc),'  (',num2str(r_para.num_runs),')'])
             end
-            load (['SPIKY_pi_AZBYCX_',num2str(pi_ruc)],'pi*_measures_mat')
             if m_para.num_pico_measures>0
-                m_res.pico_measures_mat=pico_measures_mat;
-                clear pico_measures_mat
+                load('SPIKY_AZBYCX',['pico',num2str(ruc)]);
+                eval(['m_res.pico_measures_mat = pico',num2str(ruc),';']);
+                eval(['clear pico',num2str(ruc),';']);
             end
             if m_para.num_pili_measures>0
-                m_res.pili_measures_mat=pili_measures_mat;
-                clear pili_measures_mat
+                load('SPIKY_AZBYCX',['pili',num2str(ruc)]);
+                eval(['m_res.pili_measures_mat = pili',num2str(ruc) ';']);
+                eval(['clear pili',num2str(ruc),';']);
             end
-            r_para.pi_ruc=pi_ruc;
-            waitbar(pi_ruc/r_para.num_pi_runs,pwbh,['Matrix-Loop-Info: ',num2str(pi_ruc),'  (',num2str(r_para.num_pi_runs),')'])
-            if pi_ruc==r_para.num_pi_runs
+            r_para.ruc=ruc;
+            waitbar(ruc/r_para.num_runs,pwbh,['Matrix-Loop-Info: ',num2str(ruc),'  (',num2str(r_para.num_runs),')'])
+            if ruc==r_para.num_runs
                 delete(pwbh)
             end
         end
@@ -170,9 +171,9 @@ if m_para.memo_num_pi_measures>0                                               %
 
         if m_para.num_pili_measures>0
             if f_para.num_instants>0
-                abs_run_instants_indy=find(f_para.instants>m_res.pili_supi(r_para.run_pili_starts(pi_ruc)) & ...
-                    f_para.instants<=m_res.pili_supi(r_para.run_pili_ends(pi_ruc)));
-                run_instants=f_para.instants(abs_run_instants_indy)-m_res.pili_supi(r_para.run_pili_starts(pi_ruc));
+                abs_run_instants_indy=find(f_para.instants>m_res.pili_supi(r_para.run_pili_starts(ruc)) & ...
+                    f_para.instants<=m_res.pili_supi(r_para.run_pili_ends(ruc)));
+                run_instants=f_para.instants(abs_run_instants_indy)-m_res.pili_supi(r_para.run_pili_starts(ruc));
                 num_run_instants=length(run_instants);
             else
                 num_run_instants=0;
@@ -214,21 +215,24 @@ if m_para.memo_num_pi_measures>0                                               %
                     for sac=1:f_para.num_selective_averages
                         for selc=1:f_para.num_sel_ave(sac)
                             if ismember(m_para.select_pili_measures(lmatc),m_para.spike_pili)       % regular
-                                pfx=m_res.pili_supi([r_para.run_pili_starts(pi_ruc):2:r_para.run_pili_ends(pi_ruc)-1 r_para.run_pili_ends(pi_ruc)]);
-                                pfy=shiftdim(m_res.pili_measures_mat(matc3,f_para.select_pairs,1:r_para.run_pili_lengths(pi_ruc)),1);
+                                pfx=m_res.pili_supi([r_para.run_pili_starts(ruc):2:r_para.run_pili_ends(ruc)-1 r_para.run_pili_ends(ruc)]);
+                                pfy=shiftdim(m_res.pili_measures_mat(matc3,f_para.select_pairs,1:r_para.run_pili_lengths(ruc)),1);
                                 ave=SPIKY_f_selective_averaging(pfx,pfy,max([f_para.selective_averages{sac}(2*selc-1) pfx(1)]),...
                                     min([f_para.selective_averages{sac}(2*selc) pfx(end)]));
-                                m_res.movie_vects_sa_pili_weight(sac,pi_ruc)=...
+                                m_res.movie_vects_sa_pili_weight(sac,ruc)=...
                                     min([f_para.selective_averages{sac}(2*selc) pfx(end)])-max([f_para.selective_averages{sac}(2*selc-1) pfx(1)]);
+                                if m_res.movie_vects_sa_pili_weight(sac,ruc)<=0
+                                    m_res.movie_vects_sa_pili_weight(sac,ruc)=0;
+                                end
                                 m_res.movie_vects_sa(matc2,1:f_para.num_select_pairs,sac)=...
                                     m_res.movie_vects_sa(matc2,1:f_para.num_select_pairs,sac)+...
-                                    ave'*m_res.movie_vects_sa_pili_weight(sac,pi_ruc)*sel_ave_weight(sac,selc);
+                                    ave'*m_res.movie_vects_sa_pili_weight(sac,ruc)*sel_ave_weight(sac,selc);
                             else                                                                            % realtime, future
                                 
                                 % check when window smaller than spike diff
                                 
-                                pfx=m_res.pili_supi(r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc));
-                                pfy=shiftdim(m_res.pili_measures_mat(matc3,f_para.select_pairs,1:r_para.run_pili_lengths(pi_ruc)),1);
+                                pfx=m_res.pili_supi(r_para.run_pili_starts(ruc):r_para.run_pili_ends(ruc));
+                                pfy=shiftdim(m_res.pili_measures_mat(matc3,f_para.select_pairs,1:r_para.run_pili_lengths(ruc)),1);
                                 first_pili_supi_ind=find(pfx(1:2:end)>=f_para.selective_averages{sac}(2*selc-1),1,'first')*2-1;  % first inside interval
                                 last_pili_supi_ind=find(pfx(2:2:end)<=f_para.selective_averages{sac}(2*selc),1,'last')*2;      % last inside interval
                                 if ~isempty(first_pili_supi_ind) && ~isempty(last_pili_supi_ind)
@@ -236,7 +240,7 @@ if m_para.memo_num_pi_measures>0                                               %
                                         dpfx=pfx(first_pili_supi_ind:last_pili_supi_ind);
                                         dpfy=pfy(:,first_pili_supi_ind:last_pili_supi_ind);
                                         if first_pili_supi_ind>1 && f_para.selective_averages{sac}(2*selc-1)<dpfx(1)-d_para.dts/999 && ...
-                                                f_para.selective_averages{sac}(2*selc-1)>=m_res.cum_isi(r_para.run_pico_starts(pi_ruc))  % interval to first spike
+                                                f_para.selective_averages{sac}(2*selc-1)>=m_res.cum_isi(r_para.run_pico_starts(ruc))  % interval to first spike
                                             dpfx=[f_para.selective_averages{sac}(2*selc-1) pfx(first_pili_supi_ind-1) dpfx];
                                             dpfy_m=1./(1./m_res.pili_measures_mat(matc3,f_para.select_pairs,first_pili_supi_ind-2)+...
                                                 (1./(m_res.pili_measures_mat(matc3,f_para.select_pairs,first_pili_supi_ind-1)+...
@@ -248,7 +252,7 @@ if m_para.memo_num_pi_measures>0                                               %
                                             dpfy=cat(2,dpfy_m,pfy(:,first_pili_supi_ind-1),dpfy);
                                         end
                                         if last_pili_supi_ind<length(pfx) && f_para.selective_averages{sac}(2*selc)>dpfx(end)+d_para.dts/999 && ...
-                                                f_para.selective_averages{sac}(2*selc)<=m_res.cum_isi(r_para.run_pico_ends(pi_ruc)+1)   % interval after last spike
+                                                f_para.selective_averages{sac}(2*selc)<=m_res.cum_isi(r_para.run_pico_ends(ruc)+1)   % interval after last spike
                                             dpfx=[dpfx pfx(last_pili_supi_ind+1) f_para.selective_averages{sac}(2*selc)];
                                             dpfy_p=1./(1./m_res.pili_measures_mat(matc3,f_para.select_pairs,last_pili_supi_ind+1)+...
                                                 (1./(m_res.pili_measures_mat(matc3,f_para.select_pairs,last_pili_supi_ind+2)+...
@@ -287,10 +291,10 @@ if m_para.memo_num_pi_measures>0                                               %
                                             (1./dpfy(1:f_para.num_select_pairs,evens)-1./dpfy(1:f_para.num_select_pairs,odds));
                                         aves(isnan(aves))=0;
                                         ave=sum(aves.*repmat(isi,f_para.num_select_pairs,1),2)/sum(isi);
-                                        m_res.movie_vects_sa_pili_weight(sac,pi_ruc)=sum(isi);
+                                        m_res.movie_vects_sa_pili_weight(sac,ruc)=sum(isi);
                                         m_res.movie_vects_sa(matc2,1:f_para.num_select_pairs,sac)=...
                                             m_res.movie_vects_sa(matc2,1:f_para.num_select_pairs,sac)+...
-                                            ave'*m_res.movie_vects_sa_pili_weight(sac,pi_ruc)*sel_ave_weight(sac,selc);
+                                            ave'*m_res.movie_vects_sa_pili_weight(sac,ruc)*sel_ave_weight(sac,selc);
                                     end
                                 end
                             end
@@ -301,12 +305,12 @@ if m_para.memo_num_pi_measures>0                                               %
 
                 if f_para.num_triggered_averages>0
                     for tac=1:f_para.num_triggered_averages
-                        trig_indy=find(f_para.triggered_averages{tac}>=m_res.pili_supi(r_para.run_pili_starts(pi_ruc)) & ...
-                            f_para.triggered_averages{tac}<=m_res.pili_supi(r_para.run_pili_ends(pi_ruc)));
+                        trig_indy=find(f_para.triggered_averages{tac}>=m_res.pili_supi(r_para.run_pili_starts(ruc)) & ...
+                            f_para.triggered_averages{tac}<=m_res.pili_supi(r_para.run_pili_ends(ruc)));
                         if ~isempty(trig_indy)
                             tlind=zeros(1,length(trig_indy));
                             for ric=1:length(trig_indy)
-                                dummy=find(m_res.pili_supi(r_para.run_pili_starts(pi_ruc):r_para.run_pili_ends(pi_ruc))<...
+                                dummy=find(m_res.pili_supi(r_para.run_pili_starts(ruc):r_para.run_pili_ends(ruc))<...
                                     f_para.triggered_averages{tac}(trig_indy(ric)),1,'last');
                                 if ~isempty(dummy)
                                     tlind(ric)=dummy;
@@ -314,24 +318,24 @@ if m_para.memo_num_pi_measures>0                                               %
                                     tlind(ric)=1;
                                 end
                             end
-                            m_res.movie_vects_ta_pili_weight(tac,pi_ruc)=length(trig_indy);
+                            m_res.movie_vects_ta_pili_weight(tac,ruc)=length(trig_indy);
                             if ismember(m_para.select_pili_measures(lmatc),m_para.spike_pili)       % regular
                                 m_res.movie_vects_ta(matc2,1:f_para.num_select_pairs,tac)=...
                                     m_res.movie_vects_ta(matc2,1:f_para.num_select_pairs,tac)+...
                                     mean( m_res.pili_measures_mat(matc3,f_para.select_pairs,tlind)+...
                                     (m_res.pili_measures_mat(matc3,f_para.select_pairs,tlind+1)-m_res.pili_measures_mat(matc3,f_para.select_pairs,tlind)).*...
-                                    shiftdim(repmat((f_para.triggered_averages{tac}(trig_indy)-m_res.pili_supi(r_para.run_pili_starts(pi_ruc)+tlind-1))./...
-                                    (m_res.pili_supi(r_para.run_pili_starts(pi_ruc)+tlind)-m_res.pili_supi(r_para.run_pili_starts(pi_ruc)+tlind-1)),f_para.num_select_pairs,1),-1),3)*...
-                                    m_res.movie_vects_ta_pili_weight(tac,pi_ruc);
+                                    shiftdim(repmat((f_para.triggered_averages{tac}(trig_indy)-m_res.pili_supi(r_para.run_pili_starts(ruc)+tlind-1))./...
+                                    (m_res.pili_supi(r_para.run_pili_starts(ruc)+tlind)-m_res.pili_supi(r_para.run_pili_starts(ruc)+tlind-1)),f_para.num_select_pairs,1),-1),3)*...
+                                    m_res.movie_vects_ta_pili_weight(tac,ruc);
                             else                                                                            % realtime, future
                                 m_res.movie_vects_ta(matc2,1:f_para.num_select_pairs,tac)=...
                                     m_res.movie_vects_ta(matc2,1:f_para.num_select_pairs,tac)+...
                                     mean( 1./(1./m_res.pili_measures_mat(matc3,f_para.select_pairs,tlind)+...
                                     (1./(m_res.pili_measures_mat(matc3,f_para.select_pairs,tlind+1)+(m_res.pili_measures_mat(matc3,f_para.select_pairs,tlind+1)==0))-...
                                     1./(m_res.pili_measures_mat(matc3,f_para.select_pairs,tlind)+(m_res.pili_measures_mat(matc3,f_para.select_pairs,tlind)==0))).*...
-                                    shiftdim(repmat((f_para.triggered_averages{tac}(trig_indy)-m_res.pili_supi(r_para.run_pili_starts(pi_ruc)+tlind-1))./...
-                                    (m_res.pili_supi(r_para.run_pili_starts(pi_ruc)+tlind)-m_res.pili_supi(r_para.run_pili_starts(pi_ruc)+tlind-1)),f_para.num_select_pairs,1),-1)) ,3)*...
-                                    m_res.movie_vects_ta_pili_weight(tac,pi_ruc);
+                                    shiftdim(repmat((f_para.triggered_averages{tac}(trig_indy)-m_res.pili_supi(r_para.run_pili_starts(ruc)+tlind-1))./...
+                                    (m_res.pili_supi(r_para.run_pili_starts(ruc)+tlind)-m_res.pili_supi(r_para.run_pili_starts(ruc)+tlind-1)),f_para.num_select_pairs,1),-1)) ,3)*...
+                                    m_res.movie_vects_ta_pili_weight(tac,ruc);
                             end
                         end
                     end
@@ -346,9 +350,9 @@ if m_para.memo_num_pi_measures>0                                               %
         if m_para.num_pico_measures>0                                            % ##### pico #####
 
             if f_para.num_instants>0
-                abs_run_instants_indy=find(f_para.instants>m_res.cum_isi(r_para.run_pico_starts(pi_ruc)) & ...
-                    f_para.instants<=m_res.cum_isi(r_para.run_pico_ends(pi_ruc)+1));
-                run_instants=f_para.instants(abs_run_instants_indy); %-m_res.pili_supi(r_para.run_pili_starts(pi_ruc));
+                abs_run_instants_indy=find(f_para.instants>m_res.cum_isi(r_para.run_pico_starts(ruc)) & ...
+                    f_para.instants<=m_res.cum_isi(r_para.run_pico_ends(ruc)+1));
+                run_instants=f_para.instants(abs_run_instants_indy); %-m_res.pili_supi(r_para.run_pili_starts(ruc));
                 num_run_instants=length(run_instants);
             else
                 num_run_instants=0;
@@ -364,7 +368,7 @@ if m_para.memo_num_pi_measures>0                                               %
                     if pmatc==1
                         ipind=zeros(1,num_run_instants);
                         for ric=1:num_run_instants
-                            dummy=find(m_res.cum_isi(r_para.run_pico_starts(pi_ruc):r_para.run_pico_ends(pi_ruc))<run_instants(ric),1,'last');
+                            dummy=find(m_res.cum_isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc))<run_instants(ric),1,'last');
                             if ~isempty(dummy)
                                 ipind(ric)=dummy;
                             else
@@ -378,29 +382,29 @@ if m_para.memo_num_pi_measures>0                                               %
                 if f_para.num_selective_averages>0                        % pico not very precise for selective averages
                     for sac=1:f_para.num_selective_averages
                         for selc=1:f_para.num_sel_ave(sac)
-                            pfx=m_res.cum_isi(r_para.run_pico_starts(pi_ruc):r_para.run_pico_ends(pi_ruc)+1);
-                            pfy=reshape([shiftdim(m_res.pico_measures_mat(matc3,f_para.select_pairs,1:r_para.run_pico_lengths(pi_ruc)),1); ...
-                                shiftdim(m_res.pico_measures_mat(matc3,f_para.select_pairs,1:r_para.run_pico_lengths(pi_ruc)),1)],...
-                                f_para.num_select_pairs,r_para.run_pico_lengths(pi_ruc)*2);
+                            pfx=m_res.cum_isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc)+1);
+                            pfy=reshape([shiftdim(m_res.pico_measures_mat(matc3,f_para.select_pairs,1:r_para.run_pico_lengths(ruc)),1); ...
+                                shiftdim(m_res.pico_measures_mat(matc3,f_para.select_pairs,1:r_para.run_pico_lengths(ruc)),1)],...
+                                f_para.num_select_pairs,r_para.run_pico_lengths(ruc)*2);
                             ave=SPIKY_f_selective_averaging(pfx,pfy,max([f_para.selective_averages{sac}(2*selc-1) pfx(1)]),...
                                 min([f_para.selective_averages{sac}(2*selc) pfx(end)]));
-                            m_res.movie_vects_sa_pico_weight(sac,pi_ruc)=...
+                            m_res.movie_vects_sa_pico_weight(sac,ruc)=...
                                 min([f_para.selective_averages{sac}(2*selc) pfx(end)])-max([f_para.selective_averages{sac}(2*selc-1) pfx(1)]);
                             m_res.movie_vects_sa(matc2,1:f_para.num_select_pairs,sac)=...
                                 m_res.movie_vects_sa(matc2,1:f_para.num_select_pairs,sac)+...
-                                ave'*m_res.movie_vects_sa_pico_weight(sac,pi_ruc)*sel_ave_weight(sac,selc);
+                                ave'*m_res.movie_vects_sa_pico_weight(sac,ruc)*sel_ave_weight(sac,selc);
                         end
                     end
                     clear pfx; clear pfy;
                 end
                 if f_para.num_triggered_averages>0                              % pico not very precise for instants
                     for tac=1:f_para.num_triggered_averages
-                        trig_indy=find(f_para.triggered_averages{tac}>m_res.cum_isi(r_para.run_pico_starts(pi_ruc)) & ...
-                            f_para.triggered_averages{tac}<=m_res.cum_isi(r_para.run_pico_ends(pi_ruc)));
+                        trig_indy=find(f_para.triggered_averages{tac}>m_res.cum_isi(r_para.run_pico_starts(ruc)) & ...
+                            f_para.triggered_averages{tac}<=m_res.cum_isi(r_para.run_pico_ends(ruc)));
                         if ~isempty(trig_indy)
                             tpind=zeros(1,length(trig_indy));
                             for ric=1:length(trig_indy)
-                                dummy=find(m_res.cum_isi(r_para.run_pico_starts(pi_ruc):r_para.run_pico_ends(pi_ruc))<...
+                                dummy=find(m_res.cum_isi(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc))<...
                                     f_para.triggered_averages{tac}(trig_indy(ric)),1,'last');
                                 if ~isempty(dummy)
                                     tpind(ric)=dummy;
@@ -408,11 +412,11 @@ if m_para.memo_num_pi_measures>0                                               %
                                     tpind(ric)=1;
                                 end
                             end
-                            m_res.movie_vects_ta_pico_weight(tac,pi_ruc)=length(trig_indy);
+                            m_res.movie_vects_ta_pico_weight(tac,ruc)=length(trig_indy);
                             m_res.movie_vects_ta(matc2,1:f_para.num_select_pairs,tac)=...
                                 m_res.movie_vects_ta(matc2,1:f_para.num_select_pairs,tac)+...
                                 mean(m_res.pico_measures_mat(matc3,f_para.select_pairs,tpind),3)*...
-                                m_res.movie_vects_ta_pico_weight(tac,pi_ruc);
+                                m_res.movie_vects_ta_pico_weight(tac,ruc);
                         end
                     end
                 end
@@ -420,84 +424,6 @@ if m_para.memo_num_pi_measures>0                                               %
         end
     end
 end
-
-
-
-
-% #######################################################################################################################
-% ################################################## samp ###############################################################
-% #######################################################################################################################
-
-if m_para.num_samp_measures>0                                               % ##### samp #####
-
-    for samp_ruc=1:r_para.num_samp_runs
-
-        if samp_ruc~=r_para.samp_ruc
-            disp(['samp_matrix_load_run_info = ',num2str(samp_ruc),'  (',num2str(r_para.num_samp_runs),')'])
-            load (['SPIKY_samp_AZBYCX_',num2str(samp_ruc)],'samp_measures_mat')
-            m_res.samp_measures_mat=samp_measures_mat;
-            clear samp_measures_mat
-            r_para.samp_ruc=samp_ruc;
-        end
-
-        if f_para.num_instants>0
-            abs_run_instants_indy=find(f_para.instants-d_para.tmin>r_para.run_samp_starts(samp_ruc)*d_para.dtm & ...
-                f_para.instants-d_para.tmin<=r_para.run_samp_ends(samp_ruc)*d_para.dtm);
-            run_instants=f_para.instants(abs_run_instants_indy)-r_para.run_samp_starts(samp_ruc)*d_para.dtm+d_para.dtm;
-            num_run_instants=length(run_instants);
-            run_instants_indy=zeros(1,num_run_instants);
-            for fsc=1:num_run_instants
-                run_instants_indy(fsc)=round((run_instants(fsc)-d_para.tmin)/d_para.dtm);
-            end
-        else
-            num_run_instants=0;
-        end
-
-        for tmatc=1:m_para.num_samp_measures
-            matc=find(m_para.select_measures==m_para.select_samp_measures(tmatc));
-            matc2=m_para.measure_bi_indy(m_para.select_measures(matc));
-            matc3=m_para.measure_indy(m_para.select_measures(matc));
-            %ttt=[tmatc matc matc2 matc3]
-
-            if num_run_instants>0
-                m_res.movie_vects(matc2,1:f_para.num_select_pairs,abs_run_instants_indy)=m_res.samp_measures_mat(matc3,...
-                    f_para.select_pairs,run_instants_indy);
-            end
-            if f_para.num_selective_averages>0
-                for sac=1:f_para.num_selective_averages
-                    for selc=1:f_para.num_sel_ave(sac)
-                        indy_select=find(d_para.tmin+(r_para.run_samp_starts(samp_ruc):r_para.run_samp_ends(samp_ruc))*d_para.dtm>=...
-                            f_para.selective_averages{sac}(2*selc-1) & d_para.tmin+(r_para.run_samp_starts(samp_ruc):...
-                            r_para.run_samp_ends(samp_ruc))*d_para.dtm<=f_para.selective_averages{sac}(2*selc));
-                        if ~isempty(indy_select)
-                            m_res.movie_vects_sa_samp_weight(sac,samp_ruc)=length(indy_select);
-                            %[tmatc sac selc]
-                            m_res.movie_vects_sa(matc2,1:f_para.num_select_pairs,sac)=...
-                                m_res.movie_vects_sa(matc2,1:f_para.num_select_pairs,sac)+...
-                                mean(m_res.samp_measures_mat(matc3,f_para.select_pairs,indy_select),3)*...
-                                m_res.movie_vects_sa_samp_weight(sac,samp_ruc)*sel_ave_weight(sac,selc);
-                        end
-                    end
-                end
-            end
-            if f_para.num_triggered_averages>0
-                for tac=1:f_para.num_triggered_averages
-                    indy_trigger=intersect(round((f_para.triggered_averages{tac}-d_para.tmin)/d_para.dtm),r_para.run_samp_starts(...
-                        samp_ruc):r_para.run_samp_ends(samp_ruc))-r_para.run_samp_starts(samp_ruc)+1;
-                    if ~isempty(indy_trigger)
-                        m_res.movie_vects_ta_samp_weight(tac,samp_ruc)=length(indy_trigger);
-                        m_res.movie_vects_ta(matc2,1:f_para.num_select_pairs,tac)=...
-                            m_res.movie_vects_ta(matc2,1:f_para.num_select_pairs,tac)+...
-                            mean(m_res.samp_measures_mat(matc3,f_para.select_pairs,indy_trigger),3)*...
-                            m_res.movie_vects_ta_samp_weight(tac,samp_ruc);
-                    end
-                end
-            end
-        end
-    end
-end
-
-
 
 
 
@@ -509,19 +435,13 @@ if f_para.num_selective_averages>0
     if m_para.num_pili_measures>0
         m_res.movie_vects_sa(m_para.pili_bi_measures_indy,1:f_para.num_select_pairs,1:f_para.num_selective_averages)=...
             m_res.movie_vects_sa(m_para.pili_bi_measures_indy,1:f_para.num_select_pairs,1:f_para.num_selective_averages)./...
-            repmat(shiftdim(sum(m_res.movie_vects_sa_pili_weight(1:f_para.num_selective_averages,1:r_para.num_pi_runs),2),-2),...
+            repmat(shiftdim(sum(m_res.movie_vects_sa_pili_weight(1:f_para.num_selective_averages,1:r_para.num_runs),2),-2),...
             m_para.num_pili_measures,f_para.num_select_pairs);
-    end
-    if m_para.num_samp_measures>0
-        m_res.movie_vects_sa(m_para.samp_bi_measures_indy,1:f_para.num_select_pairs,1:f_para.num_selective_averages)=...
-            m_res.movie_vects_sa(m_para.samp_bi_measures_indy,1:f_para.num_select_pairs,1:f_para.num_selective_averages)./...
-            repmat(shiftdim(sum(m_res.movie_vects_sa_samp_weight(1:f_para.num_selective_averages,1:r_para.num_samp_runs),2),-2),...
-            m_para.num_samp_measures,f_para.num_select_pairs);
     end
     if m_para.num_pico_measures>0
         m_res.movie_vects_sa(m_para.pico_bi_measures_indy,1:f_para.num_select_pairs,1:f_para.num_selective_averages)=...
             m_res.movie_vects_sa(m_para.pico_bi_measures_indy,1:f_para.num_select_pairs,1:f_para.num_selective_averages)./...
-            repmat(shiftdim(sum(m_res.movie_vects_sa_pico_weight(1:f_para.num_selective_averages,1:r_para.num_pi_runs),2),-2),...
+            repmat(shiftdim(sum(m_res.movie_vects_sa_pico_weight(1:f_para.num_selective_averages,1:r_para.num_runs),2),-2),...
             m_para.num_pico_measures,f_para.num_select_pairs);
     end
 
@@ -529,10 +449,6 @@ if f_para.num_selective_averages>0
         if m_para.num_pili_measures>0
             m_res.movie_vects_sa(m_para.pili_bi_measures_indy,1:f_para.num_select_pairs,sac)=...
                 m_res.movie_vects_sa(m_para.pili_bi_measures_indy,1:f_para.num_select_pairs,sac)/sum(sel_ave_weight(sac,1:f_para.num_sel_ave(sac)));
-        end
-        if m_para.num_samp_measures>0
-            m_res.movie_vects_sa(m_para.samp_bi_measures_indy,1:f_para.num_select_pairs,sac)=...
-                m_res.movie_vects_sa(m_para.samp_bi_measures_indy,1:f_para.num_select_pairs,sac)/sum(sel_ave_weight(sac,1:f_para.num_sel_ave(sac)));
         end
         if m_para.num_pico_measures>0
             m_res.movie_vects_sa(m_para.pico_bi_measures_indy,1:f_para.num_select_pairs,sac)=...
@@ -544,19 +460,13 @@ if f_para.num_triggered_averages>0
     if m_para.num_pili_measures>0
         m_res.movie_vects_ta(m_para.pili_bi_measures_indy,1:f_para.num_select_pairs,1:f_para.num_triggered_averages)=...
             m_res.movie_vects_ta(m_para.pili_bi_measures_indy,1:f_para.num_select_pairs,1:f_para.num_triggered_averages)./...
-            repmat(shiftdim(sum(m_res.movie_vects_ta_pili_weight(1:f_para.num_triggered_averages,1:r_para.num_pi_runs),2),-2),...
+            repmat(shiftdim(sum(m_res.movie_vects_ta_pili_weight(1:f_para.num_triggered_averages,1:r_para.num_runs),2),-2),...
             m_para.num_pili_measures,f_para.num_select_pairs);
-    end
-    if m_para.num_samp_measures>0
-        m_res.movie_vects_ta(m_para.samp_bi_measures_indy,1:f_para.num_select_pairs,1:f_para.num_triggered_averages)=...
-            m_res.movie_vects_ta(m_para.samp_bi_measures_indy,1:f_para.num_select_pairs,1:f_para.num_triggered_averages)./...
-            repmat(shiftdim(sum(m_res.movie_vects_ta_samp_weight(1:f_para.num_triggered_averages,1:r_para.num_samp_runs),2),-2),...
-            m_para.num_samp_measures,f_para.num_select_pairs);
     end
     if m_para.num_pico_measures>0
         m_res.movie_vects_ta(m_para.pico_bi_measures_indy,1:f_para.num_select_pairs,1:f_para.num_triggered_averages)=...
             m_res.movie_vects_ta(m_para.pico_bi_measures_indy,1:f_para.num_select_pairs,1:f_para.num_triggered_averages)./...
-            repmat(shiftdim(sum(m_res.movie_vects_ta_pico_weight(1:f_para.num_triggered_averages,1:r_para.num_pi_runs),2),-2),...
+            repmat(shiftdim(sum(m_res.movie_vects_ta_pico_weight(1:f_para.num_triggered_averages,1:r_para.num_runs),2),-2),...
             m_para.num_pico_measures,f_para.num_select_pairs);
     end
 end
@@ -624,9 +534,9 @@ if f_para.group_matrices && d_para.num_select_train_groups>1 && d_para.num_selec
 end
 
 f_para.num_frames=f_para.num_instants+(f_para.num_selective_averages+f_para.num_triggered_averages)*(1+(f_para.num_average_frames-1)*...
-    (get(handles.record_movie_checkbox,'Value')==1))*((m_para.num_samp_measures==0) || (r_para.samp_ruc==r_para.num_samp_runs));
+    (get(handles.record_movie_checkbox,'Value')==1));
 
-if comparison && r_para.num_samp_runs==1 && r_para.num_pi_runs==1 
+if comparison && r_para.num_runs==1 
     if f_para.num_instants==0
         m_res.movie_vects=[];
     end
@@ -712,8 +622,8 @@ if f_para.num_frames>0
     end
     
     
-    r_para.num_runs=1;
-    ruc=1;
+    %r_para.num_runs=1;
+    %ruc=1;
 
     if comparison
         if h_para.dendrograms
@@ -732,7 +642,7 @@ if f_para.num_frames>0
             h_para.cols((rc-1)*num_cols+(1:num_cols))=1:num_cols;
         end
     elseif sequence
-        if ruc==1 || (ruc==r_para.num_runs && f_para.num_instants==0)
+        if ruc==r_para.num_runs   % ruc==1 || (ruc==r_para.num_runs && f_para.num_instants==0)
             if f_para.dendrograms+f_para.group_matrices>0
                 h_para.max_cols=[1 2 3 2 3 3 4 4];
             else
@@ -741,6 +651,7 @@ if f_para.num_frames>0
             h_para.max_col=h_para.max_cols(h_para.num_all_subplots);
             h_para.rows=ceil((1:h_para.num_all_subplots)/h_para.max_col);
             h_para.cols=(1:h_para.num_all_subplots)-h_para.max_col*((1:h_para.num_all_subplots)>h_para.max_col);
+        else
         end
     end
     colbar=f_para.colorbar*(1+(f_para.color_norm_mode==3)); % 0-no colorbar,1-colorbar for last subplot only,2-colorbar for all subplots

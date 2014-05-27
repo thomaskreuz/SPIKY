@@ -59,25 +59,25 @@ clc
 para=struct('tmin',[],'tmax',[],'dts',[],'select_measures',[]);            % Initialization of parameter structure
 
 
-dataset=2;            % 1-Frequency mismatch,2-Spiking events,3-Splay state vs. identical
+dataset=1;            % 1-Frequency mismatch,2-Spiking events,3-Splay state vs. identical
 
 
 m_para.all_measures_string={'ISI';'SPIKE';'SPIKE_realtime';'SPIKE_future';'PSTH';};  % order of select_measures
 
-para.select_measures=[0 1 0 0 0];  % Select measures (0-calculate,1-do not calculate)
+para.select_measures      =[0 1 0 0 0];  % Select measures (0-calculate,1-do not calculate)
 
 
-plotting=0;           % +1:spikes,+2:dissimilarity profile,+4:dissimilarity matrix
+plotting=7;           % +1:spikes,+2:dissimilarity profile,+4:dissimilarity matrix
 
 
 % ################################################### Example spike trains
 
 if dataset==1                    % Frequency mismatch (from Fig. 2a of 2013 paper)
-    para.tmin=0; para.tmax=1300; para.dts=1;
+    para.tmin=0; para.tmax=130000; para.dts=1;
     num_trains=2;
     spikes=cell(1,num_trains);
-    spikes{1}=(100:100:1200);
-    spikes{2}=(100:110:1200);
+    spikes{1}=(100:1:120000);
+    spikes{2}=(100:1:120000);
 elseif dataset==2              % Spiking events (from Fig. 2b of 2013 paper)
     para.tmin=0; para.tmax=4000; para.dts=1;
     num_trains=50; num_spikes=40;

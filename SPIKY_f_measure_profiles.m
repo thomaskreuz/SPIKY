@@ -1,4 +1,4 @@
-% This function plots the individual time profiles of the selected spike train distances and calculates their average.
+%samp This function plots the individual time profiles of the selected spike train distances and calculates their average.
 
 function [fave,yt,ytl,p_para]=SPIKY_f_measure_profiles(fave,fyt,fytl,fx,fy,fheadline,...
     fsp_paras,fmaxval,profi_ave,fdata_type,s_para,p_para,mac)
@@ -9,18 +9,21 @@ fsp_start=fsp_paras(3);
 
 for nmac=1:length(s_para.nma)
     mova=0;
+    if s_para.nma(nmac)==2 && fdata_type==3
+        continue
+    end
     if s_para.nma(nmac)==2 && size(fy,1)==1                                                       % moving average
         if s_para.causal==0                                                % regular (average over both past and future values)
             if fdata_type==1          % piecewise constant
                 for trac=1:size(fy,1)
-                    fy(trac,:)=SPIKY_f_moving_average_weighted(fy(trac,:),fx,s_para.pi_mao);
+                    fy(trac,:)=SPIKY_f_moving_average_weighted(fy(trac,:),fx,s_para.mao);
                 end
             elseif fdata_type==2      % piecewise linear
                 mova=1;
                 for trac=1:size(fy,1)
                     %fx=fx(2:2:end)-fx([1 2:2:end-2]);
                     fy(trac,1:length(fx))=mean([fy(trac,2:2:end); fy(trac,1:2:end)]);
-                    fy(trac,1:length(fx))=SPIKY_f_moving_average_weighted(fy(trac,1:length(fx)),fx,s_para.pi_mao);
+                    fy(trac,1:length(fx))=SPIKY_f_moving_average_weighted(fy(trac,1:length(fx)),fx,s_para.mao);
                 end
                 fy=fy(:,1:length(fx));
             elseif fdata_type==3      % sampled
@@ -33,14 +36,14 @@ for nmac=1:length(s_para.nma)
         elseif s_para.causal==1                                            % realtime (average over past values only)
             if fdata_type==1          % piecewise constant
                 for trac=1:size(fy,1)
-                    fy(trac,:)=SPIKY_f_moving_average_weighted_p(fy(trac,:),fx,s_para.pi_mao);
+                    fy(trac,:)=SPIKY_f_moving_average_weighted_p(fy(trac,:),fx,s_para.mao);
                 end
             elseif fdata_type==2      % piecewise linear
                 mova=1;
                 for trac=1:size(fy,1)
                     %fx=fx(2:2:end)-fx([1 2:2:end-2]);
                     fy(trac,1:length(fx))=mean([fy(trac,2:2:end); fy(trac,1:2:end)]);
-                    fy(trac,1:length(fx))=SPIKY_f_moving_average_weighted_p(fy(trac,1:length(fx)),fx,s_para.pi_mao);
+                    fy(trac,1:length(fx))=SPIKY_f_moving_average_weighted_p(fy(trac,1:length(fx)),fx,s_para.mao);
                 end
                 fy=fy(:,1:length(fx));
             elseif fdata_type==3      % sampled
@@ -53,14 +56,14 @@ for nmac=1:length(s_para.nma)
         elseif s_para.causal==2                                            % future (average over future values only)
             if fdata_type==1          % piecewise constant
                 for trac=1:size(fy,1)
-                    fy(trac,:)=SPIKY_f_moving_average_weighted_f(fy(trac,:),fx,s_para.pi_mao);
+                    fy(trac,:)=SPIKY_f_moving_average_weighted_f(fy(trac,:),fx,s_para.mao);
                 end
             elseif fdata_type==2      % piecewise linear
                 mova=1;
                 for trac=1:size(fy,1)
                     %fx=fx(2:2:end)-fx([1 2:2:end-2]);
                     fy(trac,1:length(fx))=mean([fy(trac,2:2:end); fy(trac,1:2:end)]);
-                    fy(trac,1:length(fx))=SPIKY_f_moving_average_weighted_f(fy(trac,1:length(fx)),fx,s_para.pi_mao);
+                    fy(trac,1:length(fx))=SPIKY_f_moving_average_weighted_f(fy(trac,1:length(fx)),fx,s_para.mao);
                 end
                 fy=fy(:,1:length(fx));
             elseif fdata_type==3      % sampled
