@@ -604,6 +604,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
         else
             [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
         end
+        if isequal(d_para.filename,0) || isequal(d_para.path,0)
+            return
+        end
         d_para.matfile=[d_para.path d_para.filename];
         if d_para.matfile~=0
             SI_UserData=get(f_para.num_fig,'UserData');
@@ -1888,6 +1891,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
         else
             [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
         end
+        if isequal(d_para.filename,0) || isequal(d_para.path,0)
+            return
+        end
         d_para.matfile=[d_para.path d_para.filename];
         if d_para.matfile~=0
             SSA_UserData=get(f_para.num_fig,'UserData');
@@ -2950,6 +2956,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file',d_para.matfile);
         else
             [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
+        end
+        if isequal(d_para.filename,0) || isequal(d_para.path,0)
+            return
         end
         d_para.matfile=[d_para.path d_para.filename];
         if d_para.matfile~=0

@@ -182,6 +182,9 @@ uiwait(gcf);
 
     function [] = Load_pushbutton_callback(varargin)
         [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
+        if isequal(d_para.filename,0) || isequal(d_para.path,0)
+            return
+        end
         dummy=[d_para.path d_para.filename];
         if ~isequal(dummy,0)
             %d_para.matfile=dummy;

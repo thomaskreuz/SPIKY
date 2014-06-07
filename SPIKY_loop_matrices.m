@@ -126,6 +126,7 @@ if f_para.num_frames>0
                         f_para.instants<=m_res.pili_supi(r_para.run_pili_ends(ruc)));
                     run_instants=f_para.instants(abs_run_instants_indy)-m_res.pili_supi(r_para.run_pili_starts(ruc));
                     num_run_instants=length(run_instants);
+                    run_pili_supi=m_res.pili_supi(r_para.run_pili_starts(ruc):r_para.run_pili_ends(ruc))-m_res.pili_supi(r_para.run_pili_starts(ruc));
                 else
                     num_run_instants=0;
                 end
@@ -140,7 +141,7 @@ if f_para.num_frames>0
                         if lmatc==1
                             ilind=zeros(1,num_run_instants);
                             for ric=1:num_run_instants
-                                dummy=find(m_res.pili_supi<run_instants(ric),1,'last');
+                                dummy=find(run_pili_supi<run_instants(ric),1,'last');
                                 if ~isempty(dummy)
                                     ilind(ric)=dummy;
                                 else
@@ -152,13 +153,13 @@ if f_para.num_frames>0
                             m_res.movie_vects(matc2,1:f_para.num_select_pairs,abs_run_instants_indy)=...
                                 m_res.pili_measures_mat(matc3,f_para.select_pairs,ilind)+...
                                 (m_res.pili_measures_mat(matc3,f_para.select_pairs,ilind+1)-m_res.pili_measures_mat(matc3,f_para.select_pairs,ilind)).*...
-                                shiftdim(repmat((run_instants-m_res.pili_supi(ilind))./(m_res.pili_supi(ilind+1)-m_res.pili_supi(ilind)),f_para.num_select_pairs,1),-1);
+                                shiftdim(repmat((run_instants-run_pili_supi(ilind))./(run_pili_supi(ilind+1)-run_pili_supi(ilind)),f_para.num_select_pairs,1),-1);
                         else                                                                            % realtime, future
                             m_res.movie_vects(matc2,1:f_para.num_select_pairs,abs_run_instants_indy)=...
                                 1./(1./m_res.pili_measures_mat(matc3,f_para.select_pairs,ilind)+...
                                 (1./(m_res.pili_measures_mat(matc3,f_para.select_pairs,ilind+1)+(m_res.pili_measures_mat(matc3,f_para.select_pairs,ilind+1)==0))-...
                                 1./(m_res.pili_measures_mat(matc3,f_para.select_pairs,ilind)+(m_res.pili_measures_mat(matc3,f_para.select_pairs,ilind)==0))).*...
-                                shiftdim(repmat((run_instants-m_res.pili_supi(ilind))./(m_res.pili_supi(ilind+1)-m_res.pili_supi(ilind)),f_para.num_select_pairs,1),-1));
+                                shiftdim(repmat((run_instants-run_pili_supi(ilind))./(run_pili_supi(ilind+1)-run_pili_supi(ilind)),f_para.num_select_pairs,1),-1));
                         end
                     end
 

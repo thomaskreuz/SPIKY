@@ -172,7 +172,7 @@ else
                 if numel(unique(inty_mat))==1
                     title_str=['   ---   ',d_para.interval_names{unique(inty_mat)}];
                 else
-                    title_str=''; 
+                    title_str='';
                 end
             else
                 title_str='';
@@ -250,7 +250,7 @@ else
                 if numel(unique(inty_vect))==1
                     title_str=['   ---   ',d_para.interval_names{unique(inty_vect)}];
                 else
-                    title_str=''; 
+                    title_str='';
                 end
             else
                 title_str='';
@@ -314,7 +314,7 @@ end
 
 for matc=1:h_para.num_all_matrices
     mat_sph(matc)=subplot('position',h_para.supos(matc,1:4),'UIContextMenu',mat_cmenu);
-
+    
     hold on; cla;
     if matc<=h_para.num_measures
         if frc<=f_para.num_instants
@@ -356,11 +356,11 @@ for matc=1:h_para.num_all_matrices
     im_cmenu = uicontextmenu;
     im_ih=imagesc(flipud(plot_mat),'UIContextMenu',im_cmenu);
     set(gca,'YDir','normal')
-        
+    
     set(im_ih,'UserData',matc,'Tag',m_res.bi_mat_str{matc})
     im_assign_cb = 'assignin(''base'', [''SPIKY_matrix_'' num2str(get(gco,''UserData''))], get(gco,''CData'') );    assignin(''base'', [''SPIKY_matrix_name_'' num2str(get(gco,''UserData''))], get(gco,''Tag'') ); ';
     ev_item = uimenu(im_cmenu,'Label','Extract variable: Matrix','Callback',im_assign_cb);
-
+    
     if f_para.color_norm_mode==1
         set(gca,'CLim',[0 1])
     elseif f_para.color_norm_mode==2
@@ -456,19 +456,19 @@ for matc=1:h_para.num_all_matrices
             end
         end
     end
-
+    
     mat_tick_cmenu = uicontextmenu;
     mat_tick_fh=zeros(1,2);
     mat_tick_fh(1)=line(xl,yl(1)*ones(1,2),'Color','w','LineWidth',0.5,'UIContextMenu',mat_tick_cmenu);
     mat_tick_fh(2)=line(xl(1)*ones(1,2),yl,'Color','w','LineWidth',0.5,'UIContextMenu',mat_tick_cmenu);
     fh_str='mat_tick';
     SPIKY_handle_set_property
-
+    
     if f_para.colorbar && (matc==h_para.num_all_matrices || f_para.color_norm_mode==3)
         colorbar
         set(gca,'position',h_para.supos(matc,1:4))
     end
-
+    
     if f_para.dendrograms==1
         fig=figure(f_para.num_fig);
         dendros_sph(matc)=subplot('position',h_para.supos(h_para.num_all_matrices+matc,1:4),'UIContextMenu',dendros_cmenu);
@@ -492,7 +492,7 @@ for matc=1:h_para.num_all_matrices
                 results.group_dendros{matc-h_para.num_measures}=sdm_linkage;
             end
             set(dendros_sph(matc),'UserData',sdm_linkage,'Tag',[m_res.bi_mat_str{matc},num2str(matc)])
-
+            
             xtl=get(gca,'XTickLabel');
             xtln=zeros(1,size(plot_mat,1));
             for trac=1:size(plot_mat,1)
@@ -624,16 +624,20 @@ if get(handles.print_figures_checkbox,'Value')==1             % Create postscrip
     end
 end
 
-if get(handles.record_movie_checkbox,'Value')==1 && isfield(mov_handles,'tmov')
-    figure(f_para.num_fig)
-    F = getframe(f_para.num_fig);
-    F1 = F;
-    F1.cdata(:,:,1) = flipud(F.cdata(:,:,1));
-    F1.cdata(:,:,2) = flipud(F.cdata(:,:,2));
-    F1.cdata(:,:,3) = flipud(F.cdata(:,:,3));
-    mov_handles.tmov = addframe(mov_handles.tmov,F1);
-    ft(frc,:,:,:)=F.cdata;
-    if frc==f_para.num_frames
-        mov_handles.tmov = close(mov_handles.tmov);
+if isfield(mov_handles,'tmov')
+    if get(handles.record_movie_checkbox,'Value')==1
+        figure(f_para.num_fig)
+        F = getframe(f_para.num_fig);
+        F1 = F;
+        F1.cdata(:,:,1) = flipud(F.cdata(:,:,1));
+        F1.cdata(:,:,2) = flipud(F.cdata(:,:,2));
+        F1.cdata(:,:,3) = flipud(F.cdata(:,:,3));
+        mov_handles.tmov = addframe(mov_handles.tmov,F1);
+        ft(frc,:,:,:)=F.cdata;
+    else
+        %if frc==f_para.num_frames
+            mov_handles.tmov = close(mov_handles.tmov);
+            rmfield(mov_handles,'tmov')
+        %end
     end
 end

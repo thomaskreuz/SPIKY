@@ -185,13 +185,13 @@ if any(f_para.subplot_posi(m_para.isi_pico:m_para.num_all_measures))            
     
     all_spikes=all_spikes(d_para.num_trains:end-d_para.num_trains+1);
     all_trains=all_trains(d_para.num_trains:end-d_para.num_trains+1);
-    all_isi=zeros(1,length(all_spikes)-1,'single');
-    all_isi(1:length(all_spikes)-1)=diff(all_spikes);
-    num_all_isi=length(all_isi);
+    num_all_isi=length(all_spikes)-1;
+    all_isi=diff(all_spikes);
     m_res.isi=all_isi(all_isi>0);
     m_res.num_isi=length(m_res.isi);
     
-    m_res.cum_isi=all_spikes(1)+[0 cumsum(m_res.isi)];
+    %m_res.cum_isi=all_spikes(1)+[0 cumsum(m_res.isi)];
+    m_res.cum_isi=unique(all_spikes);
     clear all_indy indy all_spikes
     
     % We define the ISI as going from right after the last spike to the
@@ -234,7 +234,7 @@ if any(f_para.subplot_posi(m_para.isi_pico:m_para.num_all_measures))            
     if memo>max_memo
         num_init_runs=ceil(memo/max_memo);
         if f_para.run_test==0 || ~ismember(get(handles.Data_listbox,'Value'),[1 2 3])
-            max_pico_len=fix(m_res.num_isi/num_init_runs);
+            max_pico_len=ceil(m_res.num_isi/num_init_runs);
         elseif get(handles.Data_listbox,'Value')==1
             max_pico_len=15; % in isi             % $$$$$$$$$$
             %max_pico_len=5; % in isi             % $$$$$$$$$$

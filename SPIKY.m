@@ -1,5 +1,5 @@
-% TEST
-% ##### Copyright Thomas Kreuz, Nebojsa Bozanic;  Alpha-Version 2.4, May 2014 #####
+%
+% ##### Copyright Thomas Kreuz, Nebojsa Bozanic;  Beta-Version 1.0, June 2014 #####
 %
 % SPIKY is a graphical user interface (Matlab) which can be used to calculate and
 % visualize both the SPIKE- and the ISI-distance between two (or more) spike trains.
@@ -171,7 +171,7 @@ gcol=[236 233 216]/255;
 set(gca,'Color','w','XColor',gcol,'YColor',gcol,'XTick',[],'YTick',[],'box','on')
 
 %uicontrol('style','text','units','normalized','position',[0.1 0.85 0.5 0.08],'string','SPIKY','FontSize',20,'FontWeight','bold')
-uicontrol('style','text','units','normalized','position',[0.09 0.715 0.5 0.04],'string','Alpha-Version 2.4','FontSize',12)
+uicontrol('style','text','units','normalized','position',[0.09 0.715 0.5 0.04],'string','Beta-Version 1.0','FontSize',12)
 uicontrol('style','text','units','normalized','position',[0.45 0.835 0.5 0.04],'string','Thomas Kreuz','FontSize',12,'FontWeight','bold')
 uicontrol('style','text','units','normalized','position',[0.463 0.795 0.5 0.04],'string','Nebojsa Bozanic','FontSize',12,'FontWeight','bold')
 uicontrol('style','text','units','normalized','position',[0.1 0.596 0.8 0.04],...
@@ -459,6 +459,9 @@ p_para=p_para_default;
 
 
 [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
+if isequal(d_para.filename,0) || isequal(d_para.path,0)
+    return
+end
 d_para.matfile=[d_para.path d_para.filename];
 if ~isequal(d_para.matfile,0)
     if strcmp(get(handles.Para_data_uipanel,'Visible'),'on')
@@ -471,7 +474,7 @@ if ~isequal(d_para.matfile,0)
     end
     allspikes=spikes;
 
-    d_para.comment_string=d_para.matfile;
+    d_para.comment_string=d_para.filename;
     SPIKY_paras_set
     SPIKY_plot_allspikes
     SPIKY_paras_set
@@ -509,14 +512,17 @@ s_para=s_para_default;
 p_para=p_para_default;
 
 [d_para.filename,d_para.path]=uigetfile('*.txt','Pick a .txt-file');
+if isequal(d_para.filename,0) || isequal(d_para.path,0)
+    return
+end
 d_para.txtfile=[d_para.path d_para.filename];
-if ~isequal(txtfile, 0)
+if ~isequal(d_para.txtfile, 0)
     if strcmp(get(handles.Para_data_uipanel,'Visible'),'on')
         uipushtool_new_Callback(hObject, eventdata, handles)
     end
-    spikes=dlmread(txtfile);
+    spikes=dlmread(d_para.txtfile);
     if size(spikes,2)==1 && size(spikes,1)>9
-        fid = fopen(txtfile);
+        fid = fopen(d_para.txtfile);
         spiks=textscan(fid,'%s','Delimiter','\n');
         fclose(fid);
         eost=[0; find(strcmp(spiks{1},'')); length(spiks{1})+1];
@@ -534,8 +540,8 @@ if ~isequal(txtfile, 0)
     end
     allspikes=spikes;
 
-    d_para.comment_string=txtfile;
-    SPIKY_paras_set   % $$$$$$$$$ ?
+    d_para.comment_string=d_para.filename;
+    SPIKY_paras_set
     SPIKY_plot_allspikes
     SPIKY_paras_set
     
@@ -547,7 +553,7 @@ if ~isequal(txtfile, 0)
     setappdata(handles.figure1,'plot_parameters',p_para)
     setappdata(handles.figure1,'allspikes',allspikes)
 
-    set(handles.Data_listbox,'String',[get(handles.Data_listbox,'String');txtfile])
+    set(handles.Data_listbox,'String',[get(handles.Data_listbox,'String');d_para.txtfile])
     set(handles.Data_listbox,'Value',size(get(handles.Data_listbox,'String'),1))
 
     set(handles.Data_listbox,'Enable','off')

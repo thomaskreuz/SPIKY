@@ -1,9 +1,15 @@
 % SPIKY_loop_surro --- Copyright Thomas Kreuz, Nebojsa Bozanic; March 2014
 %
-% This is similar to "SPIKY_loop.m" only that you do not look at different datasets;
+% This is similar to 'SPIKY_loop' only that you do not look at different datasets;
 % rather you can compare the results obtained for one dataset against the results
 % obtained for spike train surrogates generated from that dataset.  
-% [This program is not yet completely finished, there will be some refinements soon.]
+%
+% 'SPIKY_surro' is the main program where the variables are set and from where the funtion 'SPIKY_loop_f_distances' is called.
+% This function uses a minimum number of input and output variables (described below).
+%
+% ########################################################################################################################
+% ##### This program should work already but it is not yet completely finished, there will be some refinements soon. #####
+% ########################################################################################################################
 %
 % More information on the program and the spike train distances can be found under
 % "http://www.fi.isc.cnr.it/users/thomas.kreuz/Source-Code/SPIKY.html" and/or in
@@ -63,7 +69,7 @@ dataset=2;            % 1-Frequency mismatch,2-Spiking events,3-Random
 
 m_para.all_measures_string={'ISI';'SPIKE';'SPIKE_realtime';'SPIKE_future';'PSTH';};  % order of select_measures
 
-para.select_measures=[0 1 0 0 1];  % Select measures (0-calculate,1-do not calculate)
+para.select_measures=[0 1 0 0 0];  % Select measures (0-calculate,1-do not calculate)
 
 num_surros=2;
 para.choice=4;   % 1-keep spike train numbers,2-keep interval distribution,3-keep pooled spike train,4-keep PSTH

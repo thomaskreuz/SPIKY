@@ -46,6 +46,9 @@ end
     function Load_Parameters_pushbutton_callback(varargin)
         if isempty(get(Load_Parameters_edit,'String'))
             [d_para.filename,d_para.path]=uigetfile('*.txt','Pick a .txt-file');
+            if isequal(d_para.filename,0) || isequal(d_para.path,0)
+                return
+            end
             load_parameters_filename=[d_para.path d_para.filename];
             set(Load_Parameters_edit,'String',load_parameters_filename)
         else
@@ -182,6 +185,9 @@ end
     function Save_Parameters_pushbutton_callback(varargin)
         if isempty(get(Save_Parameters_edit,'String'))
             [d_para.filename,d_para.path]=uigetfile('*.txt','Pick a .txt-file');
+            if isequal(d_para.filename,0) || isequal(d_para.path,0)
+                return
+            end
             save_parameters_filename=[d_para.path d_para.filename];
             set(Save_Parameters_edit,'String',save_parameters_filename)
         else

@@ -305,6 +305,10 @@ if m_para.num_sel_bi_measures>0     % num_sel_measures>0
             for trac=1:d_para.num_trains
                 firsts(trac)=find(uspikes{trac}(1:num_uspikes(trac))<=m_res.cum_isi(r_para.run_pico_starts(ruc)),1,'last');
                 lasts(trac)=find(uspikes{trac}(1:num_uspikes(trac))<m_res.cum_isi(r_para.run_pico_ends(ruc)+1),1,'last');
+                if lasts(trac)==num_uspikes(trac)
+                    %[uspikes{trac}(num_uspikes(trac)) m_res.cum_isi(r_para.run_pico_ends(ruc)+1) m_res.cum_isi(r_para.run_pico_ends(ruc)+1)-uspikes{trac}(num_uspikes(trac))]
+                    lasts(trac)=num_uspikes(trac)-1;
+                end
                 run_ivs{trac}=ivs{trac}(firsts(trac):lasts(trac))-r_para.run_pico_starts(ruc)+1;
                 run_ive{trac}=ive{trac}(firsts(trac):lasts(trac))-r_para.run_pico_starts(ruc)+1;
                 run_ivs{trac}(run_ivs{trac}<1)=1;

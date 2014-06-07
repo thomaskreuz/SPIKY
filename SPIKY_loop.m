@@ -4,8 +4,9 @@
 % Both programs can be used to calculate time-resolved spike train distances (ISI and SPIKE) between two (or more) spike trains.
 % However, whereas SPIKY was mainly designed to facilitate the detailed analysis of one dataset,
 % 'SPIKY_loop' is meant to be used in order to compare the SPIKY_results for many different datasets (e.g. in some kind of loop).
-% The source codes use a minimum number of input and output variables (described below).
+%
 % 'SPIKY_loop' is the main program where the variables are set and from where the funtion 'SPIKY_loop_f_distances' is called.
+% This function uses a minimum number of input and output variables (described below).
 %
 % More information on the program and the spike train distances can be found under
 % "http://www.fi.isc.cnr.it/users/thomas.kreuz/Source-Code/SPIKY.html" and/or in
