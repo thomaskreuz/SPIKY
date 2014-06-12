@@ -276,7 +276,3 @@ end
 d_para.num_all_trains=length(spikes);
 d_para.num_trains=d_para.num_all_trains;
 d_para.preselect_trains=1:d_para.num_trains;
-
-
-
-
