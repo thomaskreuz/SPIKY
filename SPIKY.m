@@ -1148,7 +1148,7 @@ end
 STG_Input_fig=figure('units','normalized','menubar','none','position',[0.05 0.1 0.4 0.8],'Name','Spike train generator',...
     'NumberTitle','off','Color',[0.9294 0.9176 0.851],'DeleteFcn',{@STG_Init_Input_callback}); % ,'WindowStyle','modal'
 
-STG_Init_panel=uipanel('units','normalized','position',[0.05 0.67 0.9 0.3],'Title','Main parameters','FontSize',13,'FontWeight','bold');
+STG_Init_panel=uipanel('units','normalized','position',[0.05 0.67 0.9 0.3],'Title','Main parameters','FontSize',15,'FontWeight','bold');
 STG_num_trains_text=uicontrol('style','text','units','normalized','position',[0.16 0.85 0.36 0.08],'string','Number of spike trains:',...
     'HorizontalAlignment','left','FontSize',13,'FontUnits','normalized');
 STG_tmin_text=uicontrol('style','text','units','normalized','position',[0.16 0.8 0.36 0.08],'string','Start time:',...
@@ -1173,7 +1173,7 @@ STG_Init_OK_pushbutton=uicontrol('style','pushbutton','units','normalized','posi
 uicontrol(STG_Init_OK_pushbutton)
 
 STG_Options_panel=uipanel('units','normalized','position',[0.05 0.13 0.9 0.51],'Title','Spike train patterns',...
-    'FontSize',13,'FontWeight','bold','Visible','off');
+    'FontSize',15,'FontWeight','bold','Visible','off');
 
 STG_time_panel=uipanel('units','normalized','position',[0.02 0.72 0.48 0.26],'Title','Time','FontSize',13,'FontWeight','bold',...
     'parent',STG_Options_panel,'Visible','off');
@@ -1830,6 +1830,7 @@ end
             set(STG_Init_OK_pushbutton,'Enable','on')
             set(STG_Options_panel,'Visible','off')
             set(STG_Final_Cancel_pushbutton,'Visible','off')
+            set(STG_Final_Edit_pushbutton,'Visible','off')
             set(STG_Final_Reset_pushbutton,'Visible','off')
             set(STG_Final_OK_pushbutton,'Visible','off')
             fig=figure(f_para.num_fig);
@@ -1861,7 +1862,7 @@ end
         p_para=getappdata(handles.figure1,'plot_parameters');
 
         SS_fig=figure('units','normalized','menubar','none','position',[0.05 0.07 0.4 0.86],'Name','Select spikes',...
-            'NumberTitle','off','Color',[0.9294 0.9176 0.851],'DeleteFcn',{@SS_Close_callback}); % ,'WindowStyle','modal'
+            'NumberTitle','off','Color',[0.9294 0.9176 0.851],'DeleteFcn',{@SS_Close_callback},'WindowStyle','modal');
 
         SS_edit=uicontrol('style','edit','units','normalized','position',[0.08 0.91 0.84 0.04],...
             'FontSize',13,'FontUnits','normalized','BackgroundColor','w','Visible','on');
