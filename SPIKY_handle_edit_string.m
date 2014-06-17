@@ -1,4 +1,4 @@
-% This function which is called by ‘SPIKY_handle_font.m’ allows changing the string of text objects
+% This function which is called by ?SPIKY_handle_font.m? allows changing the string of text objects
 % (such as axis labels or subplot titles) in the figure.
 
 function [] = SPIKY_handle_edit_string(varargin)
@@ -42,8 +42,14 @@ uicontrol(Edit_pushbutton)
         if numel(varargin{3})==1
             set(varargin{3},'String',new_string)
         else
-            for sc=1:length(varargin{3})
-                set(varargin{3}(sc),'String',new_string{sc})
+            if ~isempty(new_string)
+                for sc=1:length(varargin{3})
+                    set(varargin{3}(sc),'String',new_string{sc})
+                end
+            else
+                for sc=1:length(varargin{3})
+                    set(varargin{3}(sc),'String','')
+                end
             end
         end
         close(Edit_fig)
