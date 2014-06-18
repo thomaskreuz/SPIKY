@@ -72,7 +72,7 @@ m_para.all_measures_string={'ISI';'SPIKE';'SPIKE_realtime';'SPIKE_future';'PSTH'
 para.select_measures=[0 1 0 0 0];  % Select measures (0-calculate,1-do not calculate)
 
 num_surros=2;
-para.choice=4;   % 1-keep spike train numbers,2-keep interval distribution,3-keep pooled spike train,4-keep PSTH
+para.choice=4;   % 1-keep number of spikes,2-keep interval distribution,3-keep pooled spike train,4-keep PSTH
 
 plotting=3;           % +1:spikes,+2:dissimilarity profile,+4:dissimilarity matrix
 

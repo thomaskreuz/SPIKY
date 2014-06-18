@@ -1256,7 +1256,7 @@ STG_Final_Cancel_pushbutton=uicontrol('style','pushbutton','units','normalized',
 STG_Final_Reset_pushbutton=uicontrol('style','pushbutton','units','normalized','position',[0.325 0.05 0.15 0.04],'string','Reset','FontSize',13,'FontUnits','normalized',...
     'BackgroundColor',[0.8353 0.8235 0.7922],'CallBack',{@STG_Final_Reset_callback},'Visible','off');
 STG_Final_Edit_pushbutton=uicontrol('style','pushbutton','units','normalized','position',[0.525 0.05 0.15 0.04],'string','Edit','FontSize',13,'FontUnits','normalized',...
-    'BackgroundColor',[0.8353 0.8235 0.7922],'CallBack',{@SPIKY_select_spikes},'Visible','off');
+    'BackgroundColor',[0.8353 0.8235 0.7922],'CallBack',{@SPIKY_edit_spikes},'Visible','off');
 STG_Final_OK_pushbutton=uicontrol('style','pushbutton','units','normalized','position',[0.725 0.05 0.15 0.04],'string','Done','FontSize',13,'FontUnits','normalized','FontWeight','bold',...
     'BackgroundColor',[0.8353 0.8235 0.7922],'CallBack',{@STG_Final_callback},'Visible','off','UserData',0);
 
@@ -1840,6 +1840,8 @@ end
             set(STG_UserData.fh,'WindowButtonMotionFcn',[],'WindowButtonUpFcn',[],'KeyPressFcn',[])
             set(STG_UserData.ah,'ButtonDownFcn',[],'UIContextMenu',[])
             set(fig,'UserData',STG_UserData);
+            set(STG_UserData.tx(1),'str','');
+            set(STG_UserData.tx(2),'str','');
             cla
             set(gca,'XTick',[],'YTick',[]);
             xlabel('')
@@ -1853,7 +1855,7 @@ end
 % ##################################################################
 % ##################################################################
 
-    function SPIKY_select_spikes(varargin)
+    function SPIKY_edit_spikes(varargin)
 
         set(handles.figure1,'Visible','off')
 
@@ -2047,8 +2049,11 @@ end
                     end
                 end
                 SS_UserData.lh=[];
-
+                setappdata(SS_UserData.fh,'spike_lh',SS_UserData.lh);
+                SS_UserData=rmfield(SS_UserData,'STG_spikes');                
                 set(SS_UserData.fh,'Userdata',SS_UserData)
+                cla
+                STG(hObject, eventdata, handles)
             elseif gcbo==SS_OK_pushbutton
                 for trac=1:lb_num_strings
                     [dummy,conv_ok]=str2num(char(lb_strings{trac}));
@@ -2479,7 +2484,7 @@ elseif strcmp(varargin{2}.Key,'downarrow')
     drawnow;
     %STG_UserData.marked=cell(1,STG_UserData.num_trains);
     for trac=STG_UserData.num_trains : -1 : 2
-        STG_UserData.marked{trac} = [numel(STG_UserData.STG_spikes{trac}) - numel(STG_UserData.marked{trac-1}) + 1 : numel(STG_UserData.STG_spikes{trac})];
+        STG_UserData.marked{trac} = numel(STG_UserData.STG_spikes{trac}) - numel(STG_UserData.marked{trac-1}) + 1 : numel(STG_UserData.STG_spikes{trac});
     end
     STG_UserData.marked{1} = [];
     set(STG_UserData.fh,'Userdata',STG_UserData)
