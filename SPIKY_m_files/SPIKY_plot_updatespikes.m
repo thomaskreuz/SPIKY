@@ -299,20 +299,20 @@ else
 end
 
 spike_cmenu = uicontextmenu;
-spike_lh=zeros(d_para.num_trains,max(d_para.num_spikes),'single');
+spike_lh=cell(1,d_para.num_trains);
 image_mh=zeros(1);
 if d_para.num_total_spikes<d_para.max_total_spikes
     if f_para.spike_train_color_coding_mode>1 && mod(f_para.spike_col,2)>0
         for trac=1:d_para.num_trains
             for sc=1:d_para.num_spikes(trac)
-                spike_lh(trac,sc)=line(spikes{trac}(sc)*ones(1,2),0.05+(d_para.num_trains-1-(trac-1)+[0.05 0.95])/d_para.num_trains,...
+                spike_lh{trac}(sc)=line(spikes{trac}(sc)*ones(1,2),0.05+(d_para.num_trains-1-(trac-1)+[0.05 0.95])/d_para.num_trains,...
                     'Color',dcols(trac,:),'LineStyle',p_para.spike_ls,'LineWidth',p_para.spike_lw,'UIContextMenu',spike_cmenu);
             end
         end
     else
         for trac=1:d_para.num_trains
             for sc=1:d_para.num_spikes(trac)
-                spike_lh(trac,sc)=line(spikes{trac}(sc)*ones(1,2),0.05+(d_para.num_trains-1-(trac-1)+[0.05 0.95])/d_para.num_trains,...
+                spike_lh{trac}(sc)=line(spikes{trac}(sc)*ones(1,2),0.05+(d_para.num_trains-1-(trac-1)+[0.05 0.95])/d_para.num_trains,...
                     'Color',p_para.spike_col,'LineStyle',p_para.spike_ls,'LineWidth',p_para.spike_lw,'UIContextMenu',spike_cmenu);
             end
         end

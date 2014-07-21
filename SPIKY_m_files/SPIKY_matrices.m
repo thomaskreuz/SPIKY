@@ -134,6 +134,13 @@ if m_para.memo_num_measures>0                                               % ##
         disp(['Number of matrix loop runs: ',num2str(r_para.num_runs)])
         pwbh = waitbar(0,'Large data set. Please be patient.','CreateCancelBtn','setappdata(gcbf,''canceling'',1)');
         setappdata(pwbh,'canceling',0)
+        if m_para.num_pico_measures>0
+            min_ruc=find(m_res.cum_isi(r_para.run_pico_ends+1)>=f_para.tmin,1,'first');
+            max_ruc=find(m_res.cum_isi(r_para.run_pico_ends+1)<=f_para.tmax,1,'last');
+        else
+            min_ruc=find(m_res.pili_supi(r_para.run_pili_ends)>=f_para.tmin,1,'first');
+            max_ruc=find(m_res.pili_supi(r_para.run_pili_ends)<=f_para.tmax,1,'last');
+        end
     end
     for ruc=1:r_para.num_runs
         if r_para.num_runs>1 && getappdata(pwbh,'canceling')

@@ -48,6 +48,12 @@ uicontrol(SM2_OK_pushbutton)
 
 figure(f_para.num_fig);
 if isfield(d_para,'thick_markers')
+    if ~isempty(d_para.thick_markers)
+        thick_mar_lh=getappdata(handles.figure1,'thick_mar_lh');
+        for lhc=1:length(thick_mar_lh)
+            set(thick_mar_lh,'Visible','off')
+        end
+    end
     set(SM1_edit,'String',regexprep(num2str(d_para.thick_markers),'\s+',' '))
     SM1_UserData.lh=zeros(1,length(d_para.thick_markers));
     for lhc=1:length(d_para.thick_markers)
@@ -57,6 +63,12 @@ if isfield(d_para,'thick_markers')
     SM1_UserData.thick_markers=d_para.thick_markers;
 else
     SM1_UserData.thick_markers=[];
+end
+if isfield(d_para,'thin_markers') && ~isempty(d_para.thin_markers)
+    thin_mar_lh=getappdata(handles.figure1,'thin_mar_lh');
+    for lhc=1:length(thin_mar_lh)
+        set(thin_mar_lh,'Visible','off')
+    end
 end
 SM1_UserData.fh=gcf;
 SM1_UserData.ah=gca;
@@ -77,7 +89,9 @@ SM1_UserData.um=uimenu(SM1_UserData.cm,'label','Delete thick marker(s)','CallBac
 set(SM1_UserData.fh,'WindowButtonMotionFcn',{@SM1_get_coordinates,SM1_UserData},'KeyPressFcn',{@SM1_keyboard,SM1_UserData});
 set(SM1_UserData.lh,'ButtonDownFcn',{@SM1_start_move_thick_markers,SM1_UserData},'UIContextMenu',SM1_UserData.cm)
 set(SM1_UserData.ah,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
-set(SM1_UserData.spike_lh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+for trac=1:d_para.num_trains
+    set(SM1_UserData.spike_lh{trac},'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+end
 set(SM1_UserData.image_mh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
 set(SM1_UserData.fh,'Userdata',SM1_UserData)
 
@@ -197,7 +211,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
         set(SM1_UserData.fh,'WindowButtonMotionFcn',{@SM1_get_coordinates,SM1_UserData},'KeyPressFcn',{@SM1_keyboard,SM1_UserData})
         set(SM1_UserData.lh,'ButtonDownFcn',{@SM1_start_move_thick_markers,SM1_UserData},'UIContextMenu',SM1_UserData.cm)
         set(SM1_UserData.ah,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
-        set(SM1_UserData.spike_lh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SM1_UserData.spike_lh{trac},'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+        end
         set(SM1_UserData.image_mh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
         set(SM1_UserData.fh,'Userdata',SM1_UserData)
     end
@@ -236,7 +252,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
         set(SM1_UserData.fh,'WindowButtonMotionFcn',{@SM1_get_coordinates,SM1_UserData},'KeyPressFcn',{@SM1_keyboard,SM1_UserData})
         set(SM1_UserData.lh,'ButtonDownFcn',{@SM1_start_move_thick_markers,SM1_UserData},'UIContextMenu',SM1_UserData.cm)
         set(SM1_UserData.ah,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
-        set(SM1_UserData.spike_lh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SM1_UserData.spike_lh{trac},'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+        end
         set(SM1_UserData.image_mh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
         set(SM1_UserData.fh,'Userdata',SM1_UserData)
     end
@@ -271,7 +289,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(SM1_UserData.fh,'WindowButtonMotionFcn',{@SM1_get_coordinates,SM1_UserData},'KeyPressFcn',{@SM1_keyboard,SM1_UserData})
                 set(SM1_UserData.lh,'ButtonDownFcn',{@SM1_start_move_thick_markers,SM1_UserData},'UIContextMenu',SM1_UserData.cm)
                 set(SM1_UserData.ah,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
-                set(SM1_UserData.spike_lh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM1_UserData.spike_lh{trac},'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+                end
                 set(SM1_UserData.image_mh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
                 set(SM1_UserData.fh,'Userdata',SM1_UserData)
             end
@@ -289,7 +309,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
             end
             set(SM1_UserData.fh,'WindowButtonMotionFcn',{@SM1_move_thick_markers,SM1_UserData})
             set(SM1_UserData.ah,'ButtonDownFcn','')
-            set(SM1_UserData.spike_lh,'ButtonDownFcn','')
+            for trac=1:d_para.num_trains
+                set(SM1_UserData.spike_lh{trac},'ButtonDownFcn','')
+            end
             set(SM1_UserData.image_mh,'ButtonDownFcn','')
             set(SM1_UserData.fh,'Userdata',SM1_UserData)
         end
@@ -370,7 +392,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
             'WindowButtonUpFcn',[])
         set(SM1_UserData.lh,'ButtonDownFcn',{@SM1_start_move_thick_markers,SM1_UserData},'UIContextMenu',SM1_UserData.cm)
         set(SM1_UserData.ah,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
-        set(SM1_UserData.spike_lh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SM1_UserData.spike_lh{trac},'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+        end
         set(SM1_UserData.image_mh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
         set(SM1_UserData.fh,'Userdata',SM1_UserData)
     end
@@ -408,7 +432,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(SM1_UserData.fh,'WindowButtonMotionFcn',{@SM1_get_coordinates,SM1_UserData},'KeyPressFcn',{@SM1_keyboard,SM1_UserData})
                 set(SM1_UserData.lh,'ButtonDownFcn',{@SM1_start_move_thick_markers,SM1_UserData},'UIContextMenu',SM1_UserData.cm)
                 set(SM1_UserData.ah,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
-                set(SM1_UserData.spike_lh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM1_UserData.spike_lh{trac},'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+                end
                 set(SM1_UserData.image_mh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
                 set(SM1_UserData.fh,'Userdata',SM1_UserData)
             end
@@ -429,7 +455,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(SM1_UserData.fh,'WindowButtonMotionFcn',{@SM1_get_coordinates,SM1_UserData},'KeyPressFcn',{@SM1_keyboard,SM1_UserData})
                 set(SM1_UserData.lh,'ButtonDownFcn',{@SM1_start_move_thick_markers,SM1_UserData},'UIContextMenu',SM1_UserData.cm)
                 set(SM1_UserData.ah,'ButtonDownFcn',{@SM1_start_pick,SM1_UserData})
-                set(SM1_UserData.spike_lh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM1_UserData.spike_lh{trac},'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+                end
                 set(SM1_UserData.image_mh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
                 set(SM1_UserData.fh,'Userdata',SM1_UserData)
             end
@@ -451,7 +479,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 SM1_UserData.initial_XPos=round(ax_pos(1,1)/SM1_UserData.dts)*SM1_UserData.dts;
                 SM1_UserData.initial_XData=ax_x;
                 set(SM1_UserData.ah,'ButtonDownFcn','')
-                set(SM1_UserData.spike_lh,'ButtonDownFcn','')
+                for trac=1:d_para.num_trains
+                    set(SM1_UserData.spike_lh{trac},'ButtonDownFcn','')
+                end
                 set(SM1_UserData.image_mh,'ButtonDownFcn','')
                 set(SM1_UserData.fh,'WindowButtonMotionFcn',{@SM1_move_thick_markers,SM1_UserData})
                 set(SM1_UserData.fh,'Userdata',SM1_UserData)
@@ -535,7 +565,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(SM1_UserData.fh,'WindowButtonMotionFcn',{@SM1_get_coordinates,SM1_UserData},'KeyPressFcn',{@SM1_keyboard,SM1_UserData})
                 set(SM1_UserData.lh,'ButtonDownFcn',{@SM1_start_move_thick_markers,SM1_UserData},'UIContextMenu',SM1_UserData.cm)
                 set(SM1_UserData.ah,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
-                set(SM1_UserData.spike_lh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM1_UserData.spike_lh{trac},'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+                end
                 set(SM1_UserData.image_mh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
                 set(SM1_UserData.fh,'Userdata',SM1_UserData)
             elseif gcbo==SM1_Cancel_pushbutton || gcbo==SM_fig
@@ -544,7 +576,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(SM1_UserData.fh,'WindowButtonMotionFcn',[],'WindowButtonUpFcn',[],'KeyPressFcn',[])
                 set(SM1_UserData.lh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SM1_UserData.ah,'ButtonDownFcn',[],'UIContextMenu',[])
-                set(SM1_UserData.spike_lh,'ButtonDownFcn',[],'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM1_UserData.spike_lh{trac},'ButtonDownFcn','','UIContextMenu',[])
+                end
                 set(SM1_UserData.image_mh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 delete(SM_fig)
@@ -590,7 +624,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(SM1_UserData.fh,'WindowButtonMotionFcn',{@SM1_get_coordinates,SM1_UserData},'KeyPressFcn',{@SM1_keyboard,SM1_UserData})
                 set(SM1_UserData.lh,'ButtonDownFcn',{@SM1_start_move_thick_markers,SM1_UserData},'UIContextMenu',SM1_UserData.cm)
                 set(SM1_UserData.ah,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
-                set(SM1_UserData.spike_lh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM1_UserData.spike_lh{trac},'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
+                end
                 set(SM1_UserData.image_mh,'ButtonDownFcn',{@SM1_pick_thick_markers,SM1_UserData},'UIContextMenu',[])
                 set(SM1_UserData.fh,'Userdata',SM1_UserData)
             else
@@ -626,7 +662,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(SM1_UserData.fh,'WindowButtonMotionFcn',[],'WindowButtonUpFcn',[],'KeyPressFcn',[])
                 set(SM1_UserData.lh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SM1_UserData.ah,'ButtonDownFcn',[],'UIContextMenu',[])
-                set(SM1_UserData.spike_lh,'ButtonDownFcn',[],'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM1_UserData.spike_lh{trac},'ButtonDownFcn','','UIContextMenu',[])
+                end
                 set(SM1_UserData.image_mh,'ButtonDownFcn',[],'UIContextMenu',[])
 
                 % ########################################################
@@ -660,7 +698,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(SM2_UserData.fh,'WindowButtonMotionFcn',{@SM2_get_coordinates,SM2_UserData},'KeyPressFcn',{@SM2_keyboard,SM2_UserData});
                 set(SM2_UserData.lh,'ButtonDownFcn',{@SM2_start_move_thin_markers,SM2_UserData},'UIContextMenu',SM2_UserData.cm)
                 set(SM2_UserData.ah,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
-                set(SM2_UserData.spike_lh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM2_UserData.spike_lh{trac},'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+                end
                 set(SM2_UserData.image_mh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
                 set(SM2_UserData.fh,'Userdata',SM2_UserData)
             end
@@ -787,7 +827,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
         set(SM2_UserData.fh,'WindowButtonMotionFcn',{@SM2_get_coordinates,SM2_UserData},'KeyPressFcn',{@SM2_keyboard,SM2_UserData})
         set(SM2_UserData.lh,'ButtonDownFcn',{@SM2_start_move_thin_markers,SM2_UserData},'UIContextMenu',SM2_UserData.cm)
         set(SM2_UserData.ah,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
-        set(SM2_UserData.spike_lh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SM2_UserData.spike_lh{trac},'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+        end
         set(SM2_UserData.image_mh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
         set(SM2_UserData.fh,'Userdata',SM2_UserData)
     end
@@ -826,7 +868,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
         set(SM2_UserData.fh,'WindowButtonMotionFcn',{@SM2_get_coordinates,SM2_UserData},'KeyPressFcn',{@SM2_keyboard,SM2_UserData})
         set(SM2_UserData.lh,'ButtonDownFcn',{@SM2_start_move_thin_markers,SM2_UserData},'UIContextMenu',SM2_UserData.cm)
         set(SM2_UserData.ah,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
-        set(SM2_UserData.spike_lh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SM2_UserData.spike_lh{trac},'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+        end
         set(SM2_UserData.image_mh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
         set(SM2_UserData.fh,'Userdata',SM2_UserData)
     end
@@ -861,7 +905,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(SM2_UserData.fh,'WindowButtonMotionFcn',{@SM2_get_coordinates,SM2_UserData},'KeyPressFcn',{@SM2_keyboard,SM2_UserData})
                 set(SM2_UserData.lh,'ButtonDownFcn',{@SM2_start_move_thin_markers,SM2_UserData},'UIContextMenu',SM2_UserData.cm)
                 set(SM2_UserData.ah,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
-                set(SM2_UserData.spike_lh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM2_UserData.spike_lh{trac},'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+                end
                 set(SM2_UserData.image_mh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
                 set(SM2_UserData.fh,'Userdata',SM2_UserData)
             end
@@ -879,7 +925,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
             end
             set(SM2_UserData.fh,'WindowButtonMotionFcn',{@SM2_move_thin_markers,SM2_UserData})
             set(SM2_UserData.ah,'ButtonDownFcn','')
-            set(SM2_UserData.spike_lh,'ButtonDownFcn','')
+            for trac=1:d_para.num_trains
+                set(SM2_UserData.spike_lh{trac},'ButtonDownFcn','','UIContextMenu',[])
+            end
             set(SM2_UserData.image_mh,'ButtonDownFcn','')
             set(SM2_UserData.fh,'Userdata',SM2_UserData)
         end
@@ -960,7 +1008,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
             'WindowButtonUpFcn',[])
         set(SM2_UserData.lh,'ButtonDownFcn',{@SM2_start_move_thin_markers,SM2_UserData},'UIContextMenu',SM2_UserData.cm)
         set(SM2_UserData.ah,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
-        set(SM2_UserData.spike_lh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SM2_UserData.spike_lh{trac},'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+        end
         set(SM2_UserData.image_mh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
         set(SM2_UserData.fh,'Userdata',SM2_UserData)
     end
@@ -998,7 +1048,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(SM2_UserData.fh,'WindowButtonMotionFcn',{@SM2_get_coordinates,SM2_UserData},'KeyPressFcn',{@SM2_keyboard,SM2_UserData})
                 set(SM2_UserData.lh,'ButtonDownFcn',{@SM2_start_move_thin_markers,SM2_UserData},'UIContextMenu',SM2_UserData.cm)
                 set(SM2_UserData.ah,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
-                set(SM2_UserData.spike_lh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM2_UserData.spike_lh{trac},'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+                end
                 set(SM2_UserData.image_mh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
                 set(SM2_UserData.fh,'Userdata',SM2_UserData)
             end
@@ -1019,7 +1071,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(SM2_UserData.fh,'WindowButtonMotionFcn',{@SM2_get_coordinates,SM2_UserData},'KeyPressFcn',{@SM2_keyboard,SM2_UserData})
                 set(SM2_UserData.lh,'ButtonDownFcn',{@SM2_start_move_thin_markers,SM2_UserData},'UIContextMenu',SM2_UserData.cm)
                 set(SM2_UserData.ah,'ButtonDownFcn',{@SM2_start_pick,SM2_UserData})
-                set(SM2_UserData.spike_lh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM2_UserData.spike_lh{trac},'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+                end
                 set(SM2_UserData.image_mh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
                 set(SM2_UserData.fh,'Userdata',SM2_UserData)
             end
@@ -1041,7 +1095,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 SM2_UserData.initial_XPos=round(ax_pos(1,1)/SM2_UserData.dts)*SM2_UserData.dts;
                 SM2_UserData.initial_XData=ax_x;
                 set(SM2_UserData.ah,'ButtonDownFcn','')
-                set(SM2_UserData.spike_lh,'ButtonDownFcn','')
+                for trac=1:d_para.num_trains
+                    set(SM2_UserData.spike_lh{trac},'ButtonDownFcn','','UIContextMenu',[])
+                end
                 set(SM2_UserData.image_mh,'ButtonDownFcn','')
                 set(SM2_UserData.fh,'WindowButtonMotionFcn',{@SM2_move_thin_markers,SM2_UserData})
                 set(SM2_UserData.fh,'Userdata',SM2_UserData)
@@ -1125,7 +1181,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(SM2_UserData.fh,'WindowButtonMotionFcn',{@SM2_get_coordinates,SM2_UserData},'KeyPressFcn',{@SM2_keyboard,SM2_UserData})
                 set(SM2_UserData.lh,'ButtonDownFcn',{@SM2_start_move_thin_markers,SM2_UserData},'UIContextMenu',SM2_UserData.cm)
                 set(SM2_UserData.ah,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
-                set(SM2_UserData.spike_lh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM2_UserData.spike_lh{trac},'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+                end
                 set(SM2_UserData.image_mh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
                 set(SM2_UserData.fh,'Userdata',SM2_UserData)
             elseif gcbo==SM2_Cancel_pushbutton || gcbo==SM_fig
@@ -1134,7 +1192,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(SM2_UserData.fh,'WindowButtonMotionFcn',[],'WindowButtonUpFcn',[],'KeyPressFcn',[])
                 set(SM2_UserData.lh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SM2_UserData.ah,'ButtonDownFcn',[],'UIContextMenu',[])
-                set(SM2_UserData.spike_lh,'ButtonDownFcn',[],'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM2_UserData.spike_lh{trac},'ButtonDownFcn',[],'UIContextMenu',[])
+                end
                 set(SM2_UserData.image_mh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SM2_UserData.fh,'Userdata',SM2_UserData)
                 delete(SM_fig)
@@ -1178,7 +1238,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 set(SM2_UserData.fh,'WindowButtonMotionFcn',{@SM2_get_coordinates,SM2_UserData},'KeyPressFcn',{@SM2_keyboard,SM2_UserData})
                 set(SM2_UserData.lh,'ButtonDownFcn',{@SM2_start_move_thin_markers,SM2_UserData},'UIContextMenu',SM2_UserData.cm)
                 set(SM2_UserData.ah,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
-                set(SM2_UserData.spike_lh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM2_UserData.spike_lh{trac},'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
+                end
                 set(SM2_UserData.image_mh,'ButtonDownFcn',{@SM2_pick_thin_markers,SM2_UserData},'UIContextMenu',[])
                 set(SM2_UserData.fh,'Userdata',SM2_UserData)
             else
@@ -1196,7 +1258,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
                 SM2_UserData.um=[];
                 set(SM2_UserData.fh,'WindowButtonMotionFcn',[],'WindowButtonUpFcn',[],'KeyPressFcn',[])
                 set(SM2_UserData.ah,'ButtonDownFcn',[],'UIContextMenu',[])
-                set(SM2_UserData.spike_lh,'ButtonDownFcn',[],'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SM2_UserData.spike_lh{trac},'ButtonDownFcn','','UIContextMenu',[])
+                end
                 set(SM2_UserData.image_mh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SM2_UserData.fh,'Userdata',SM2_UserData)
 
@@ -1239,7 +1303,9 @@ set(SM1_UserData.fh,'Userdata',SM1_UserData)
         SM_UserData.um=[];
         set(SM_UserData.fh,'WindowButtonMotionFcn',[],'WindowButtonUpFcn',[],'KeyPressFcn',[])
         set(SM_UserData.ah,'ButtonDownFcn',[],'UIContextMenu',[])
-        set(SM_UserData.spike_lh,'ButtonDownFcn',[],'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SM_UserData.spike_lh{trac},'ButtonDownFcn','','UIContextMenu',[])
+        end
         set(SM_UserData.image_mh,'ButtonDownFcn',[],'UIContextMenu',[])
         set(SM_UserData.tx,'str','');
         set(SM_UserData.fh,'Userdata',[])

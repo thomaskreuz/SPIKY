@@ -55,8 +55,25 @@ thick_separators_str_out=regexprep(num2str(thick_separators),'\s+',' ');
 
 group_sizes_str_in=regexprep(get(handles.dpara_group_sizes_edit,'String'),'\s+',' ');
 group_sizes=str2num(regexprep(group_sizes_str_in,f_para.regexp_str_vector_integers,''));
-group_sizes=group_sizes(group_sizes>0 & group_sizes<d_para.num_trains);
+group_sizes=group_sizes(group_sizes>0);
+group_sizes(group_sizes>d_para.num_trains)=d_para.num_trains;
 group_sizes_str_out=regexprep(num2str(group_sizes),'\s+',' ');
+
+ds=strtrim(get(handles.dpara_group_names_edit,'String'));
+if ~isempty(ds)
+    if ds(end)~=';'
+        ds=[ds,';'];
+    end
+    num_all_train_group_names=length(find(ds==';'));
+    group_names=cell(1,num_all_train_group_names);
+    for strc=1:num_all_train_group_names
+        group_names{strc}=ds(1:find(ds==';',1,'first')-1);
+        ds=ds(find(ds==';',1,'first')+2:end);
+    end
+else
+    group_names='';
+end
+
 
 if ~strcmp(tmin_str_in,tmin_str_out) || ~strcmp(tmax_str_in,tmax_str_out) || ...
         (~strcmp(dts_str_in,dts_str_out) && str2double(dts_str_in)~=str2double(dts_str_out)) || ...
@@ -154,6 +171,7 @@ if tmin_in>=tmax_in
     set(handles.dpara_tmax_edit,'String',num2str(d_para.tmax))
     return
 end
+
 if get(handles.dpara_select_train_mode_popupmenu,'Value')==2 && ~isnumeric(str2num(get(handles.dpara_trains_edit,'String')))
     set(0,'DefaultUIControlFontSize',16);
     mbh=msgbox(sprintf('Please select individual spike trains or select all spike trains!'),'Warning','warn','modal');
@@ -162,9 +180,10 @@ if get(handles.dpara_select_train_mode_popupmenu,'Value')==2 && ~isnumeric(str2n
     mb_pos=get(mbh,'Position');
     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
     uiwait(mbh);
-    set(handles.dpara_trains_edit,'String',[])   % ,'Enable','off'
+    set(handles.dpara_trains_edit,'String',[])
     return
 end
+
 if get(handles.dpara_select_train_mode_popupmenu,'Value')==3 && ~isnumeric(str2num(get(handles.dpara_train_groups_edit,'String')))
     set(0,'DefaultUIControlFontSize',16);
     mbh=msgbox(sprintf('Please select spike train groups or select all spike trains!'),'Warning','warn','modal');
@@ -173,6 +192,31 @@ if get(handles.dpara_select_train_mode_popupmenu,'Value')==3 && ~isnumeric(str2n
     mb_pos=get(mbh,'Position');
     set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
     uiwait(mbh);
-    set(handles.dpara_train_groups_edit,'String',[])   % ,'Enable','off'
+    set(handles.dpara_train_groups_edit,'String',[])
     return
 end
+
+if ~isempty(group_sizes) && sum(group_sizes)~=d_para.num_trains
+    set(0,'DefaultUIControlFontSize',16);
+    mbh=msgbox(sprintf('The group sizes must add up to the number of selected spike trains!'),'Warning','warn','modal');
+    htxt=findobj(mbh,'Type','text');
+    set(htxt,'FontSize',12,'FontWeight','bold')
+    mb_pos=get(mbh,'Position');
+    set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
+    uiwait(mbh);
+    set(handles.dpara_group_sizes_edit,'String',[])
+    return
+end
+
+if length(group_sizes)~=length(group_names)
+    set(0,'DefaultUIControlFontSize',16);
+    mbh=msgbox(sprintf('Number of group sizes must equal number of group names!'),'Warning','warn','modal');
+    htxt=findobj(mbh,'Type','text');
+    set(htxt,'FontSize',12,'FontWeight','bold')
+    mb_pos=get(mbh,'Position');
+    set(mbh,'Position',[mb_pos(1:2) mb_pos(3)*1.5 mb_pos(4)])
+    uiwait(mbh);
+    set(handles.dpara_group_sizes_edit,'String',[])
+    return
+end
+

@@ -35,6 +35,7 @@ dpara_all_train_group_names_str='';
 for strc=1:numel(d_para.all_train_group_names)
     dpara_all_train_group_names_str=[dpara_all_train_group_names_str,char(d_para.all_train_group_names{strc}),'; '];
 end
+
 dpara_all_train_group_names_str=regexprep(dpara_all_train_group_names_str,';\s+','; ');
 set(handles.dpara_group_names_edit,'String',regexprep(dpara_all_train_group_names_str,'\s+',' '),'Enable','on')
 set(handles.dpara_group_sizes_edit,'String',regexprep(num2str(d_para.all_train_group_sizes),'\s+',' '),'Enable','on')

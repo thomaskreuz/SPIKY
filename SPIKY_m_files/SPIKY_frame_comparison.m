@@ -151,6 +151,16 @@ for frc=1:h_para.num_frames
             if max(max(plot_mat))>0
                 set(gca,'CLim',[0 max(max(plot_mat))])
             end
+        elseif f_para.color_norm_mode==4
+            min_mat_val=min(min(min(min(m_res.movie_mat))));
+            max_mat_val=max(max(max(max(m_res.movie_mat))));            
+            if max_mat_val>min_mat_val
+                set(gca,'CLim',[min_mat_val max_mat_val])
+            end
+        elseif f_para.color_norm_mode==5
+            if max(max(plot_mat))>min(min(plot_mat))
+                set(gca,'CLim',[min(min(plot_mat)) max(max(plot_mat))])
+            end
         end
         if matc<=h_para.num_measures
             xlim([0.5 f_para.num_trains+0.5])
@@ -212,7 +222,7 @@ for frc=1:h_para.num_frames
         end
         if h_para.cols(spc)==1 %||
             measure_label_fh(h_para.rows(spc))=text(xl(1)-(0.43-0.1*(max(h_para.cols)>2))*(xl(2)-xl(1)),yl(1)+0.46*(yl(2)-yl(1)),m_res.bi_mat_str{matc},'Visible',p_para.mat_label_vis,...
-                'Color',p_para.mat_label_col,'FontSize',p_para.mat_label_fs+2,'FontWeight','bold','FontAngle',p_para.mat_label_fa,'UIContextMenu',measure_label_cmenu)
+                'Color',p_para.mat_label_col,'FontSize',p_para.mat_label_fs+2,'FontWeight','bold','FontAngle',p_para.mat_label_fa,'UIContextMenu',measure_label_cmenu);
         end
         if matc<=h_para.num_measures % || max(h_para.rows)==1
             if frc<=f_para.num_instants
@@ -413,18 +423,16 @@ if h_para.dendrograms==1
 end
 
 
-
-%
-% if f_para.print_mode                                                                         % Create postscript file
-%     if f_para.publication==1
-%         set(gcf,'PaperOrientation','Portrait');set(gcf,'PaperType', 'A4');
-%         set(gcf,'PaperUnits','Normalized','PaperPosition',[0 0.15 1.0 0.8]);
-%     else
-%         set(gcf,'PaperOrientation','Landscape');set(gcf,'PaperType', 'A4');
-%         set(gcf,'PaperUnits','Normalized','PaperPosition', [0 0 1.0 1.0]);
-%     end
-%     psname=[f_para.imagespath,f_para.filename,f_para.comment_string,'_Matrix_Cuts.ps'];
-%     print(gcf,'-dpsc',psname);
-% end
+if get(handles.print_figures_checkbox,'Value')==1                                                                         % Create postscript file
+    if f_para.publication==1
+        set(gcf,'PaperOrientation','Portrait');set(gcf,'PaperType', 'A4');
+        set(gcf,'PaperUnits','Normalized','PaperPosition',[0 0.15 1.0 0.8]);
+    else
+        set(gcf,'PaperOrientation','Landscape');set(gcf,'PaperType', 'A4');
+        set(gcf,'PaperUnits','Normalized','PaperPosition', [0 0 1.0 1.0]);
+    end
+    psname=[f_para.imagespath,d_para.comment_string,f_para.comment_string,'_Frame_Comparison.ps'];
+    print(gcf,'-dpsc',psname);
+end
 
 

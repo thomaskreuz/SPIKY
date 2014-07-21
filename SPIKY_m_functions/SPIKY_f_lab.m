@@ -1,5 +1,5 @@
 % This function automatically sets the range and the spacing of the axis ticks.
-% origin: set to 1 if zero should be included as value otherwis 0
+% origin: set to 1 if zero should be included as value otherwise 0
 % cut: set to 1 if only values within the range covered by vect2 can be used
 
 function lab=SPIKY_f_lab(vect,num_values,origin,cut)  

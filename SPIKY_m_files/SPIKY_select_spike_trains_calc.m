@@ -377,12 +377,12 @@ end
         d_para.num_trains=length(d_para.preselect_trains);
         d_para.num_allspikes=zeros(1,d_para.num_trains);
         pspikes=cell(1,d_para.num_trains);
-        spike_lh=zeros(d_para.num_trains,max(d_para.num_allspikes),'single');
+        spike_lh=cell(1,d_para.num_trains);
         for trac=1:d_para.num_trains
             pspikes{trac}=round(sort(allspikes{d_para.preselect_trains(trac)})/d_para.dts)*d_para.dts;
             d_para.num_allspikes(trac)=length(pspikes{trac});
             for sc=1:d_para.num_allspikes(trac)
-                spike_lh(trac,sc)=line(pspikes{trac}(sc)*ones(1,2),0.05+(d_para.num_trains-1-(trac-1)+[0.05 0.95])/d_para.num_trains,...
+                spike_lh{trac}(sc)=line(pspikes{trac}(sc)*ones(1,2),0.05+(d_para.num_trains-1-(trac-1)+[0.05 0.95])/d_para.num_trains,...
                     'Color',p_para.spike_col,'LineStyle',p_para.spike_ls,'LineWidth',p_para.spike_lw);
             end
         end

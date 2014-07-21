@@ -89,9 +89,9 @@ if frc<=f_para.num_instants
         for trac=1:f_para.num_trains
             for sc=1:f_para.num_pspikes(trac)
                 if pspikes{trac}(sc)<=f_para.instants(frc)
-                    set(mov_handles.spike_lh(trac,sc),'Visible','on','XData',(pspikes{trac}(sc)+d_para.tmax-f_para.instants(frc))*ones(1,2))
+                    set(mov_handles.spike_lh{trac}(sc),'Visible','on','XData',(pspikes{trac}(sc)+d_para.tmax-f_para.instants(frc))*ones(1,2))
                 else
-                    set(mov_handles.spike_lh(trac,sc),'Visible','off')
+                    set(mov_handles.spike_lh{trac}(sc),'Visible','off')
                 end
             end
         end
@@ -120,7 +120,7 @@ else
         pspikes=get(gca,'UserData');
         for trac=1:f_para.num_trains
             for sc=1:f_para.num_pspikes(trac)
-                set(mov_handles.spike_lh(trac,sc),'Visible','on','XData',pspikes{trac}(sc)*ones(1,2))
+                set(mov_handles.spike_lh{trac}(sc),'Visible','on','XData',pspikes{trac}(sc)*ones(1,2))
             end
         end
         if isfield(mov_handles,'thick_mar_lh')
@@ -364,10 +364,43 @@ for matc=1:h_para.num_all_matrices
     if f_para.color_norm_mode==1
         set(gca,'CLim',[0 1])
     elseif f_para.color_norm_mode==2
-        set(gca,'CLim',[0 max(max(max(m_res.movie_vects)))])   % ######
+        if frc<=f_para.num_instants
+            max_mat_val=max(max(squeeze(m_res.movie_vects(:,:,mi))));
+        elseif frc<=f_para.num_instants+f_para.num_selective_averages*f_para.num_average_frames
+            if savc2==1
+                max_mat_val=max(max(squeeze(m_res.movie_vects_sa(:,:,savc))));
+            end
+        else
+            if tavc2==1
+                max_mat_val=max(max(squeeze(m_res.movie_vects_ta(:,:,tavc))));
+            end
+        end
+        set(gca,'CLim',[0 max_mat_val])
     elseif f_para.color_norm_mode==3
         if max(max(plot_mat))>0
             set(gca,'CLim',[0 max(max(plot_mat))])
+        end
+    elseif f_para.color_norm_mode==4
+        if frc<=f_para.num_instants
+            min_mat_val=min(min(squeeze(m_res.movie_vects(:,:,mi))));
+            max_mat_val=max(max(squeeze(m_res.movie_vects(:,:,mi))));
+        elseif frc<=f_para.num_instants+f_para.num_selective_averages*f_para.num_average_frames
+            if savc2==1
+                min_mat_val=min(min(squeeze(m_res.movie_vects_sa(:,:,savc))));
+                max_mat_val=max(max(squeeze(m_res.movie_vects_sa(:,:,savc))));
+            end
+        else
+            if tavc2==1
+                min_mat_val=min(min(squeeze(m_res.movie_vects_ta(:,:,tavc))));
+                max_mat_val=max(max(squeeze(m_res.movie_vects_ta(:,:,tavc))));
+            end
+        end
+        if max_mat_val>min_mat_val
+            set(gca,'CLim',[min_mat_val max_mat_val])
+        end
+    elseif f_para.color_norm_mode==5
+        if max(max(plot_mat))>min(min(plot_mat))
+            set(gca,'CLim',[min(min(plot_mat)) max(max(plot_mat))])
         end
     end
     if matc<=h_para.num_measures
@@ -464,7 +497,7 @@ for matc=1:h_para.num_all_matrices
     fh_str='mat_tick';
     SPIKY_handle_set_property
     
-    if f_para.colorbar && (matc==h_para.num_all_matrices || f_para.color_norm_mode==3)
+    if f_para.colorbar && (matc==h_para.num_all_matrices || ismember(f_para.color_norm_mode,[3 5]))
         colorbar
         set(gca,'position',h_para.supos(matc,1:4))
     end
@@ -615,6 +648,8 @@ if get(handles.print_figures_checkbox,'Value')==1             % Create postscrip
         if savc2==1
             psname=[f_para.imagespath,d_para.comment_string,f_para.comment_string,'_SelAve',num2str(savc),'.ps'];
             print(gcf,'-dpsc',psname);
+            %pdfname=[f_para.imagespath,d_para.comment_string,f_para.comment_string,'_SelAve',num2str(savc),'.pdf'];
+            %saveas(gcf,pdfname,'pdf');
         end
     else
         if tavc2==1

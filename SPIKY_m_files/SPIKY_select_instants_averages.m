@@ -167,7 +167,9 @@ if isfield(SI_UserData,'lh')
         set(SI_UserData.lh,'ButtonDownFcn',{@SI_start_move_instants,SI_UserData},'UIContextMenu',SI_UserData.cm)    
 end
 set(SI_UserData.ah,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
-set(SI_UserData.spike_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+for trac=1:d_para.num_trains
+    set(SI_UserData.spike_lh{trac},'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+end
 set(SI_UserData.image_mh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
 set(SI_UserData.thin_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
 set(SI_UserData.thick_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
@@ -295,7 +297,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
         set(SI_UserData.fh,'WindowButtonMotionFcn',{@SI_get_coordinates,SI_UserData},'KeyPressFcn',{@SI_keyboard,SI_UserData})
         set(SI_UserData.ah,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
         set(SI_UserData.lh,'ButtonDownFcn',{@SI_start_move_instants,SI_UserData},'UIContextMenu',SI_UserData.cm)
-        set(SI_UserData.spike_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SI_UserData.spike_lh{trac},'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+        end
         set(SI_UserData.image_mh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
         set(SI_UserData.thin_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
         set(SI_UserData.thick_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
@@ -339,7 +343,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
         set(SI_UserData.fh,'WindowButtonMotionFcn',{@SI_get_coordinates,SI_UserData},'KeyPressFcn',{@SI_keyboard,SI_UserData})
         set(SI_UserData.lh,'ButtonDownFcn',{@SI_start_move_instants,SI_UserData},'UIContextMenu',SI_UserData.cm)
         set(SI_UserData.ah,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
-        set(SI_UserData.spike_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SI_UserData.spike_lh{trac},'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+        end
         set(SI_UserData.image_mh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
         set(SI_UserData.thin_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
         set(SI_UserData.thick_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
@@ -379,7 +385,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set(SI_UserData.fh,'WindowButtonMotionFcn',{@SI_get_coordinates,SI_UserData},'KeyPressFcn',{@SI_keyboard,SI_UserData})
                 set(SI_UserData.lh,'ButtonDownFcn',{@SI_start_move_instants,SI_UserData},'UIContextMenu',SI_UserData.cm)
                 set(SI_UserData.ah,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
-                set(SI_UserData.spike_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SI_UserData.spike_lh{trac},'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+                end
                 set(SI_UserData.image_mh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
                 set(SI_UserData.thin_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
                 set(SI_UserData.thick_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
@@ -402,7 +410,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             end
             set(SI_UserData.fh,'WindowButtonMotionFcn',{@SI_move_instants,SI_UserData})
             set(SI_UserData.ah,'ButtonDownFcn','')
-            set(SI_UserData.spike_lh,'ButtonDownFcn','')
+            for trac=1:d_para.num_trains
+                set(SI_UserData.spike_lh{trac},'ButtonDownFcn','')
+            end
             set(SI_UserData.image_mh,'ButtonDownFcn','')
             set(SI_UserData.thin_mar_lh,'ButtonDownFcn','')
             set(SI_UserData.thick_mar_lh,'ButtonDownFcn','')
@@ -488,7 +498,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             'WindowButtonUpFcn',[])
         set(SI_UserData.lh,'ButtonDownFcn',{@SI_start_move_instants,SI_UserData},'UIContextMenu',SI_UserData.cm)
         set(SI_UserData.ah,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
-        set(SI_UserData.spike_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SI_UserData.spike_lh{trac},'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+        end
         set(SI_UserData.image_mh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
         set(SI_UserData.thin_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
         set(SI_UserData.thick_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
@@ -531,7 +543,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set(SI_UserData.fh,'WindowButtonMotionFcn',{@SI_get_coordinates,SI_UserData},'KeyPressFcn',{@SI_keyboard,SI_UserData})
                 set(SI_UserData.lh,'ButtonDownFcn',{@SI_start_move_instants,SI_UserData},'UIContextMenu',SI_UserData.cm)
                 set(SI_UserData.ah,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
-                set(SI_UserData.spike_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SI_UserData.spike_lh{trac},'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+                end
                 set(SI_UserData.image_mh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
                 set(SI_UserData.thin_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
                 set(SI_UserData.thick_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
@@ -557,7 +571,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set(SI_UserData.fh,'WindowButtonMotionFcn',{@SI_get_coordinates,SI_UserData},'KeyPressFcn',{@SI_keyboard,SI_UserData})
                 set(SI_UserData.lh,'ButtonDownFcn',{@SI_start_move_instants,SI_UserData},'UIContextMenu',SI_UserData.cm)
                 set(SI_UserData.ah,'ButtonDownFcn',{@SI_start_pick,SI_UserData},'UIContextMenu',[])
-                set(SI_UserData.spike_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SI_UserData.spike_lh{trac},'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+                end
                 set(SI_UserData.image_mh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
                 set(SI_UserData.thin_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
                 set(SI_UserData.thick_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
@@ -584,7 +600,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 SI_UserData.initial_XPos=round(ax_pos(1,1)/SI_UserData.dts)*SI_UserData.dts;
                 SI_UserData.initial_XData=ax_x;
                 set(SI_UserData.ah,'ButtonDownFcn','')
-                set(SI_UserData.spike_lh,'ButtonDownFcn','')
+                for trac=1:d_para.num_trains
+                    set(SI_UserData.spike_lh{trac},'ButtonDownFcn','')
+                end
                 set(SI_UserData.image_mh,'ButtonDownFcn','')
                 set(SI_UserData.thin_mar_lh,'ButtonDownFcn','')
                 set(SI_UserData.thick_mar_lh,'ButtonDownFcn','')
@@ -690,7 +708,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set(SI_UserData.fh,'WindowButtonMotionFcn',{@SI_get_coordinates,SI_UserData},'KeyPressFcn',{@SI_keyboard,SI_UserData})
                 set(SI_UserData.lh,'ButtonDownFcn',{@SI_start_move_instants,SI_UserData},'UIContextMenu',SI_UserData.cm)
                 set(SI_UserData.ah,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
-                set(SI_UserData.spike_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SI_UserData.spike_lh{trac},'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+                end
                 set(SI_UserData.image_mh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
                 set(SI_UserData.thin_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
                 set(SI_UserData.thick_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
@@ -704,7 +724,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set(SI_UserData.fh,'WindowButtonMotionFcn',[],'WindowButtonUpFcn',[],'KeyPressFcn',[])
                 set(SI_UserData.lh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SI_UserData.ah,'ButtonDownFcn',[],'UIContextMenu',[])
-                set(SI_UserData.spike_lh,'ButtonDownFcn',[],'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SI_UserData.spike_lh{trac},'ButtonDownFcn',[],'UIContextMenu',[])
+                end
                 set(SI_UserData.image_mh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SI_UserData.thin_mar_lh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SI_UserData.thick_mar_lh,'ButtonDownFcn',[],'UIContextMenu',[])
@@ -749,7 +771,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set(SI_UserData.fh,'WindowButtonMotionFcn',{@SI_get_coordinates,SI_UserData},'KeyPressFcn',{@SI_keyboard,SI_UserData})
                 set(SI_UserData.lh,'ButtonDownFcn',{@SI_start_move_instants,SI_UserData},'UIContextMenu',SI_UserData.cm)
                 set(SI_UserData.ah,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
-                set(SI_UserData.spike_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SI_UserData.spike_lh{trac},'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
+                end
                 set(SI_UserData.image_mh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
                 set(SI_UserData.thin_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
                 set(SI_UserData.thick_mar_lh,'ButtonDownFcn',{@SI_pick_instants,SI_UserData},'UIContextMenu',[])
@@ -783,7 +807,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set(SI_UserData.fh,'WindowButtonMotionFcn',[],'WindowButtonUpFcn',[],'KeyPressFcn',[])
                 set(SI_UserData.lh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SI_UserData.ah,'ButtonDownFcn',[],'UIContextMenu',[])
-                set(SI_UserData.spike_lh,'ButtonDownFcn',[],'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SI_UserData.spike_lh{trac},'ButtonDownFcn',[],'UIContextMenu',[])
+                end
                 set(SI_UserData.image_mh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SI_UserData.thin_mar_lh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SI_UserData.thick_mar_lh,'ButtonDownFcn',[],'UIContextMenu',[])
@@ -885,6 +911,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 
 %                 set(SSA_UserData.fh,'Interruptible','off','BusyAction','cancel');
 %                 set(SSA_UserData.ah,'Interruptible','off','BusyAction','cancel');
+%                 for trac=1:d_para.num_trains
+%                     set(SSA_UserData.spike_lh{trac},'Interruptible','off','BusyAction','cancel')
+%                 end
 %                 set(SSA_UserData.spike_lh,'Interruptible','off','BusyAction','cancel')
 %                 set(SSA_UserData.image_mh,'Interruptible','off','BusyAction','cancel')
 %                 set(SSA_UserData.thin_mar_lh,'Interruptible','off','BusyAction','cancel')
@@ -922,7 +951,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                     set([SSA_UserData.lh{lb_pos}],'ButtonDownFcn',{@SSA_start_move_selave,SSA_UserData},'UIContextMenu',SSA_UserData.cm)
                 end
                 set(SSA_UserData.ah,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
-                set(SSA_UserData.spike_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+                for trac=1:d_para.num_trains
+                    set(SSA_UserData.spike_lh{trac},'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+                end
                 set(SSA_UserData.image_mh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
                 set(SSA_UserData.thin_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
                 set(SSA_UserData.thick_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
@@ -1107,7 +1138,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             set([SSA_UserData.lh{lb_pos}],'ButtonDownFcn',{@SSA_start_move_selave,SSA_UserData},'UIContextMenu',SSA_UserData.cm)
         end
         set(SSA_UserData.ah,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
-        set(SSA_UserData.spike_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+        for trac=1:d_para.num_trains
+            set(SSA_UserData.spike_lh{trac},'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+        end
         set(SSA_UserData.image_mh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
         set(SSA_UserData.thin_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
         set(SSA_UserData.thick_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
@@ -1231,7 +1264,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                     set(SSA_UserData.fh,'WindowButtonMotionFcn',{@SSA_set_selave,SSA_UserData},...
                         'WindowButtonUpFcn',{@SSA_end_selave,SSA_UserData},'Interruptible','off','BusyAction','cancel')
                     set(SSA_UserData.ah,'ButtonDownFcn','','Interruptible','off','BusyAction','cancel')
-                    set(SSA_UserData.spike_lh,'ButtonDownFcn','','Interruptible','off','BusyAction','cancel')
+                    for trac=1:d_para.num_trains
+                        set(SSA_UserData.spike_lh{trac},'ButtonDownFcn','','Interruptible','off','BusyAction','cancel')
+                    end
                     set(SSA_UserData.image_mh,'ButtonDownFcn','','Interruptible','off','BusyAction','cancel')
                     set(SSA_UserData.thin_mar_lh,'ButtonDownFcn','','Interruptible','off','BusyAction','cancel')
                     set(SSA_UserData.thick_mar_lh,'ButtonDownFcn','','Interruptible','off','BusyAction','cancel')
@@ -1302,7 +1337,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                     set(SSA_UserData.lh{lb_pos}(SSA_UserData.marked_indy),'ButtonDownFcn',{@SSA_start_move_selave,SSA_UserData},'UIContextMenu',SSA_UserData.cm)
                 end
                 set(SSA_UserData.ah,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
-                set(SSA_UserData.spike_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+                for trac=1:d_para.num_trains
+                    set(SSA_UserData.spike_lh{trac},'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+                end
                 set(SSA_UserData.image_mh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
                 set(SSA_UserData.thin_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
                 set(SSA_UserData.thick_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
@@ -1431,7 +1468,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
         set([SSA_UserData.lh{:}],'ButtonDownFcn',[])
         set([SSA_UserData.lh{lb_pos}],'ButtonDownFcn',{@SSA_start_move_selave,SSA_UserData},'UIContextMenu',SSA_UserData.cm)
         set(SSA_UserData.ah,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData},'Interruptible','on')
-        set(SSA_UserData.spike_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData},'Interruptible','on')
+        for trac=1:d_para.num_trains
+            set(SSA_UserData.spike_lh{trac},'ButtonDownFcn',{@SSA_start_selave,SSA_UserData},'Interruptible','on')
+        end
         set(SSA_UserData.image_mh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData},'Interruptible','on')
         set(SSA_UserData.thin_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData},'Interruptible','on')
         set(SSA_UserData.thick_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData},'Interruptible','on')
@@ -1513,7 +1552,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             set([SSA_UserData.lh{lb_pos}],'ButtonDownFcn',{@SSA_start_move_selave,SSA_UserData},'UIContextMenu',SSA_UserData.cm)
         end
         set(SSA_UserData.ah,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
-        set(SSA_UserData.spike_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+        for trac=1:d_para.num_trains
+            set(SSA_UserData.spike_lh{trac},'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+        end
         set(SSA_UserData.image_mh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
         set(SSA_UserData.thin_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
         set(SSA_UserData.thick_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
@@ -1546,7 +1587,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set([SSA_UserData.lh{:}],'ButtonDownFcn',[])
                 set([SSA_UserData.lh{lb_pos}],'ButtonDownFcn',{@SSA_start_move_selave,SSA_UserData},'UIContextMenu',SSA_UserData.cm)
                 set(SSA_UserData.ah,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
-                set(SSA_UserData.spike_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+                for trac=1:d_para.num_trains
+                    set(SSA_UserData.spike_lh{trac},'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+                end
                 set(SSA_UserData.image_mh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
                 set(SSA_UserData.thin_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
                 set(SSA_UserData.thick_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
@@ -1586,7 +1629,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             SSA_UserData.flag=0;
             set(SSA_UserData.fh,'WindowButtonMotionFcn',{@SSA_move_selave,SSA_UserData})
             set(SSA_UserData.ah,'ButtonDownFcn','')
-            set(SSA_UserData.spike_lh,'ButtonDownFcn','')
+            for trac=1:d_para.num_trains
+                set(SSA_UserData.spike_lh{trac},'ButtonDownFcn','')
+            end
             set(SSA_UserData.image_mh,'ButtonDownFcn','')
             set(SSA_UserData.thin_mar_lh,'ButtonDownFcn','')
             set(SSA_UserData.thick_mar_lh,'ButtonDownFcn','')
@@ -1730,7 +1775,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             set([SSA_UserData.lh{lb_pos}],'ButtonDownFcn',{@SSA_start_move_selave,SSA_UserData},'UIContextMenu',SSA_UserData.cm)
         end
         set(SSA_UserData.ah,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
-        set(SSA_UserData.spike_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+        for trac=1:d_para.num_trains
+            set(SSA_UserData.spike_lh{trac},'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+        end
         set(SSA_UserData.image_mh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
         set(SSA_UserData.thin_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
         set(SSA_UserData.thick_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
@@ -1816,7 +1863,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set([SSA_UserData.lh{lb_pos}],'ButtonDownFcn',{@SSA_start_move_selave,SSA_UserData},'UIContextMenu',SSA_UserData.cm)
             end
             set(SSA_UserData.ah,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
-            set(SSA_UserData.spike_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+            for trac=1:d_para.num_trains
+                set(SSA_UserData.spike_lh{trac},'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+            end
             set(SSA_UserData.image_mh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
             set(SSA_UserData.thin_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
             set(SSA_UserData.thick_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
@@ -1841,7 +1890,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set([SSA_UserData.lh{:}],'ButtonDownFcn',[])
                 set([SSA_UserData.lh{lb_pos}],'ButtonDownFcn',{@SSA_start_move_selave,SSA_UserData},'UIContextMenu',SSA_UserData.cm)
                 set(SSA_UserData.ah,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
-                set(SSA_UserData.spike_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+                for trac=1:d_para.num_trains
+                    set(SSA_UserData.spike_lh{trac},'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+                end
                 set(SSA_UserData.image_mh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
                 set(SSA_UserData.thin_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
                 set(SSA_UserData.thick_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
@@ -1872,7 +1923,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set(SSA_UserData.fh,'Userdata',SSA_UserData)
                 set(SSA_UserData.fh,'WindowButtonMotionFcn',{@SSA_move_selave,SSA_UserData},'WindowButtonUpFcn',{@SSA_stop_move_selave,SSA_UserData})
                 set(SSA_UserData.ah,'ButtonDownFcn','')
-                set(SSA_UserData.spike_lh,'ButtonDownFcn','')
+                for trac=1:d_para.num_trains
+                    set(SSA_UserData.spike_lh{trac},'ButtonDownFcn','')
+                end
                 set(SSA_UserData.image_mh,'ButtonDownFcn','')
                 set(SSA_UserData.thin_mar_lh,'ButtonDownFcn','')
                 set(SSA_UserData.thick_mar_lh,'ButtonDownFcn','')
@@ -2042,7 +2095,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             set(SSA_UserData.um,'CallBack',{@SSA_delete_selave,SSA_UserData})
             set(SSA_UserData.fh,'WindowButtonMotionFcn',{@SSA_get_coordinates,SSA_UserData},'KeyPressFcn',{@SSA_keyboard,SSA_UserData})
             set(SSA_UserData.ah,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
-            set(SSA_UserData.spike_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+            for trac=1:d_para.num_trains
+                set(SSA_UserData.spike_lh{trac},'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
+            end
             set(SSA_UserData.image_mh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
             set(SSA_UserData.thin_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
             set(SSA_UserData.thick_mar_lh,'ButtonDownFcn',{@SSA_start_selave,SSA_UserData})
@@ -2171,7 +2226,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             figure(f_para.num_fig);
             set(STA_UserData.fh,'Interruptible','on');
             set(STA_UserData.ah,'Interruptible','on');
-            set(STA_UserData.spike_lh,'Interruptible','on')
+            for trac=1:d_para.num_trains
+                set(STA_UserData.spike_lh{trac},'Interruptible','on')
+            end
             set(STA_UserData.image_mh,'Interruptible','on')
             set(STA_UserData.thin_mar_lh,'Interruptible','on')
             set(STA_UserData.thick_mar_lh,'Interruptible','on')
@@ -2244,7 +2301,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set(STA_UserData.lh{lb_pos},'ButtonDownFcn',{@STA_start_move_trigave,STA_UserData},'UIContextMenu',STA_UserData.cm)
             end
             set(STA_UserData.ah,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData},'UIContextMenu',[])
-            set(STA_UserData.spike_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData},'UIContextMenu',[])
+            for trac=1:d_para.num_trains
+                set(STA_UserData.spike_lh{trac},'ButtonDownFcn',{@STA_pick_trigave,STA_UserData},'UIContextMenu',[])
+            end
             set(STA_UserData.image_mh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData},'UIContextMenu',[])
             set(STA_UserData.thin_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData},'UIContextMenu',[])
             set(STA_UserData.thick_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData},'UIContextMenu',[])
@@ -2395,7 +2454,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             set(STA_UserData.lh{lb_pos},'ButtonDownFcn',{@STA_start_move_trigave,STA_UserData},'UIContextMenu',STA_UserData.cm)
         end
         set(STA_UserData.ah,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
-        set(STA_UserData.spike_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
+        for trac=1:d_para.num_trains
+            set(STA_UserData.spike_lh{trac},'ButtonDownFcn',{@STA_pick_trigave,STA_UserData},'UIContextMenu',[])
+        end
         set(STA_UserData.image_mh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
         set(STA_UserData.thin_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
         set(STA_UserData.thick_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
@@ -2556,7 +2617,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
         set([STA_UserData.lh{:}],'ButtonDownFcn',[])
         set(STA_UserData.lh{lb_pos},'ButtonDownFcn',{@STA_start_move_trigave,STA_UserData},'UIContextMenu',STA_UserData.cm)
         set(STA_UserData.ah,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
-        set(STA_UserData.spike_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
+        for trac=1:d_para.num_trains
+            set(STA_UserData.spike_lh{trac},'ButtonDownFcn',{@STA_pick_trigave,STA_UserData},'UIContextMenu',[])
+        end
         set(STA_UserData.image_mh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
         set(STA_UserData.thin_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
         set(STA_UserData.thick_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
@@ -2633,7 +2696,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             set(STA_UserData.lh{lb_pos},'ButtonDownFcn',{@STA_start_move_trigave,STA_UserData},'UIContextMenu',STA_UserData.cm)
         end
         set(STA_UserData.ah,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
-        set(STA_UserData.spike_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
+        for trac=1:d_para.num_trains
+            set(STA_UserData.spike_lh{trac},'ButtonDownFcn',{@STA_pick_trigave,STA_UserData},'UIContextMenu',[])
+        end
         set(STA_UserData.image_mh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
         set(STA_UserData.thin_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
         set(STA_UserData.thick_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
@@ -2676,7 +2741,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set([STA_UserData.lh{:}],'ButtonDownFcn',[])
                 set(STA_UserData.lh{lb_pos},'ButtonDownFcn',{@STA_start_move_trigave,STA_UserData},'UIContextMenu',STA_UserData.cm)
                 set(STA_UserData.ah,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
-                set(STA_UserData.spike_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
+                for trac=1:d_para.num_trains
+                    set(STA_UserData.spike_lh{trac},'ButtonDownFcn',{@STA_pick_trigave,STA_UserData},'UIContextMenu',[])
+                end
                 set(STA_UserData.image_mh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
                 set(STA_UserData.thin_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
                 set(STA_UserData.thick_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
@@ -2710,7 +2777,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             end
             set(STA_UserData.fh,'WindowButtonMotionFcn',{@STA_move_trigave,STA_UserData})
             set(STA_UserData.ah,'ButtonDownFcn','')
-            set(STA_UserData.spike_lh,'ButtonDownFcn','')
+            for trac=1:d_para.num_trains
+                set(STA_UserData.spike_lh{trac},'ButtonDownFcn','')
+            end
             set(STA_UserData.image_mh,'ButtonDownFcn','')
             set(STA_UserData.thin_mar_lh,'ButtonDownFcn','')
             set(STA_UserData.thick_mar_lh,'ButtonDownFcn','')
@@ -2806,7 +2875,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
         set([STA_UserData.lh{:}],'ButtonDownFcn',[])
         set(STA_UserData.lh{lb_pos},'ButtonDownFcn',{@STA_start_move_trigave,STA_UserData},'UIContextMenu',STA_UserData.cm)
         set(STA_UserData.ah,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
-        set(STA_UserData.spike_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
+        for trac=1:d_para.num_trains
+            set(STA_UserData.spike_lh{trac},'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
+        end
         set(STA_UserData.image_mh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
         set(STA_UserData.thin_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
         set(STA_UserData.thick_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
@@ -2877,7 +2948,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                     set(STA_UserData.lh{lb_pos},'ButtonDownFcn',{@STA_start_move_trigave,STA_UserData},'UIContextMenu',STA_UserData.cm)
                 end
                 set(STA_UserData.ah,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
-                set(STA_UserData.spike_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
+                for trac=1:d_para.num_trains
+                    set(STA_UserData.spike_lh{trac},'ButtonDownFcn',{@STA_pick_trigave,STA_UserData},'UIContextMenu',[])
+                end
                 set(STA_UserData.image_mh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
                 set(STA_UserData.thin_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
                 set(STA_UserData.thick_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
@@ -2905,7 +2978,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
                 set([STA_UserData.lh{:}],'ButtonDownFcn',[])
                 set(STA_UserData.lh{lb_pos},'ButtonDownFcn',{@STA_start_move_trigave,STA_UserData},'UIContextMenu',STA_UserData.cm)
                 set(STA_UserData.ah,'ButtonDownFcn',{@STA_start_pick,STA_UserData})
-                set(STA_UserData.spike_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
+                for trac=1:d_para.num_trains
+                    set(STA_UserData.spike_lh{trac},'ButtonDownFcn',{@STA_pick_trigave,STA_UserData},'UIContextMenu',[])
+                end
                 set(STA_UserData.image_mh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
                 set(STA_UserData.thin_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
                 set(STA_UserData.thick_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
@@ -2937,7 +3012,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
 
                 set(STA_UserData.fh,'Userdata',STA_UserData)
                 set(STA_UserData.ah,'ButtonDownFcn','')
-                set(STA_UserData.spike_lh,'ButtonDownFcn','')
+                for trac=1:d_para.num_trains
+                    set(STA_UserData.spike_lh{trac},'ButtonDownFcn','')
+                end
                 set(STA_UserData.image_mh,'ButtonDownFcn','')
                 set(STA_UserData.thin_mar_lh,'ButtonDownFcn','')
                 set(STA_UserData.thick_mar_lh,'ButtonDownFcn','')
@@ -3066,7 +3143,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
             set(STA_UserData.um,'CallBack',{@STA_delete_trigave,STA_UserData})
             set(STA_UserData.fh,'WindowButtonMotionFcn',{@STA_get_coordinates,STA_UserData},'KeyPressFcn',{@STA_keyboard,STA_UserData})
             set(STA_UserData.ah,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
-            set(STA_UserData.spike_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
+            for trac=1:d_para.num_trains
+                set(STA_UserData.spike_lh{trac},'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
+            end
             set(STA_UserData.image_mh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
             set(STA_UserData.thin_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
             set(STA_UserData.thick_mar_lh,'ButtonDownFcn',{@STA_pick_trigave,STA_UserData})
@@ -3194,7 +3273,9 @@ set(SI_UserData.fh,'Userdata',SI_UserData)
         SIA_UserData.um=[];
         set(SIA_UserData.fh,'WindowButtonMotionFcn',[],'WindowButtonUpFcn',[],'KeyPressFcn',[])
         set(SIA_UserData.ah,'ButtonDownFcn',[],'UIContextMenu',[])
-        set(SIA_UserData.spike_lh,'ButtonDownFcn',[],'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SIA_UserData.spike_lh{trac},'ButtonDownFcn',[],'UIContextMenu',[])
+        end
         set(SIA_UserData.image_mh,'ButtonDownFcn',[],'UIContextMenu',[])
         set(SIA_UserData.thin_mar_lh,'ButtonDownFcn',[],'UIContextMenu',[])
         set(SIA_UserData.thick_mar_lh,'ButtonDownFcn',[],'UIContextMenu',[])

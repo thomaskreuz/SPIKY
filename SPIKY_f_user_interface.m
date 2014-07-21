@@ -15,12 +15,12 @@ d_para_default=struct('tmin',[],'tmax',[],'dts',[],'max_total_spikes',100000,'ma
 
 % structure 'f_para': parameters that determine the appearance of the figures (and the movie), for a description see comments at the end of this file
 f_para_default=struct('imagespath',['.',filesep],'moviespath',['.',filesep],...    % Default values
-    'matpath',['.',filesep],'print_mode',0,'movie_mode',0,'publication',0,'comment_string','','num_fig',123,...
+    'matpath',['.',filesep],'print_mode',0,'movie_mode',0,'publication',1,'comment_string','','num_fig',123,...
     'pos_fig',[0.5 0.01 0.5 0.8867],'supo1',[0.1 0.1 0.8 0.8],'hints',0,'show_title',1,'edge_correction',1,...
     'time_unit_string','','x_offset',0,'x_scale',1,'x_realtime_mode',0,'extreme_spikes',1,'ma_mode',1,'mao',20,...
     'psth_window',0,'psth_num_bins',1000,'frames_per_second',1,'num_average_frames',1,'profile_mode',1,...
-    'profile_norm_mode',1,'profile_average_line',0,'color_norm_mode',1,'colorbar',1,'group_matrices',0,'dendrograms',0,...
-    'histogram',0,'spike_train_color_coding_mode',1,'spike_col',2,'subplot_size',[],'plot_mode',5,...
+    'profile_norm_mode',2,'profile_average_line',0,'color_norm_mode',2,'colorbar',1,'group_matrices',0,'dendrograms',0,...
+    'histogram',0,'spike_train_color_coding_mode',0,'spike_col',2,'subplot_size',[],'plot_mode',5,...
     'subplot_posi',[0 1  0  0    2 0 0]);
 % subplot_posi: Stim Spikes    PSTH   ISI   SPIKE SPIKE-realtime SPIKE-future
 
@@ -44,7 +44,7 @@ s_para_default=struct('window_mode',1,'nma',1,'causal',1,'itmin',[],'itmax',[],.
 p_para_default=struct(...
     'stim_vis','on','stim_col','k','stim_ls','-','stim_lw',1,...                                % lines: stimulus
     'spike_vis','on','spike_col','k','spike_ls','-','spike_lw',1,'spike_marked_col','r',...     % lines: spikes (raster plot)
-    'tbounds_vis','on','tbounds_col','k','tbounds_ls','-.','tbounds_lw',1,...                   % lines: overall time bounds
+    'tbounds_vis','on','tbounds_col','k','tbounds_ls','--','tbounds_lw',1,...                   % lines: overall time bounds
     'sp_seps_vis','on','sp_seps_col','k','sp_seps_ls','-','sp_seps_lw',2,...                    % lines: subplot separators
     'stim_bounds_vis','on','stim_bounds_col','k','stim_bounds_ls',':','stim_bounds_lw',1,...    % lines: stimulus time bounds
     'sp_bounds_vis','on','sp_bounds_col','k','sp_bounds_ls',':','sp_bounds_lw',1,...            % lines: subplot bounds
@@ -56,27 +56,27 @@ p_para_default=struct(...
     'thin_mar_vis','on','thin_mar_col','r','thin_mar_marked_col','b','thin_mar_ls','--','thin_mar_lw',1.5,...   % lines: thin time markers
     'sp_thick_mar_vis','on','sp_thick_mar_col','r','sp_thick_mar_ls','-','sp_thick_mar_lw',2,...% lines: thick subplot time markers
     'sp_thin_mar_vis','on','sp_thin_mar_col','r','sp_thin_mar_ls','--','sp_thin_mar_lw',1.5,... % lines: thin subplot time markers
-    'sgs_vis','on','sgs_col','k','sgs_marked_col','r','sgs_ls',':','sgs_lw',2,...               % lines: spike train group separators
-    'mat_sgs_vis','on','mat_sgs_col','w','mat_sgs_ls',':','mat_sgs_lw',2,...                    % lines: matrix spike train group separators
+    'sgs_vis','on','sgs_col','k','sgs_marked_col','r','sgs_ls','--','sgs_lw',1,...               % lines: spike train group separators
+    'mat_sgs_vis','on','mat_sgs_col','w','mat_sgs_ls',':','mat_sgs_lw',1.5,...                    % lines: matrix spike train group separators
     'mat_thick_sep_vis','on','mat_thick_sep_col','k','mat_thick_sep_ls','-','mat_thick_sep_lw',1,...% lines: thick matrix spike train separators
     'mat_thin_sep_vis','on','mat_thin_sep_col','k','mat_thin_sep_ls',':','mat_thin_sep_lw',1,...% lines: thin matrix spike train separators
     'prof_vis','on','prof_col','k','prof_ls','-','prof_lw',1,...                                % lines: measure profiles
     'ma_prof_vis','on','ma_prof_col','c','ma_prof_ls','-','ma_prof_lw',2,...                    % lines: measure profiles (analysis window)
-    'ave_vis','on','ave_col','b','ave_ls','--','ave_lw',2,...                                   % lines: average of measure profiles
+    'ave_vis','on','ave_col','k','ave_ls','--','ave_lw',2,...                                   % lines: average of measure profiles
     'com_vis','on','com_col','k','com_ls',':','com_lw',1,...                                    % lines: common spikes
     'extreme_vis','on','extreme_col','k','extreme_ls',':','extreme_lw',1,...                    % lines: extrems spikes
     'dendrol_vis','on','dendrol_ls','-','dendrol_lw',2,...                                      % lines: dendrogram lines
     'mov_vis','on','mov_col','g','mov_ls','-','mov_lw',2,...                                    % lines: moving line
     'instants_vis','on','instants_col','g','instants_marked_col','r','instants_ls','-','instants_lw',2,...% lines: instants
     'selave_vis','on','selave_col','g','selave_active_col','b','selave_marked_col','r','selave_overlap_col','m','selave_ls','-','selave_lw',3,...% lines: selective averaging lines
-    'trigave_vis','on','trigave_col','g','trigave_active_col','b','trigave_marked_col','r','trigave_ls','none','trigave_lw',3,...
+    'trigave_vis','on','trigave_col','g','trigave_active_col','b','trigave_marked_col','r','trigave_ls','none','trigave_lw',2.5,...
     'trigave_symb_top','v','trigave_symb_bot','^','trigave_symb','+',...                        % plot: triggered averaging symbols
     'title_vis','on','title_col','k','title_fs',18,'title_fw','bold','title_fa','normal',...                              % texts: title
     'xlab_vis','on','xlab_col','k','xlab_fs',15,'xlab_fw','bold','xlab_fa','normal',...                                   % texts: profile x-label
     'prof_title_vis','on','prof_title_col','k','prof_title_fs',14,'prof_title_fw','bold','prof_title_fa','normal',...     % texts: profile title
-    'prof_ave_vis','on','prof_ave_col','b','prof_ave_fs',16,'prof_ave_fw','bold','prof_ave_fa','normal',...               % texts: profile average
+    'prof_ave_vis','on','prof_ave_col','k','prof_ave_fs',16,'prof_ave_fw','bold','prof_ave_fa','normal',...               % texts: profile average
     'prof_tick_vis','on','prof_tick_col','k','prof_tick_fs',13,'prof_tick_fw','normal','prof_tick_fa','normal',...        % texts: profile ticks
-    'mat_title_vis','on','mat_title_col','k','mat_title_fs',14,'mat_title_fw','bold','mat_title_fa','normal',...          % texts: matrix title
+    'mat_title_vis','on','mat_title_col','k','mat_title_fs',15,'mat_title_fw','bold','mat_title_fa','normal',...          % texts: matrix title
     'mat_label_vis','on','mat_label_col','k','mat_label_fs',14,'mat_label_fw','bold','mat_label_fa','normal',...          % texts: matrix label
     'mat_tick_vis','on','mat_tick_col','k','mat_tick_fs',12,'mat_tick_fw','normal','mat_tick_fa','normal',...             % texts: matrix ticks
     'measure_vis','on','measure_col','k','measure_fs',16,'measure_fw','bold','measure_fa','normal',...                    % texts: measure names
@@ -102,6 +102,7 @@ listbox_str={'Frequency mismatch';...   % 1
     'Testfile-Mat-zp';...               % 10
     'Testfile-Mat-01';...               % 11
 };
+%    'SPIKY-Paper';...                   % 12
 %    'Ladder';...                        % 12
 %    'paolo_spikes';...                  % 12
 
@@ -496,21 +497,122 @@ if calc
 
         case 12                                       % Ladder
 
+
             d_para.tmin=0;
-            d_para.tmax=10000;
+            d_para.tmax=2000;
             d_para.dts=1;
 
-            num_trains=30;               % Set spikes
+            d_para.all_train_group_names={'G1';'G2';'G3';'G4'};
+            d_para.all_train_group_sizes=[5 5 5 5];
+            %d_para.num_all_train_groups=length(d_para.all_train_group_sizes);
+
+            num_trains=20; num_spikes=8;
+            noise=[0.1 0.1 0.1];
+            cnoise=[0 50 100 150 75];
+
+            matspikes=zeros(num_trains,num_spikes);
+            %d_para.interval_names{1}='2 Cluster - AABB';
+            for nc=1:num_spikes/4
+                matspikes(1:num_trains/4,nc)=(nc-0.75)/num_spikes*d_para.tmax+cnoise(1)*noise(1).*randn(1,num_trains/4)';
+                matspikes(num_trains/4+(1:num_trains/4),nc)=(nc-0.75)/num_spikes*d_para.tmax+cnoise(2)*noise(1).*randn(1,num_trains/4)';
+                matspikes(num_trains/2+(1:num_trains/4),nc)=(nc-0.25)/num_spikes*d_para.tmax+cnoise(3)*noise(1).*randn(1,num_trains/4)';
+                matspikes(3*num_trains/4+(1:num_trains/4),nc)=(nc-0.25)/num_spikes*d_para.tmax+cnoise(4)*noise(1).*randn(1,num_trains/4)';
+            end
+            %d_para.interval_names{2}='2 Cluster - Random association';
+            %rand_st=randperm(num_trains);
+            rand_st=[1 3 6 8 10 11 15 16 18 20 2 4 5 7 9 12 13 14 17 19];
+            for nc=num_spikes*1/4+(1:num_spikes/4)
+                matspikes(rand_st(1:num_trains/2),nc)=(nc-0.75)/num_spikes*d_para.tmax+cnoise(5)*noise(2).*randn(1,num_trains/2)';
+                matspikes(rand_st(num_trains/2+(1:num_trains/2)),nc)=(nc-0.25)/num_spikes*d_para.tmax+cnoise(5)*noise(2).*randn(1,num_trains/2)';
+            end
+            %d_para.interval_names{3}='4 Cluster - ABCD';
+            for nc=num_spikes*1/2+(1:num_spikes/4)
+                matspikes(1:num_trains/4,nc)=nc/num_spikes*d_para.tmax+cnoise(1)*noise(3).*randn(1,num_trains/4)'-30;
+                matspikes(num_trains/4+(1:num_trains/4),nc)=(nc-0.25)/num_spikes*d_para.tmax+cnoise(2)*noise(3).*randn(1,num_trains/4)'-30;
+                matspikes(num_trains/2+(1:num_trains/4),nc)=(nc-0.5)/num_spikes*d_para.tmax+cnoise(3)*noise(3).*randn(1,num_trains/4)'-30;
+                matspikes(num_trains*3/4+(1:num_trains/4),nc)=(nc-0.75)/num_spikes*d_para.tmax+cnoise(4)*noise(3).*randn(1,num_trains/4)'-30;
+            end
+            %d_para.interval_names{4}='Random Spiking';
+            for nc=num_spikes*3/4+(1:num_spikes/4)
+                matspikes(1:num_trains,nc)=nc/num_spikes*d_para.tmax-d_para.tmax/num_spikes.*rand(1,num_trains)';
+            end
+
+            tracs=7;
+            tracf=[2 9 14 19];
+            
+            matspikes(tracs,3)=min(matspikes([tracs tracf],3));
+            matspikes(tracs,3)=687.5;
+            matspikes(tracf,3)=matspikes(tracs,3)+2*rand(1,length(tracf));
+            matspikes(tracs,4)=min(matspikes([tracs tracf],4));
+            matspikes(tracs,4)=937.5;
+            matspikes(tracf,4)=matspikes(tracs,4)+2*rand(1,length(tracf));
+
+            matspikes(tracs,7)=min(matspikes([tracs tracf],7));
+            matspikes(tracs,7)=1625;
+            matspikes(tracf,7)=matspikes(tracs,7)+2*rand(1,length(tracf));
+            matspikes(tracs,8)=min(matspikes([tracs tracf],8));
+            matspikes(tracs,8)=1875;
+            matspikes(tracf,8)=matspikes(tracs,8)+2*rand(1,length(tracf));
+            
+            matspikes(:,9)=500;
+            matspikes(:,10)=1000+randn(num_trains,1)*0;
+            matspikes(:,11)=1500;
             
             spikes=cell(1,num_trains);
             for trac=1:num_trains
-                spikes{trac}=d_para.tmin+(0:num_trains)/num_trains*(d_para.tmax-d_para.tmin);
-                spikes{trac}(num_trains+1+(1:trac))=d_para.tmin+(-0.5+(1:trac))/num_trains*(d_para.tmax-d_para.tmin);
-                spikes{trac}=sort(spikes{trac});
+                spikes{trac}=sort(matspikes(trac,(matspikes(trac,:)>d_para.tmin & matspikes(trac,:)<d_para.tmax))-d_para.tmin);
             end
+            d_para.tmax=d_para.tmax-d_para.tmin;
+            d_para.tmin=0;
+            clear matspikes
+            d_para.instants=250;
 
-            d_para.comment_string='Ladder';
+            d_para.selective_averages={ [0 500 1000 1500]; [0 2000] };
 
+            d_para.triggered_averages=cell(1,length(tracs));
+            for trac=1:length(tracs)
+                d_para.triggered_averages{trac}=round(spikes{tracs(trac)}/d_para.dts)*d_para.dts;       % Triggered averaging over all time instants when a certain neuron fires
+            end
+            d_para.triggered_averages{trac}=d_para.triggered_averages{trac}([4 5 10 11]);
+
+            d_para.thin_markers=500:500:d_para.tmax-500;
+            d_para.thin_markers=[];
+            d_para.thick_markers=[];
+            d_para.thin_separators=[];
+            d_para.thick_separators=[];
+
+            d_para.interval_names={'2 Cluster - AABB';'2 Cluster - Random association';'4 Cluster - ABCD';'Random Spiking'};
+            d_para.interval_divisions=500:500:d_para.tmax-500; % Edges of subsections
+            d_para.comment_string='SPIKY_Clustering';
+            f_para.comment_string='';
+            f_para.spike_train_color_coding_mode=2;
+            f_para.profile_norm_mode=2;
+            f_para.group_matrices=1;
+            %f_para.dendrograms=0;
+            f_para.show_title=0;
+            f_para.profile_mode=3;
+            f_para.profile_average_line=1;
+            f_para.extreme_spikes=0;
+            f_para.print_mode=1;
+            f_para.plot_mode=3;
+
+%         case 12                                       % Ladder
+% 
+%             d_para.tmin=0;
+%             d_para.tmax=10000;
+%             d_para.dts=1;
+% 
+%             num_trains=30;               % Set spikes
+%             
+%             spikes=cell(1,num_trains);
+%             for trac=1:num_trains
+%                 spikes{trac}=d_para.tmin+(0:num_trains)/num_trains*(d_para.tmax-d_para.tmin);
+%                 spikes{trac}(num_trains+1+(1:trac))=d_para.tmin+(-0.5+(1:trac))/num_trains*(d_para.tmax-d_para.tmin);
+%                 spikes{trac}=sort(spikes{trac});
+%             end
+% 
+%             d_para.comment_string='Ladder';
+% 
 %         case 12                                       % Paolo data (matrix with 0 and 1)
 % 
 %             d_para.matfile='paolo_spikes.mat';
@@ -607,10 +709,10 @@ end
 % frames_per_second: Well, frames per second for the movie
 % num_average_frames: Number of frames the averages are shown at the end of the movie (if this is too small they are hardly visible)
 % plot_mode: +1:profiles,+2:frame comparison,+4:frame sequence (the latter two are mutually exclusive, otherwise binary addition allows combinations)
-% profile_mode: Allows to additionally/exclusively show dissimilarity profiles averaged over certain spike train groups only
-% profile_norm_mode: Normalization of averaged bivariate dissimilarity profiles (1-Absolute maximum value 'one',2-Overall maximum value,3-Individual maximum value)
+% profile_mode: Allows to additionally/exclusively show dissimilarity profiles averaged over certain spike train groups only (1-all only,2-groups only,3-all and groups)
+% profile_norm_mode: Normalization of averaged bivariate dissimilarity profiles (1-Absolute maximum value 'one',2-Overall maximum value (from 0),3-Individual maximum value (from 0),4-Overall maximum value,5-Individual maximum value)
 % profile_average_line: Determines whether a line at the mean value is shown for each dissimilarity profile
-% color_norm_mode: normalization of pairwise color matrices (1-Absolute maximum value,2-Overall maximum value,3-Each one individually)
+% color_norm_mode: normalization of pairwise color matrices (1-Absolute maximum value,2-Overall maximum value (from 0),3-Individual maximum value (from 0),4-Overall maximum value,5-Individual maximum value)
 % colorbar: Determines whether a colorbar is shown next to the dissimilarity matrices
 % group_matrices: Allows tracing the overall synchronization among groups of spike trains (0-no,1-yes)
 % dendrograms: Show cluster trees from distance matrices (0-no,1-yes)

@@ -449,9 +449,42 @@ if mod(f_para.plot_mode,2)>0
     end
 
     if any(f_para.subplot_posi(m_para.bi_measures))
+        
+        if f_para.profile_norm_mode~=4
+            m_para.minbivals=zeros(1,m_para.num_all_measures);
+        else
+            m_para.minbivals=inf*ones(1,m_para.num_all_measures);
+        end
+        if f_para.profile_norm_mode>3
+            if f_para.subplot_posi(m_para.isi_pico)
+                m_para.minbivals(m_para.isi_pico)=min(min(isi_ratio));
+            end
+            if f_para.subplot_posi(m_para.spike_pili)
+                m_para.minbivals(m_para.spike_pili)=min(min(spike_diffs_l));
+            end
+            if f_para.subplot_posi(m_para.realtime_spike_pili)
+                m_para.minbivals(m_para.realtime_spike_pili)=min(min(spike_diffs_realtime_l));
+            end
+            if f_para.subplot_posi(m_para.future_spike_pili)
+                m_para.minbivals(m_para.future_spike_pili)=min(min(spike_diffs_future_l));
+            end
+            if f_para.subplot_posi(m_para.spike_pico)
+                m_para.minbivals(m_para.spike_pico)=min(min(spike_diffs));
+            end
+            if f_para.subplot_posi(m_para.realtime_spike_pico)
+                m_para.minbivals(m_para.realtime_spike_pico)=min(min(spike_diffs_realtime));
+            end
+            if f_para.subplot_posi(m_para.future_spike_pico)
+                m_para.minbivals(m_para.future_spike_pico)=min(min(spike_diffs_future));
+            end
+            if f_para.profile_norm_mode==4
+                m_para.minbivals=min(m_para.minbivals)*ones(1,m_para.num_all_measures);
+            end
+        end
+            
         if f_para.profile_norm_mode==1
             m_para.maxbivals=ones(1,m_para.num_all_measures);
-        else
+        else                
             m_para.maxbivals=zeros(1,m_para.num_all_measures);
             if f_para.subplot_posi(m_para.isi_pico)
                 m_para.maxbivals(m_para.isi_pico)=max(max(isi_ratio));
@@ -475,17 +508,22 @@ if mod(f_para.plot_mode,2)>0
                 m_para.maxbivals(m_para.future_spike_pico)=max(max(spike_diffs_future));
             end
             
-            if f_para.profile_norm_mode==2
+            if ismember(f_para.profile_norm_mode,[2 4])
                 m_para.maxbivals=max(m_para.maxbivals)*ones(1,m_para.num_all_measures);
             end
         end
     else
+        m_para.minbivals=zeros(1,m_para.num_all_measures);
         m_para.maxbivals=zeros(1,m_para.num_all_measures);
     end
     if f_para.subplot_posi(m_para.psth)
+        if f_para.profile_norm_mode<3
+            m_para.minbivals(m_para.psth)=0;
+        else
+            m_para.minbivals(m_para.psth)=min(min(m_res.psth));
+        end
         m_para.maxbivals(m_para.psth)=max(max(m_res.psth));
     end
-
 
     % #####################################################################
 
@@ -551,7 +589,8 @@ else
     subplot_index=f_para.subplot_posi;
     subplot_numbers=f_para.subplot_posi;
     subplot_paras=[f_para.subplot_posi',f_para.subplot_size',f_para.subplot_start',subplot_index'];
-    maxintval=0; maxmeanintval=0; maxrateval=0; maxmeanrateval=0; maxbivals=zeros(1,length(m_para.bi_measures));
+    maxintval=0; maxmeanintval=0; maxrateval=0; maxmeanrateval=0;
+    minbivals=zeros(1,length(m_para.bi_measures)); maxbivals=zeros(1,length(m_para.bi_measures));
     yt=[]; ytl=[]; s_para.xl=[]; s_para.yl=[];
 end
 
@@ -565,23 +604,23 @@ else
     ab_str='^a';
 end
 
-% 1           2         3      4     5  6   7      8    9    10       11  12   13      14    15    16
-% Stimulus    Spikes    PSTH   I     S  S_r S_f    St   St_r St_f     Sp  Sp_r Sp_f
+% 1           2         3      4     5  6   7      8    9    10
+% Stimulus    Spikes    PSTH   I     S  S_r S_f    Sp   Sp_r Sp_f
 %
-%     X-input         Y-input                    Label                                       Max-value Average       Datatype
+%     X-input         Y-input                    Label                            Min-value                          Max-value                       Average Datatype
 measure_paras={...
-    {'';             '';                   m_para.all_measures_str{m_para.stimulus};           0; 0;             0};...                           %  1 Stimulus
-    {'';             '';                   m_para.all_measures_str{m_para.spikes};             0; 0;              0};...                           %  2 Spike train
-    {'psth_x';'m_res.psth'; m_para.all_measures_str{m_para.psth};   m_para.maxbivals(m_para.psth); 0;        3};...                 %  3 PSTH
-    {'isi';   'isi_ratio';  [m_para.all_measures_str{m_para.isi_pico},ab_str];    m_para.maxbivals(m_para.isi_pico); 0;   1};...    %  4
+    {'';             '';    m_para.all_measures_str{m_para.stimulus};             0;                                 0;                                 0;   0};...    %  1 Stimulus
+    {'';             '';    m_para.all_measures_str{m_para.spikes};               0;                                 0;                                 0;   0};...    %  2 Spike train
+    {'psth_x';'m_res.psth'; m_para.all_measures_str{m_para.psth};                 m_para.minbivals(m_para.psth);     m_para.maxbivals(m_para.psth);     0;   3};...    %  3 PSTH
+    {'isi';   'isi_ratio';  [m_para.all_measures_str{m_para.isi_pico},ab_str];    m_para.minbivals(m_para.isi_pico); m_para.maxbivals(m_para.isi_pico); 0;   1};...    %  4
 
-    {'isi'; 'spike_diffs_l';          [m_para.all_measures_str{m_para.spike_pili},ab_str];     m_para.maxbivals(m_para.spike_pili); 0;        2};...            % 5
-    {'isi'; 'spike_diffs_realtime_l'; [m_para.all_measures_str{m_para.realtime_spike_pili},ab_str];     m_para.maxbivals(m_para.realtime_spike_pili); spike_diffs_realtime_l_ave; 2};... % 6
-    {'isi'; 'spike_diffs_future_l';   [m_para.all_measures_str{m_para.future_spike_pili},ab_str];     m_para.maxbivals(m_para.future_spike_pili); spike_diffs_future_l_ave;  2};...   % 7
+    {'isi'; 'spike_diffs_l';          [m_para.all_measures_str{m_para.spike_pili},ab_str];     m_para.minbivals(m_para.spike_pili); m_para.maxbivals(m_para.spike_pili); 0;        2};...            % 5
+    {'isi'; 'spike_diffs_realtime_l'; [m_para.all_measures_str{m_para.realtime_spike_pili},ab_str];   m_para.minbivals(m_para.realtime_spike_pili); m_para.maxbivals(m_para.realtime_spike_pili); spike_diffs_realtime_l_ave; 2};... % 6
+    {'isi'; 'spike_diffs_future_l';   [m_para.all_measures_str{m_para.future_spike_pili},ab_str];     m_para.minbivals(m_para.future_spike_pili); m_para.maxbivals(m_para.future_spike_pili); spike_diffs_future_l_ave;  2};...   % 7
 
-    {'isi';  'spike_diffs';          [m_para.all_measures_str{m_para.spike_pico},ab_str];           m_para.maxbivals(m_para.spike_pico); 0;          1};...    % 11
-    {'isi';  'spike_diffs_realtime'; [m_para.all_measures_str{m_para.realtime_spike_pico},ab_str];  m_para.maxbivals(m_para.realtime_spike_pico); 0; 1};...    % 12
-    {'isi';  'spike_diffs_future';   [m_para.all_measures_str{m_para.future_spike_pico},ab_str];    m_para.maxbivals(m_para.future_spike_pico); 0;   1};...    % 13
+    {'isi';  'spike_diffs';          [m_para.all_measures_str{m_para.spike_pico},ab_str];           m_para.minbivals(m_para.spike_pico); m_para.maxbivals(m_para.spike_pico); 0;          1};...    % 11
+    {'isi';  'spike_diffs_realtime'; [m_para.all_measures_str{m_para.realtime_spike_pico},ab_str];  m_para.minbivals(m_para.realtime_spike_pico); m_para.maxbivals(m_para.realtime_spike_pico); 0; 1};...    % 12
+    {'isi';  'spike_diffs_future';   [m_para.all_measures_str{m_para.future_spike_pico},ab_str];    m_para.minbivals(m_para.future_spike_pico); m_para.maxbivals(m_para.future_spike_pico); 0;   1};...    % 13
 };
 %     Output                        X-input         Y-input                 Label               Max value       Datatype
 
@@ -637,6 +676,7 @@ for supc=m_para.num_diff_measures+1:m_para.num_all_measures
         else
             s_para.psth=0;
         end
+        s_para.profile_norm_mode=f_para.profile_norm_mode;
         %s_para.line_width=max(subplot_index)+1-subplot_index(supc);
         dcolors='kbrgmckbrgmc'; % s_para.colors=repmat(dcolors(subplot_index(supc)),1,6);
         p_para.prof_col=dcolors(subplot_index(supc));
@@ -646,7 +686,8 @@ for supc=m_para.num_diff_measures+1:m_para.num_all_measures
             dyt=yt; dytl=ytl;
             command=[ '[ distances, yt, ytl, p_para ] = SPIKY_f_measure_profiles( distances, yt, ytl, '...
                 measure_paras{supc}{1} ', ' measure_paras{supc}{2} ', '''  ''', subplot_paras(' num2str(supc) ',:), ' ...
-                num2str(measure_paras{supc}{4}) ', [' num2str(measure_paras{supc}{5}) '], ' num2str(measure_paras{supc}{6}) ', s_para, p_para, mac);' ];
+                num2str(measure_paras{supc}{4}) ', ' num2str(measure_paras{supc}{5}) ', [' num2str(measure_paras{supc}{6}) '], ' num2str(measure_paras{supc}{7}) ...
+                ', s_para, p_para, mac);' ];
             eval(command);
             yt=dyt; ytl=dytl;
         else
@@ -654,7 +695,8 @@ for supc=m_para.num_diff_measures+1:m_para.num_all_measures
             p_para.prof_lw=1;
             command=[ '[ distances, yt, ytl, p_para ] = SPIKY_f_measure_profiles( distances, yt, ytl, '...
                 measure_paras{supc}{1} ', ' measure_paras{supc}{2} ', ''' measure_paras{supc}{3} ''', subplot_paras(' num2str(supc) ',:), ' ...
-                num2str(measure_paras{supc}{4}) ', [' num2str(measure_paras{supc}{5}) '], ' num2str(measure_paras{supc}{6}) ', s_para, p_para, mac);' ];
+                num2str(measure_paras{supc}{4}) ', ' num2str(measure_paras{supc}{5}) ', [' num2str(measure_paras{supc}{6}) '], ' num2str(measure_paras{supc}{7}) ...
+                ', s_para, p_para, mac);' ];
             eval(command);
         end
         if isfield(eval(['results.',char(m_para.all_measures_string(supc))]),'window_distance')

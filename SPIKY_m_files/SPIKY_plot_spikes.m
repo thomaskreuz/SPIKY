@@ -304,19 +304,19 @@ end
 num_spikes=cellfun('length',pspikes);
 f_para.num_total_spikes=sum(num_spikes);
 spike_cmenu = uicontextmenu;
-spike_lh=zeros(f_para.num_trains,max(f_para.num_pspikes),'single');
+spike_lh=cell(1,f_para.num_trains);
 if f_para.num_total_spikes<f_para.max_total_spikes
     if f_para.spike_train_color_coding_mode>1 && mod(f_para.spike_col,2)>0
         for trac=1:f_para.num_trains
             for sc=1:f_para.num_pspikes(trac)
-                spike_lh(trac,sc)=line(pspikes{trac}(sc)*ones(1,2),sum(f_para.subplot_size(f_para.singles))-f_para.subplot_start(2)+(0.15+(f_para.num_trains-1-(trac-1)+[0.05 0.95])/f_para.num_trains)/1.3*f_para.subplot_size(2),...
+                spike_lh{trac}(sc)=line(pspikes{trac}(sc)*ones(1,2),sum(f_para.subplot_size(f_para.singles))-f_para.subplot_start(2)+(0.15+(f_para.num_trains-1-(trac-1)+[0.05 0.95])/f_para.num_trains)/1.3*f_para.subplot_size(2),...
                     'Color',dcols(trac,:),'LineStyle',p_para.spike_ls,'LineWidth',p_para.spike_lw,'UIContextMenu',spike_cmenu);
             end
         end
     else
         for trac=1:f_para.num_trains
             for sc=1:f_para.num_pspikes(trac)
-                spike_lh(trac,sc)=line(pspikes{trac}(sc)*ones(1,2),sum(f_para.subplot_size(f_para.singles))-f_para.subplot_start(2)+(0.15+(f_para.num_trains-1-(trac-1)+[0.05 0.95])/f_para.num_trains)/1.3*f_para.subplot_size(2),...
+                spike_lh{trac}(sc)=line(pspikes{trac}(sc)*ones(1,2),sum(f_para.subplot_size(f_para.singles))-f_para.subplot_start(2)+(0.15+(f_para.num_trains-1-(trac-1)+[0.05 0.95])/f_para.num_trains)/1.3*f_para.subplot_size(2),...
                     'Color',p_para.spike_col,'LineStyle',p_para.spike_ls,'LineWidth',p_para.spike_lw,'UIContextMenu',spike_cmenu);
             end
         end

@@ -34,15 +34,25 @@ d_para.thin_separators=str2num(get(handles.dpara_thin_separators_edit,'String'))
 d_para.thin_separators=unique(round(d_para.thin_separators(round(d_para.thin_separators)>0 & round(d_para.thin_separators)<d_para.num_all_trains)));
 set(handles.dpara_thin_separators_edit,'String',regexprep(num2str(d_para.thin_separators),'\s+',' '))
 
-ds=get(handles.dpara_group_names_edit,'String');
-d_para.all_train_group_names=cell(1,length(find(ds==';')));
-for strc=1:length(find(ds==';'))
-    d_para.all_train_group_names{strc}=ds(1:find(ds==';',1,'first')-1);
-    ds=ds(find(ds==';',1,'first')+2:end);
+ds=strtrim(get(handles.dpara_group_names_edit,'String'));
+if ~isempty(ds)
+    if ds(end)~=';'
+        ds=[ds,';'];
+    end
+    num_all_train_group_names=length(find(ds==';'));
+    d_para.all_train_group_names=cell(1,num_all_train_group_names);
+    for strc=1:num_all_train_group_names
+        d_para.all_train_group_names{strc}=ds(1:find(ds==';',1,'first')-1);
+        ds=ds(find(ds==';',1,'first')+2:end);
+    end
+else
+    d_para.all_train_group_names='';
 end
+
 d_para.all_train_group_sizes=str2num(get(handles.dpara_group_sizes_edit,'String'));
 d_para.all_train_group_sizes=round(d_para.all_train_group_sizes(d_para.all_train_group_sizes>0 & d_para.all_train_group_sizes<=d_para.num_all_trains));
 set(handles.dpara_group_sizes_edit,'String',regexprep(num2str(d_para.all_train_group_sizes),'\s+',' '))
+
 
 d_para.comment_string=get(handles.dpara_comment_edit,'String');
 

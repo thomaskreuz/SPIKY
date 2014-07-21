@@ -95,7 +95,9 @@ SGS_UserData.um=uimenu(SGS_UserData.cm,'label','Delete group separator(s)','Call
 set(SGS_UserData.fh,'WindowButtonMotionFcn',{@SGS_get_coordinates,SGS_UserData},'KeyPressFcn',{@SGS_keyboard,SGS_UserData});
 set(SGS_UserData.lh,'ButtonDownFcn',{@SGS_start_move_group_separators,SGS_UserData},'UIContextMenu',SGS_UserData.cm)
 set(SGS_UserData.ah,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
-set(SGS_UserData.spike_lh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+for trac=1:d_para.num_trains
+    set(SGS_UserData.spike_lh{trac},'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+end
 set(SGS_UserData.image_mh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
 set(SGS_UserData.fh,'Userdata',SGS_UserData)
 
@@ -223,7 +225,9 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
         set(SGS_UserData.fh,'WindowButtonMotionFcn',{@SGS_get_coordinates,SGS_UserData},'KeyPressFcn',{@SGS_keyboard,SGS_UserData})
         set(SGS_UserData.lh,'ButtonDownFcn',{@SGS_start_move_group_separators,SGS_UserData},'UIContextMenu',SGS_UserData.cm)
         set(SGS_UserData.ah,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
-        set(SGS_UserData.spike_lh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SGS_UserData.spike_lh{trac},'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+        end
         set(SGS_UserData.image_mh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
         set(SGS_UserData.fh,'Userdata',SGS_UserData)
     end
@@ -266,7 +270,9 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
         set(SGS_UserData.fh,'WindowButtonMotionFcn',{@SGS_get_coordinates,SGS_UserData},'KeyPressFcn',{@SGS_keyboard,SGS_UserData})
         set(SGS_UserData.lh,'ButtonDownFcn',{@SGS_start_move_group_separators,SGS_UserData},'UIContextMenu',SGS_UserData.cm)
         set(SGS_UserData.ah,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
-        set(SGS_UserData.spike_lh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SGS_UserData.spike_lh{trac},'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+        end
         set(SGS_UserData.image_mh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
         set(SGS_UserData.fh,'Userdata',SGS_UserData)
     end
@@ -301,7 +307,9 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
                 set(SGS_UserData.fh,'WindowButtonMotionFcn',{@SGS_get_coordinates,SGS_UserData},'KeyPressFcn',{@SGS_keyboard,SGS_UserData})
                 set(SGS_UserData.lh,'ButtonDownFcn',{@SGS_start_move_group_separators,SGS_UserData},'UIContextMenu',SGS_UserData.cm)
                 set(SGS_UserData.ah,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
-                set(SGS_UserData.spike_lh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SGS_UserData.spike_lh{trac},'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+                end
                 set(SGS_UserData.image_mh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
                 set(SGS_UserData.fh,'Userdata',SGS_UserData)
             end
@@ -322,7 +330,9 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
             end
             set(SGS_UserData.fh,'WindowButtonMotionFcn',{@SGS_move_group_separators,SGS_UserData})
             set(SGS_UserData.ah,'ButtonDownFcn','')
-            set(SGS_UserData.spike_lh,'ButtonDownFcn','')
+            for trac=1:d_para.num_trains
+                set(SGS_UserData.spike_lh{trac},'ButtonDownFcn','')
+            end
             set(SGS_UserData.image_mh,'ButtonDownFcn','')
             set(SGS_UserData.fh,'Userdata',SGS_UserData)
         end        
@@ -415,7 +425,9 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
             'WindowButtonUpFcn',[])
         set(SGS_UserData.lh,'ButtonDownFcn',{@SGS_start_move_group_separators,SGS_UserData},'UIContextMenu',SGS_UserData.cm)
         set(SGS_UserData.ah,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
-        set(SGS_UserData.spike_lh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SGS_UserData.spike_lh{trac},'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+        end
         set(SGS_UserData.image_mh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
         set(SGS_UserData.fh,'Userdata',SGS_UserData)
     end
@@ -452,7 +464,9 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
                 set(SGS_UserData.fh,'WindowButtonMotionFcn',{@SGS_get_coordinates,SGS_UserData},'KeyPressFcn',{@SGS_keyboard,SGS_UserData})
                 set(SGS_UserData.lh,'ButtonDownFcn',{@SGS_start_move_group_separators,SGS_UserData},'UIContextMenu',SGS_UserData.cm)
                 set(SGS_UserData.ah,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
-                set(SGS_UserData.spike_lh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SGS_UserData.spike_lh{trac},'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+                end
                 set(SGS_UserData.image_mh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
                 set(SGS_UserData.fh,'Userdata',SGS_UserData)
             end
@@ -473,7 +487,9 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
                 set(SGS_UserData.fh,'WindowButtonMotionFcn',{@SGS_get_coordinates,SGS_UserData},'KeyPressFcn',{@SGS_keyboard,SGS_UserData})
                 set(SGS_UserData.lh,'ButtonDownFcn',{@SGS_start_move_group_separators,SGS_UserData},'UIContextMenu',SGS_UserData.cm)
                 set(SGS_UserData.ah,'ButtonDownFcn',{@SGS_start_pick,SGS_UserData})
-                set(SGS_UserData.spike_lh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SGS_UserData.spike_lh{trac},'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+                end
                 set(SGS_UserData.image_mh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
                 set(SGS_UserData.fh,'Userdata',SGS_UserData)
             end
@@ -495,7 +511,9 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
                 SGS_UserData.initial_YPos=SGS_UserData.num_trains-floor((ax_pos(1,2)-0.05)*SGS_UserData.num_trains);
                 SGS_UserData.initial_ST=ax_y;
                 set(SGS_UserData.ah,'ButtonDownFcn','')
-                set(SGS_UserData.spike_lh,'ButtonDownFcn','')
+                for trac=1:d_para.num_trains
+                    set(SGS_UserData.spike_lh{trac},'ButtonDownFcn','')
+                end
                 set(SGS_UserData.image_mh,'ButtonDownFcn','')
                 set(SGS_UserData.fh,'WindowButtonMotionFcn',{@SGS_move_group_separators,SGS_UserData})
                 set(SGS_UserData.fh,'Userdata',SGS_UserData)
@@ -583,7 +601,9 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
                 set(SGS_UserData.fh,'WindowButtonMotionFcn',{@SGS_get_coordinates,SGS_UserData},'KeyPressFcn',{@SGS_keyboard,SGS_UserData})
                 set(SGS_UserData.lh,'ButtonDownFcn',{@SGS_start_move_group_separators,SGS_UserData},'UIContextMenu',SGS_UserData.cm)
                 set(SGS_UserData.ah,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
-                set(SGS_UserData.spike_lh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SGS_UserData.spike_lh{trac},'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+                end
                 set(SGS_UserData.image_mh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
                 set(SGS_UserData.fh,'Userdata',SGS_UserData)
             elseif gcbo==SGS_Cancel_pushbutton || gcbo==SG_fig
@@ -592,7 +612,9 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
                 set(SGS_UserData.fh,'WindowButtonMotionFcn',[],'WindowButtonUpFcn',[],'KeyPressFcn',[])
                 set(SGS_UserData.lh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SGS_UserData.ah,'ButtonDownFcn',[],'UIContextMenu',[])
-                set(SGS_UserData.spike_lh,'ButtonDownFcn',[],'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SGS_UserData.spike_lh{trac},'ButtonDownFcn',[],'UIContextMenu',[])
+                end
                 set(SGS_UserData.image_mh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SGS_UserData.fh,'Userdata',SGS_UserData)
                 delete(SG_fig)
@@ -637,7 +659,9 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
                 set(SGS_UserData.fh,'WindowButtonMotionFcn',{@SGS_get_coordinates,SGS_UserData},'KeyPressFcn',{@SGS_keyboard,SGS_UserData})
                 set(SGS_UserData.lh,'ButtonDownFcn',{@SGS_start_move_group_separators,SGS_UserData},'UIContextMenu',SGS_UserData.cm)
                 set(SGS_UserData.ah,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
-                set(SGS_UserData.spike_lh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SGS_UserData.spike_lh{trac},'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
+                end
                 set(SGS_UserData.image_mh,'ButtonDownFcn',{@SGS_pick_group_separators,SGS_UserData},'UIContextMenu',[])
                 set(SGS_UserData.fh,'Userdata',SGS_UserData)
             else
@@ -656,7 +680,9 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
                 set(SGS_UserData.fh,'WindowButtonMotionFcn',[],'WindowButtonUpFcn',[],'KeyPressFcn',[])
                 set(SGS_UserData.lh,'ButtonDownFcn',[],'UIContextMenu',[])
                 set(SGS_UserData.ah,'ButtonDownFcn',[],'UIContextMenu',[])
-                set(SGS_UserData.spike_lh,'ButtonDownFcn',[],'UIContextMenu',[])
+                for trac=1:d_para.num_trains
+                    set(SGS_UserData.spike_lh{trac},'ButtonDownFcn',[],'UIContextMenu',[])
+                end
                 set(SGS_UserData.image_mh,'ButtonDownFcn',[],'UIContextMenu',[])
 
                 % ########################################################
@@ -820,6 +846,7 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
             
             d_para.group_separators=SGN_UserData.group_separators;
             d_para.all_train_group_sizes=diff([0 d_para.group_separators d_para.num_trains]);
+            d_para.num_all_train_groups=length(d_para.all_train_group_sizes);
             setappdata(handles.figure1,'data_parameters',d_para)
             set(handles.dpara_group_sizes_edit,'String',regexprep(num2str(d_para.all_train_group_sizes),'\s+',' '))
             d_para_all_train_group_names=get(SGN_names_listbox,'String');
@@ -864,7 +891,9 @@ set(SGS_UserData.fh,'Userdata',SGS_UserData)
         SG_UserData.um=[];
         set(SG_UserData.fh,'WindowButtonMotionFcn',[],'WindowButtonUpFcn',[],'KeyPressFcn',[])
         set(SG_UserData.ah,'ButtonDownFcn',[],'UIContextMenu',[])
-        set(SG_UserData.spike_lh,'ButtonDownFcn',[],'UIContextMenu',[])
+        for trac=1:d_para.num_trains
+            set(SGS_UserData.spike_lh{trac},'ButtonDownFcn',[],'UIContextMenu',[])
+        end
         set(SG_UserData.image_mh,'ButtonDownFcn',[],'UIContextMenu',[])
         set(SG_UserData.tx,'str','');
         set(SG_UserData.fh,'Userdata',[])

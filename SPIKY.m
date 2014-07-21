@@ -1,5 +1,5 @@
 %
-% ##### Copyright Thomas Kreuz, Nebojsa Bozanic;  Beta-Version 1.0, June 2014 #####
+% ##### Copyright Thomas Kreuz, Nebojsa Bozanic;  Beta-Version 1.1, July 2014 #####
 %
 % SPIKY is a graphical user interface (Matlab) which can be used to calculate and
 % visualize both the SPIKE- and the ISI-distance between two (or more) spike trains.
@@ -62,6 +62,11 @@ else
     gui_mainfcn(gui_State, varargin{:});
 end
 % End initialization code-DO NOT EDIT
+if ~isappdata(0,'guifigh')
+    guifigh=findall(0,'type','figure');
+    setappdata(0,'guifigh',guifigh)
+    set(guifigh(1),'Position',[0 0.0067 0.5 0.8878])
+end
 end
 
 
@@ -77,9 +82,7 @@ handles.output=hObject;
 % Update handles structure
 guidata(hObject, handles);
 
-%if exist('SPIKY_AZBYCX.mat','file')
-%    delete('SPIKY_AZBYCX.mat')
-%end
+addpath(genpath('SPIKY'))
 
 clc
 
@@ -109,10 +112,6 @@ end
 
 set(handles.Data_listbox,'String',listbox_str,'Value',d_para.example);
 
-%set(gcf,'units','normalized','Position',[0 0.5 0.4714 0.9])    % [0 0.0342 0.4714 0.8875] [0.4714 0.0342 0.5276 0.8875] [0 0.08 0.45 0.84]
-
-%set(gcf,'DeleteFcn',{@SPIKY_ClosingFcn,f_para_default})
-
 fig=figure(f_para.num_fig);
 set(fig,'DeleteFcn',{@SPIKY_ClosingFcn})
 
@@ -139,12 +138,17 @@ end
 
 
 function SPIKY_ClosingFcn(varargin)
+
 if exist('SPIKY_AZBYCX.mat','file')
     delete('SPIKY_AZBYCX.mat')
 end
 setappdata(varargin{1},'closed',1)
 fff=findobj('type','figure');
 delete(fff)
+if isappdata(0,'guifigh')
+    rmappdata(0,'guifigh')
+end
+
 end
 
 
@@ -163,15 +167,15 @@ Info_fig=figure('units','normalized','menubar','none','position',[0.35 0.2 0.3 0
     'Color',[0.9294 0.9176 0.851],'WindowStyle','modal'); % Create a new figure.
 
 axes('units','normalized','position',[0.25 0.75 0.2 0.2]);
-if exist('SPIKY-Logo_gray.PNG','file')
-    png=imread('SPIKY-Logo_gray.PNG');
+if exist(['SPIKY-Logo_gray.png'],'file')
+    png=imread('SPIKY-Logo_gray.png');
     image(png)
 end
 gcol=[236 233 216]/255;
 set(gca,'Color','w','XColor',gcol,'YColor',gcol,'XTick',[],'YTick',[],'box','on')
 
 %uicontrol('style','text','units','normalized','position',[0.1 0.85 0.5 0.08],'string','SPIKY','FontSize',20,'FontWeight','bold')
-uicontrol('style','text','units','normalized','position',[0.09 0.715 0.5 0.04],'string','Beta-Version 1.0','FontSize',12)
+uicontrol('style','text','units','normalized','position',[0.09 0.715 0.5 0.04],'string','Beta-Version 1.1','FontSize',12)
 uicontrol('style','text','units','normalized','position',[0.45 0.835 0.5 0.04],'string','Thomas Kreuz','FontSize',12,'FontWeight','bold')
 uicontrol('style','text','units','normalized','position',[0.463 0.795 0.5 0.04],'string','Nebojsa Bozanic','FontSize',12,'FontWeight','bold')
 uicontrol('style','text','units','normalized','position',[0.1 0.596 0.8 0.04],...
@@ -457,7 +461,6 @@ f_para=f_para_default;
 s_para=s_para_default;
 p_para=p_para_default;
 
-
 [d_para.filename,d_para.path]=uigetfile('*.mat','Pick a .mat-file');
 if isequal(d_para.filename,0) || isequal(d_para.path,0)
     return
@@ -545,8 +548,6 @@ if ~isequal(d_para.txtfile, 0)
     SPIKY_plot_allspikes
     SPIKY_paras_set
     
-    %d_para_default=d_para;
-    %setappdata(handles.figure1,'data_parameters_default',d_para_default)
     setappdata(handles.figure1,'data_parameters',d_para)
     setappdata(handles.figure1,'figure_parameters',f_para)
     setappdata(handles.figure1,'subplot_parameters',s_para)
@@ -559,7 +560,6 @@ if ~isequal(d_para.txtfile, 0)
     set(handles.Data_listbox,'Enable','off')
     set(handles.Selection_data_uipanel,'HighlightColor','w')
 
-    %set(handles.Generator_pushbutton,'Enable','off','FontWeight','normal')
     set(handles.Generate_pushbutton,'Enable','off','FontWeight','normal')
     set(handles.Para_data_uipanel,'Visible','on','HighlightColor','k')
     set(handles.Update_pushbutton,'Enable','on','FontWeight','bold')
@@ -1103,6 +1103,25 @@ end
 if exist('results','var')
     results=orderfields(results);
     assignin('base','SPIKY_results',results);
+%     if get(handles.Data_listbox,'Value')==12
+%         f_para=orderfields(f_para);
+%         assignin('base','SPIKY_f_para',f_para);
+%         d_para=orderfields(d_para);
+%         assignin('base','SPIKY_d_para',d_para);
+%         m_para=orderfields(m_para);
+%         assignin('base','SPIKY_m_para',m_para);
+%         p_para=orderfields(p_para);
+%         assignin('base','SPIKY_p_para',p_para);
+%         h_para=orderfields(h_para);
+%         assignin('base','SPIKY_h_para',h_para);
+%         s_para=orderfields(s_para);
+%         assignin('base','SPIKY_s_para',s_para);
+%         r_para=orderfields(r_para);
+%         assignin('base','SPIKY_r_para',r_para);
+%         m_res=orderfields(m_res);
+%         assignin('base','SPIKY_m_res',m_res);
+%         save SPIKY_paper_example SPIKY*
+%    end
 end
 
 setappdata(handles.figure1,'data_parameters',d_para)
@@ -1503,12 +1522,22 @@ end
     function STG_select_train_groups_pushbutton_Callback(varargin)
 
         d_para=getappdata(handles.figure1,'data_parameters');
-        ds=get(STG_group_names_edit,'String');
-        d_para.all_train_group_names=cell(1,length(find(ds==';')));
-        for strc=1:length(find(ds==';'))
-            d_para.all_train_group_names{strc}=ds(1:find(ds==';',1,'first')-1);
-            ds=ds(find(ds==';',1,'first')+2:end);
+        
+        ds=strtrim(get(STG_group_names_edit,'String'));
+        if ~isempty(ds)
+            if ds(end)~=';'
+                ds=[ds,';'];
+            end
+            num_all_train_group_names=length(find(ds==';'));
+            d_para.all_train_group_names=cell(1,num_all_train_group_names);
+            for strc=1:num_all_train_group_names
+                d_para.all_train_group_names{strc}=ds(1:find(ds==';',1,'first')-1);
+                ds=ds(find(ds==';',1,'first')+2:end);
+            end
+        else
+            d_para.all_train_group_names='';
         end
+        
         d_para.all_train_group_sizes=str2num(get(STG_group_sizes_edit,'String'));
         d_para.num_all_train_groups=length(d_para.all_train_group_sizes);
 
@@ -2105,7 +2134,6 @@ end
 
 
 
-
 function STG(hObject, eventdata, handles)
 
 d_para=getappdata(handles.figure1,'data_parameters');
@@ -2121,12 +2149,11 @@ d_para.num_all_trains=d_para.num_trains;
 SPIKY_paras_set
 
 fig=figure(f_para.num_fig);
-%set(fig,'Position',f_para.pos_fig);
+%set(fig,'Units','Normalized','Position',f_para.pos_fig);
 STG_UserData=get(fig,'UserData');
 
 STG_UserData.fh=gcf;
 STG_UserData.ah=gca;
-set(STG_UserData.fh,'Units','Normalized')
 
 STG_UserData.xl=get(STG_UserData.ah,'xlim');
 STG_UserData.yl=get(STG_UserData.ah,'ylim');
@@ -2163,10 +2190,10 @@ if isempty(spike_lh)
 else
     for trac=1:d_para.num_trains
         for sc=1:d_para.num_allspikes(trac)
-            dummy=get(spike_lh(trac,sc),'XData');
+            dummy=get(spike_lh{trac}(sc),'XData');
             STG_UserData.STG_spikes{trac}(sc)=dummy(1);
-            STG_UserData.lh{trac}(sc)=spike_lh(trac,sc);
         end
+        STG_UserData.lh{trac}=spike_lh{trac};
     end
 end
 
@@ -2289,7 +2316,7 @@ if (shftIsPressed)
         secondCorner_x=ax_pos(1,1);
         secondCorner_y=ax_pos(1,2);
         if (secondCorner_x ~= firstCorner_x)&&(secondCorner_y ~= firstCorner_y)
-            set(window, 'Position', [min(firstCorner_x, secondCorner_x), min(firstCorner_y, secondCorner_y), abs(secondCorner_x-firstCorner_x), abs(secondCorner_y-firstCorner_y)])
+            set(window,'Position',[min(firstCorner_x, secondCorner_x), min(firstCorner_y, secondCorner_y), abs(secondCorner_x-firstCorner_x), abs(secondCorner_y-firstCorner_y)])
             drawnow
             upperBoundST=STG_UserData.num_trains+1-ceil(( min(firstCorner_y, secondCorner_y)-0.05)*STG_UserData.num_trains);
             if upperBoundST>STG_UserData.num_trains

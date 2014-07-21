@@ -75,7 +75,7 @@ if varargin{7}==1 || numel(varargin{4}(varargin{4}>0))==1
         if strcmpi(varargin{5},'LineWidth') || strcmpi(varargin{5},'FontSize')
             eval(['p_para.',varargin{8},'=',sprintf('%i',new_val),';']);
         else
-            if length(varargin)<9
+            if length(varargin)<9 || strcmp(new_val,'off')
                 eval(['p_para.',varargin{8},'=''',sprintf('%s',new_val),''';']);
             else
                 eval(['p_para.',varargin{8},'=''k'';']);

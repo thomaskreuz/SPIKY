@@ -16,7 +16,7 @@
 % Kreuz T: Measures of spike train synchrony. Scholarpedia, 6(10):11934 (2011).
 % Kreuz T, Chicharro D, Greschner M, Andrzejak RG: Time-resolved and time-scale adaptive measures of spike train synchrony. J Neurosci Methods 195, 92 (2011).
 % Kreuz T, Chicharro D, Andrzejak RG, Haas JS, Abarbanel HDI: Measuring multiple spike train synchrony. J Neurosci Methods 183, 287 (2009).
-% Kreuz T, Haas JS, Morelli A, Abarbanel HDI, Politi A: Measuring spike train synchrony. J Neurosci Methods 165, 151 (2007)
+% Kreuz T, Haas JS, Morelli A, Abarbanel HDI, Politi A: Measuring spike train synchrony. J Neurosci Methods 165, 151 (2007).
 %
 % For questions and comments please contact us at "thomaskreuz (at) cnr.it".
 %
@@ -37,20 +37,20 @@
 % select_measures: Vector with measure selection (for order see below)
 %
 %
-% Output (Structure 'SPIKY_results'):
+% Output (Structure 'SPIKY_loop_results'):
 % =============================
 %
-%    SPIKY_results.<Measure>.name:     Name of selected measures (helps to identify the order within all other variables)
-%    SPIKY_results.<Measure>.distance: Level of dissimilarity over all spike trains and the whole interval
+%    SPIKY_loop_results.<Measure>.name:     Name of selected measures (helps to identify the order within all other variables)
+%    SPIKY_loop_results.<Measure>.distance: Level of dissimilarity over all spike trains and the whole interval
 %                                just one value, obtained by averaging over both spike trains and time
-%    SPIKY_results.<Measure>.matrix:   Pairwise distance matrices, obtained by averaging over time
-%    SPIKY_results.<Measure>.x:        Time-values of overall dissimilarity profile
-%    SPIKY_results.<Measure>.y:        Overall dissimilarity profile obtained by averaging over spike train pairs
+%    SPIKY_loop_results.<Measure>.matrix:   Pairwise distance matrices, obtained by averaging over time
+%    SPIKY_loop_results.<Measure>.x:        Time-values of overall dissimilarity profile
+%    SPIKY_loop_results.<Measure>.y:        Overall dissimilarity profile obtained by averaging over spike train pairs
 %
 % Note: For the ISI-distance the function 'SPIKY_f_pico' can be used to obtain the average value as well as
 % x- and y-vectors for plotting (see example below):
 %
-% [overall_dissimilarity,plot_x_values,plot_y_values] = SPIKY_f_pico(SPIKY_results.isi,SPIKY_results.dissimilarity_profiles{1},para.tmin);
+% [overall_dissimilarity,plot_x_values,plot_y_values] = SPIKY_f_pico(SPIKY_loop_results.isi,SPIKY_loop_results.dissimilarity_profiles{1},para.tmin);
 %
 
 clear all
@@ -111,7 +111,7 @@ para=d_para;
 
 % ################################################### Actual call of function !!!!!
 
-SPIKY_results = SPIKY_loop_f_distances(spikes,para) %#ok<NOPTS>
+SPIKY_loop_results = SPIKY_loop_f_distances(spikes,para) %#ok<NOPTS>
 
 % ################################################### Example plotting (just as a demonstration)
 
@@ -145,8 +145,8 @@ if num_plots>0
             subplotc=subplotc+1;
             subplot(num_plots,1,subplotc)                                      % Dissimilarity profile
             if measure==1                                % piecewise constant profiles have first to be transformed
-                isi_x=SPIKY_results.(measure_var).x;
-                isi_y=SPIKY_results.(measure_var).y;
+                isi_x=SPIKY_loop_results.(measure_var).x;
+                isi_y=SPIKY_loop_results.(measure_var).y;
                 plot_y_values=zeros(size(isi_y,1),length(isi_x)*2);
                 for pc=1:size(isi_y,1)
                     [overall_dissimilarity,plot_x_values,plot_y_values(pc,:)] = SPIKY_f_pico(isi_x,isi_y(pc,:),para.tmin);
@@ -155,14 +155,14 @@ if num_plots>0
                 plot(plot_x_values,plot_y_values)
                 plot(plot_x_values,plot_y_values(1,:),'LineWidth',1.5)
             elseif ismember(measure,[2 3 4])             % piecewise linear profiles can be plotted right away
-                x=SPIKY_results.(measure_var).x;
-                y=SPIKY_results.(measure_var).y;
+                x=SPIKY_loop_results.(measure_var).x;
+                y=SPIKY_loop_results.(measure_var).y;
                 hold on
                 plot(x,y)
                 plot(x,y(1,:),'LineWidth',1.5)
             elseif measure==5                            % PSTH
-                x=SPIKY_results.(measure_var).x;
-                y=SPIKY_results.(measure_var).y;
+                x=SPIKY_loop_results.(measure_var).x;
+                y=SPIKY_loop_results.(measure_var).y;
                 hold on
                 plot(x,y)
                 plot(x,y(1,:),'LineWidth',1.5)
@@ -174,7 +174,7 @@ if num_plots>0
         if mod(plotting,8)>3 && measure<5
             subplotc=subplotc+1;
             subplot(num_plots,1,subplotc)                                      % Dissimilarity matrix
-            mat=SPIKY_results.(measure_var).matrix;
+            mat=SPIKY_loop_results.(measure_var).matrix;
             imagesc(mat)
             axis square
             if size(mat,1)<10
