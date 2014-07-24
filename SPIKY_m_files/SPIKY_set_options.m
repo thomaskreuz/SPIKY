@@ -271,8 +271,8 @@ end
         fprintf(fid,'%s;\t\t%s\n',num2str(f_para.plot_mode),'% +1:vs time,+2::different measures,+4:different cuts,+8:different cuts-Movie (binary addition allows all combinations)');
         fprintf(fid,'%s;\t\t%s\n',num2str(f_para.profile_mode),'% 1-All only, 2-Groups only, 3-All and groups');
 
-        fprintf(fid,'%s;\t\t%s\n',num2str(f_para.profile_norm_mode),'% Normalization of averaged bivariate measure profiles (1-Absolute maximum value ''one'',2-Overall maximum value,3-Individual maximum value)');
-        fprintf(fid,'%s;\t\t%s\n',num2str(f_para.color_norm_mode),'% Normalization of pairwise dissimilarity matrices (1-Absolute maximum value ''one'',2-Overall maximum value,3-Individual maximum value)');
+        fprintf(fid,'%s;\t\t%s\n',num2str(f_para.profile_norm_mode),'% Normalization of averaged bivariate measure profiles (1-Absolute maximum value ''one'',2-Overall maximum value (from 0),3-Individual maximum value (from 0),4-Overall maximum value,5-Individual maximum value)');
+        fprintf(fid,'%s;\t\t%s\n',num2str(f_para.color_norm_mode),'% Normalization of pairwise dissimilarity matrices (1-Absolute maximum value ''one'',2-Overall maximum value (from 0),3-Individual maximum value (from 0),4-Overall maximum value,5-Individual maximum value)');
         fprintf(fid,'%s;\t\t%s\n',num2str(f_para.spike_train_color_coding_mode),'% Coloring of dendrograms (1-no,2-groups,3-trains)');
 
         fprintf(fid,'%s;\t\t%s\n',num2str(f_para.group_matrices),'% Allows tracing the overall synchronization among groups of spike trains (0-no,1-yes)');

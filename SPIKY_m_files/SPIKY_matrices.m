@@ -491,9 +491,11 @@ if f_para.group_matrices && d_para.num_select_train_groups>1 && d_para.num_selec
                     m_res.group_movie_mat(1:m_para.num_sel_bi_measures,sgc2,sgc,1:f_para.num_instants)=...
                         m_res.group_movie_mat(1:m_para.num_sel_bi_measures,sgc,sgc2,1:f_para.num_instants);
                 else
-                    m_res.group_movie_mat(1:m_para.num_sel_bi_measures,sgc,sgc2,1:f_para.num_instants)=...
-                        2*sum(m_res.movie_vects(1:m_para.num_sel_bi_measures,f_para.select_group_vect(ti_row2)==f_para.select_train_groups(sgc2) & ...
-                        f_para.select_group_vect(ti_col2)==f_para.select_train_groups(sgc),1:f_para.num_instants),2)/f_para.num_select_group_trains(sgc)^2;
+                    if f_para.num_select_group_trains(sgc)>1
+                        m_res.group_movie_mat(1:m_para.num_sel_bi_measures,sgc,sgc2,1:f_para.num_instants)=...
+                            mean(m_res.movie_vects(1:m_para.num_sel_bi_measures,f_para.select_group_vect(ti_row2)==f_para.select_train_groups(sgc2) & ...
+                            f_para.select_group_vect(ti_col2)==f_para.select_train_groups(sgc),1:f_para.num_instants),2);
+                    end
                 end
             end
         end
@@ -510,14 +512,16 @@ if f_para.group_matrices && d_para.num_select_train_groups>1 && d_para.num_selec
                     m_res.group_movie_mat_sa(1:m_para.num_sel_bi_measures,sgc2,sgc,1:f_para.num_selective_averages)=...
                         m_res.group_movie_mat_sa(1:m_para.num_sel_bi_measures,sgc,sgc2,1:f_para.num_selective_averages);
                 else
-                    m_res.group_movie_mat_sa(1:m_para.num_sel_bi_measures,sgc,sgc2,1:f_para.num_selective_averages)=...
-                        2*sum(m_res.movie_vects_sa(1:m_para.num_sel_bi_measures,f_para.select_group_vect(ti_row2)==f_para.select_train_groups(sgc2) & ...
-                        f_para.select_group_vect(ti_col2)==f_para.select_train_groups(sgc),1:f_para.num_selective_averages),2)/f_para.num_select_group_trains(sgc)^2;
+                    if f_para.num_select_group_trains(sgc)>1
+                        m_res.group_movie_mat_sa(1:m_para.num_sel_bi_measures,sgc,sgc2,1:f_para.num_selective_averages)=...
+                            mean(m_res.movie_vects_sa(1:m_para.num_sel_bi_measures,f_para.select_group_vect(ti_row2)==f_para.select_train_groups(sgc2) & ...
+                            f_para.select_group_vect(ti_col2)==f_para.select_train_groups(sgc),1:f_para.num_selective_averages),2);
+                    end
                 end
             end
         end
     end
-
+    
     if f_para.num_triggered_averages>0
         m_res.group_movie_mat_ta=zeros(m_para.num_sel_bi_measures,f_para.num_select_train_groups,f_para.num_select_train_groups,f_para.num_triggered_averages,'single');
         for sgc=1:f_para.num_select_train_groups
@@ -529,9 +533,11 @@ if f_para.group_matrices && d_para.num_select_train_groups>1 && d_para.num_selec
                     m_res.group_movie_mat_ta(1:m_para.num_sel_bi_measures,sgc2,sgc,1:f_para.num_triggered_averages)=...
                         m_res.group_movie_mat_ta(1:m_para.num_sel_bi_measures,sgc,sgc2,1:f_para.num_triggered_averages);
                 else
-                    m_res.group_movie_mat_ta(1:m_para.num_sel_bi_measures,sgc,sgc2,1:f_para.num_triggered_averages)=...
-                        2*sum(m_res.movie_vects_ta(1:m_para.num_sel_bi_measures,f_para.select_group_vect(ti_row2)==f_para.select_train_groups(sgc2) & ...
-                        f_para.select_group_vect(ti_col2)==f_para.select_train_groups(sgc),1:f_para.num_triggered_averages),2)/f_para.num_select_group_trains(sgc)^2;
+                    if f_para.num_select_group_trains(sgc)>1
+                        m_res.group_movie_mat_ta(1:m_para.num_sel_bi_measures,sgc,sgc2,1:f_para.num_triggered_averages)=...
+                            mean(m_res.movie_vects_ta(1:m_para.num_sel_bi_measures,f_para.select_group_vect(ti_row2)==f_para.select_train_groups(sgc2) & ...
+                            f_para.select_group_vect(ti_col2)==f_para.select_train_groups(sgc),1:f_para.num_triggered_averages),2);
+                    end
                 end
             end
         end

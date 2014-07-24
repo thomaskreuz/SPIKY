@@ -146,10 +146,14 @@ for frc=1:h_para.num_frames
         if f_para.color_norm_mode==1
             set(gca,'CLim',[0 1])
         elseif f_para.color_norm_mode==2
-            set(gca,'CLim',[0 max(max(max(max(m_res.movie_mat))))])
+            max_mat_val=max(max(max(max(m_res.movie_mat))));
+            if max_mat_val>0
+                set(gca,'CLim',[0 max_mat_val])
+            end
         elseif f_para.color_norm_mode==3
-            if max(max(plot_mat))>0
-                set(gca,'CLim',[0 max(max(plot_mat))])
+            max_mat_val=max(max(plot_mat));
+            if max_mat_val>0
+                set(gca,'CLim',[0 max_mat_val])
             end
         elseif f_para.color_norm_mode==4
             min_mat_val=min(min(min(min(m_res.movie_mat))));
@@ -158,8 +162,10 @@ for frc=1:h_para.num_frames
                 set(gca,'CLim',[min_mat_val max_mat_val])
             end
         elseif f_para.color_norm_mode==5
-            if max(max(plot_mat))>min(min(plot_mat))
-                set(gca,'CLim',[min(min(plot_mat)) max(max(plot_mat))])
+            min_mat_val=min(min(plot_mat));
+            max_mat_val=max(max(plot_mat));            
+            if max_mat_val>min_mat_val
+                set(gca,'CLim',[min_mat_val max_mat_val])
             end
         end
         if matc<=h_para.num_measures

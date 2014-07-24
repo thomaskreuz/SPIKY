@@ -358,7 +358,7 @@ for matc=1:h_para.num_all_matrices
     set(gca,'YDir','normal')
     
     set(im_ih,'UserData',matc,'Tag',m_res.bi_mat_str{matc})
-    im_assign_cb = 'assignin(''base'', [''SPIKY_matrix_'' num2str(get(gco,''UserData''))], get(gco,''CData'') );    assignin(''base'', [''SPIKY_matrix_name_'' num2str(get(gco,''UserData''))], get(gco,''Tag'') ); ';
+    im_assign_cb = 'assignin(''base'', [''SPIKY_matrix_'' num2str(get(gco,''UserData''))], flipud(get(gco,''CData'')) );    assignin(''base'', [''SPIKY_matrix_name_'' num2str(get(gco,''UserData''))], get(gco,''Tag'') ); ';
     ev_item = uimenu(im_cmenu,'Label','Extract variable: Matrix','Callback',im_assign_cb);
     
     if f_para.color_norm_mode==1
@@ -375,7 +375,9 @@ for matc=1:h_para.num_all_matrices
                 max_mat_val=max(max(squeeze(m_res.movie_vects_ta(:,:,tavc))));
             end
         end
-        set(gca,'CLim',[0 max_mat_val])
+        if max_mat_val>0
+            set(gca,'CLim',[0 max_mat_val])
+        end
     elseif f_para.color_norm_mode==3
         if max(max(plot_mat))>0
             set(gca,'CLim',[0 max(max(plot_mat))])
