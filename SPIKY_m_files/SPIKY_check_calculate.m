@@ -204,4 +204,3 @@ if ~strcmp(stimulus_str_in,stimulus_str_out) || ~strcmp(spikes_str_in,spikes_str
     ret=1;
     return
 end
-

@@ -65,7 +65,7 @@ end
 if ~isappdata(0,'guifigh')
     guifigh=findall(0,'type','figure');
     setappdata(0,'guifigh',guifigh)
-    set(guifigh(1),'Position',[0 0.0067 0.5 0.8878])
+    set(guifigh(1),'Position',[0 0.0067 0.5 0.8878])    % 0.0 0.08 0.5 0.8888888888888888
 end
 end
 
@@ -978,9 +978,9 @@ if ~f_para.subplot_posi(m_para.psth)
     set(handles.fpara_psth_window_edit,'Enable','off')
 end
 set(handles.Para_figure_uipanel,'Visible','on')
-if m_para.num_sel_bi_measures==0
-    set(handles.plots_frame_comparison_checkbox,'Enable','off')
-    set(handles.plots_frame_sequence_checkbox,'Enable','off')
+if m_para.num_sel_bi_measures==0 || d_para.num_frames==0
+    set(handles.plots_frame_comparison_checkbox,'Enable','off','Value',0)
+    set(handles.plots_frame_sequence_checkbox,'Enable','off','Value',0)
 end
 if get(handles.plots_frame_sequence_checkbox,'Value')==0 && get(handles.record_movie_checkbox,'Value')==0
     set(handles.Para_movie_uipanel,'Visible','off')
@@ -996,6 +996,7 @@ if ~isempty(get(handles.dpara_trains_edit,'String')) && length(find(diff(d_para.
     set(handles.fpara_train_groups_edit,'Enable','off')
     set(handles.fpara_select_train_groups_pushbutton,'Enable','off')
 end
+
 set(handles.Generator_pushbutton,'Enable','off','FontWeight','normal')
 set(handles.Update_pushbutton,'Enable','off','FontWeight','normal')
 set(handles.Calculate_pushbutton,'Enable','off','FontWeight','normal')

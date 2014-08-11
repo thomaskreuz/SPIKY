@@ -193,8 +193,9 @@ for frc=1:h_para.num_frames
         end
         xl=xlim; yl=ylim;
 
-        if matc==h_para.num_measures && frc==h_para.num_frames
-            %colorbar
+        if f_para.colorbar && ((matc==h_para.num_measures && frc==h_para.num_frames) || ismember(f_para.color_norm_mode,[3 5]))
+            colorbar
+            set(gca,'position',h_para.supos(spc,1:4))
         end
         axis square
         %if f_para.publication==0 && h_para.rows(spc)==1 && frc<=f_para.num_instants

@@ -42,7 +42,7 @@ comparison=(mod(f_para.plot_mode,4)>1 && mod(f_para.plot_mode,8)<=3);
 sequence=mod(f_para.plot_mode,8)>3;
 
 f_para.num_frames=f_para.num_instants+f_para.num_selective_averages+f_para.num_triggered_averages;
-if f_para.num_frames<1
+if (comparison || sequence) && f_para.num_frames<1
     set(0,'DefaultUIControlFontSize',16);
     if comparison % get(handles.plots_frame_comparison_checkbox,'Value')
         mbh=msgbox(sprintf('A comparison without any frames does not make much sense!\nIf you want do do a movie, please go back, select instants\nand/or selective/triggered averages, and recalculate.'),'Warning','warn','modal');
@@ -668,7 +668,7 @@ if f_para.num_frames>0
         else
         end
     end
-    colbar=f_para.colorbar*(1+(f_para.color_norm_mode==3)); % 0-no colorbar,1-colorbar for last subplot only,2-colorbar for all subplots
+    colbar=f_para.colorbar*(1+ismember(f_para.color_norm_mode,[3 5])); % 0-no colorbar,1-colorbar for last subplot only,2-colorbar for all subplots
     smaller=(h_para.num_all_subplots>h_para.max_col && h_para.num_all_subplots<7);
     h_para.supo1=[0.09 0.52+smaller*0.05 0.85 0.42-smaller*0.05];
 

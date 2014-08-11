@@ -15,7 +15,7 @@ disp(' '); disp(' ')
 % More than 2 measures and only matrices in frame comparison
 % FB-STG: Edit Replace - Delete
 % ==================================
-% 
+%
 
 m_para.all_measures_str={'Stimulus';'Spikes';'PS';'I'; 'S';'S_r';'S_f';'Si';'Si_r';'Si_f';'V';'R'};
 m_para.all_measures_string={'Stimulus';'Spikes';'PSTH';'ISI'; 'SPIKE';'SPIKE_realtime';'SPIKE_future';...
@@ -193,7 +193,7 @@ if any(f_para.subplot_posi(m_para.isi_pico:m_para.num_all_measures))            
     
     %m_res.cum_isi=all_spikes(1)+[0 cumsum(m_res.isi)];
     m_res.cum_isi=unique(all_spikes);
-    clear all_indy indy all_spikes
+    clear all_indy indy % all_spikes
     
     % We define the ISI as going from right after the last spike to the
     % exact time of the next spike. So the previous spike is not part of the ISI
@@ -210,7 +210,7 @@ if any(f_para.subplot_posi(m_para.isi_pico:m_para.num_all_measures))            
     end
     m_res.pili_supi_indy=round((m_res.pili_supi-d_para.tmin)/d_para.dts);
     clear dummy
-            
+    
     % ###########################################################################################################################################
     % ############################################################## Memory management ##########################################################
     % ###########################################################################################################################################
@@ -291,7 +291,7 @@ if any(f_para.subplot_posi(m_para.isi_pico:m_para.num_all_measures))            
         ive{trac}=cumsum(len);
         ivs{trac}=[1 ive{trac}(1:end-1)+1];
     end
-    clear all_isi all_trains empties
+    clear empties % all_isi all_trains
     
     ave_bi_vect=zeros(m_para.num_sel_bi_measures,d_para.num_pairs);
     if r_para.num_runs>1
@@ -303,7 +303,7 @@ if any(f_para.subplot_posi(m_para.isi_pico:m_para.num_all_measures))            
         setappdata(pwbh,'canceling',0)
     end
     
-    if f_para.edge_correction 
+    if f_para.edge_correction
         if r_para.num_runs>1    % Edge-correction for many runs
             fl_isis=repmat({zeros(1,4)},1,d_para.num_trains);
             for trac=1:d_para.num_trains
@@ -450,11 +450,11 @@ if any(f_para.subplot_posi(m_para.isi_pico:m_para.num_all_measures))            
         % #####################################################################################################################################
         % ########################################################### Pico-Measures I (ISI) ###################################################
         % #####################################################################################################################################
-
+        
         if m_para.num_pico_measures>0                                                                                                   % Pico
             m_res.pico_measures_mat=zeros(m_para.num_pico_measures,d_para.num_pairs,r_para.run_pico_lengths(ruc),'single');
-            
-            if f_para.subplot_posi(m_para.isi_pico)                        % ISI (calculated first, then edge-correction of ints for SPIKE)
+                        
+            if ~f_para.subplot_posi(m_para.isi_pico)                        % ISI (calculated first, then edge-correction of ints for SPIKE)   % ###### ~
                 if exist(['SPIKY_ISI_MEX.',mexext],'file')
                     m_res.pico_measures_mat(m_para.measure_indy(m_para.isi_pico),1:d_para.num_pairs,1:r_para.run_pico_lengths(ruc)) = ...
                         abs(SPIKY_ISI_MEX(int32(d_para.num_pairs),int32(r_para.run_pico_lengths(ruc)),int32(d_para.num_trains),ints));
@@ -471,20 +471,183 @@ if any(f_para.subplot_posi(m_para.isi_pico:m_para.num_all_measures))            
                     end
                 end
             end
+            if f_para.subplot_posi(m_para.isi_pico)                        % 1 - Event synchronization
+                if exist(['SPIKY_EventSync_MEX.',mexext],'file')
+                    m_res.pico_measures_mat(m_para.measure_indy(m_para.isi_pico),1:d_para.num_pairs,1:r_para.run_pico_lengths(ruc)) = ...
+                        abs(SPIKY_EventSync_MEX(int32(d_para.num_pairs),int32(r_para.run_pico_lengths(ruc)),int32(d_para.num_trains),ints));   % ####
+                else
+                    event_synchro=zeros(d_para.num_pairs,m_res.num_isi);
+                    
+                    tau_mode=1;
+                    if tau_mode==1                                       % maximum time lag fixed
+                        tau=30;
+                        pac=0;
+                        for trac1=1:d_para.num_trains-1
+                            for trac2=trac1+1:d_para.num_trains
+                                pac=pac+1;
+                                doubles=intersect(spikes{trac1},spikes{trac2});
+                                for dc=1:length(doubles)
+                                    event_synchro(pac,logical(doubles(dc)==m_res.cum_isi))=0.5;
+                                end
+                                pair_spikes=all_spikes(ismember(all_trains,[trac1,trac2]));
+                                pair_trains=all_trains(ismember(all_trains,[trac1,trac2]));
+                                for sc=1:length(pair_spikes)-1
+                                    pair_spike1=pair_spikes(sc);
+                                    if ~ismember(pair_spike1,doubles)
+                                        indy=find(pair_trains(sc+1:end)~=pair_trains(sc),1,'first');
+                                        if ~isempty(indy)
+                                            pair_spike2=pair_spikes(sc+indy);
+                                            if pair_spike2-pair_spike1<=tau
+                                                event_synchro(pac,logical(pair_spike2==m_res.cum_isi))=sign(pair_trains(sc+indy)-pair_trains(sc));
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    else                                                % maximum time lag adaptive
+                        pac=0;
+                        pair_spikes_12=cell(1,2);
+                        for trac1=1:d_para.num_trains-1
+                            pair_spikes_12{1}=all_spikes(all_trains==trac1);
+                            for trac2=trac1+1:d_para.num_trains
+                                pac=pac+1;
+                                doubles=intersect(spikes{trac1},spikes{trac2});
+                                for dc=1:length(doubles)
+                                    event_synchro(pac,logical(doubles(dc)==m_res.cum_isi))=0.5;
+                                end
+                                pair_spikes_12{2}=all_spikes(all_trains==trac2);
+                                pair_spikes=all_spikes(ismember(all_trains,[trac1,trac2]));
+                                pair_trains=all_trains(ismember(all_trains,[trac1,trac2]));
+                                
+                                pair_done=zeros(size(pair_spikes));
+                                for sc=1:length(pair_spikes)-1
+                                    if pair_done(sc)
+                                        continue;
+                                    end
+                                    pair_spike1=pair_spikes(sc);
+                                    if ~ismember(pair_spike1,doubles)
+                                        pair_train1=(pair_trains(sc)==trac1)+2*(pair_trains(sc)==trac2);
+                                        ind=find(pair_spike1==pair_spikes_12{pair_train1});
+                                        if length(pair_spikes_12{pair_train1})==1
+                                            tau1=(d_para.tmax-d_para.tmin)/2;
+                                        elseif ind==1
+                                            tau1=isis{pair_train1}(ind+1)/2;
+                                        elseif ind==length(pair_spikes_12{pair_train1})
+                                            tau1=isis{pair_train1}(ind)/2;
+                                        else
+                                            tau1=min(isis{pair_train1}(ind:ind+1))/2;
+                                        end
+                                        indy=find(pair_trains(sc+1:end)~=pair_train1,1,'first');
+                                        if ~isempty(indy)
+                                            pair_spike2=pair_spikes(sc+indy);
+                                            pair_train2=3-pair_train1;
+                                            ind=find(pair_spike2==pair_spikes_12{pair_train2});
+                                            if length(pair_spikes_12{pair_train2})==1
+                                                tau2=(d_para.tmax-d_para.tmin)/2;
+                                            elseif ind==1
+                                                tau2=isis{pair_train2}(ind+1)/2;
+                                            elseif ind==length(pair_spikes_12{pair_train2})
+                                                tau2=isis{pair_train2}(ind)/2;
+                                            else
+                                                tau2=min(isis{pair_train2}(ind:ind+1))/2;
+                                            end
+                                            tau=min([tau1 tau2]);
+                                            if pair_spike2-pair_spike1<=tau
+                                                event_synchro(pac,logical(pair_spike2==m_res.cum_isi))=sign(pair_train2-pair_train1);
+                                                pair_done(sc+indy)=1;
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                    
+                    cum_event_synchro=cumsum(abs(ceil(event_synchro)),2);
+                    %cum_event_delay=cumsum(fix(event_synchro),2);
+                    
+                    cum_events=zeros(d_para.num_trains,length(all_trains));
+                    for trac=1:d_para.num_trains
+                        for ic=1:length(all_trains)
+                            cum_events(trac,ic)=sum(all_trains(1:ic)==trac);
+                        end
+                    end
+                    cum_events=cum_events(:,all_isi>0);
+
+                    time_mode=3;
+                    if time_mode==1
+                        m_res.pico_measures_mat(m_para.measure_indy(m_para.isi_pico),1:d_para.num_pairs,1:r_para.run_pico_lengths(ruc))=cum_event_synchro;
+                    elseif time_mode==2
+                        norm_cum_event_synchro=zeros(d_para.num_pairs,m_res.num_isi);
+                        %norm_cum_event_delay=zeros(d_para.num_pairs,m_res.num_isi);
+                        pac=0;
+                        for trac1=1:d_para.num_trains-1
+                            evc_x=cum_events(trac1,end);
+                            for trac2=trac1+1:d_para.num_trains
+                                evc_y=cum_events(trac2,end);
+                                pac=pac+1;
+                                norm_cum_event_synchro(pac,:)=cum_event_synchro(pac,:)./(sqrt(cum_events(trac1,:).*cum_events(trac2,:))+((sqrt(cum_events(trac1,:).*cum_events(trac2,:)))==0));
+                                %norm_cum_event_delay(pac,:)=cum_event_delay(pac,:)./(sqrt(cum_events(trac1,:).*cum_events(trac2,:))+((sqrt(cum_events(trac1,:).*cum_events(trac2,:)))==0));
+                            end
+                        end
+                        m_res.pico_measures_mat(m_para.measure_indy(m_para.isi_pico),1:d_para.num_pairs,1:r_para.run_pico_lengths(ruc))=norm_cum_event_synchro;
+                    elseif time_mode==3
+                        wind=3;
+                        window_support=wind+1:m_res.num_isi-wind;
+                        win_events=zeros(d_para.num_trains,m_res.num_isi);
+                        win_events(:,window_support)=cum_events(:,window_support+wind)-cum_events(:,window_support-wind);
+                        for wc=2:wind
+                            win_events(:,wc)=cum_events(:,wc)-cum_events(:,1);
+                            win_events(:,m_res.num_isi+1-wc)=cum_events(:,m_res.num_isi)-cum_events(:,m_res.num_isi+1-wc);
+                        end
+                        win_event_synchro=zeros(d_para.num_pairs,m_res.num_isi);
+                        %win_event_delay=zeros(d_para.num_pairs,m_res.num_isi);
+                        pac=0;
+                        for trac1=1:d_para.num_trains-1
+                            for trac2=trac1+1:d_para.num_trains
+                                pac=pac+1;
+                                win_event_synchro(pac,window_support)=(cum_event_synchro(pac,window_support+wind)-cum_event_synchro(pac,window_support-wind))./(sqrt(win_events(trac1,window_support).*win_events(trac2,window_support))+...
+                                    ((sqrt(win_events(trac1,window_support).*win_events(trac2,window_support)))==0));
+                                %win_event_delay(pac,window_support)=(cum_event_delay(pac,window_support+wind)-cum_event_delay(pac,window_support-wind))./(sqrt(win_events(trac1,window_support).*win_events(trac2,window_support))...
+                                %    +((sqrt(win_events(trac1,window_support).*win_events(trac2,window_support)))==0));
+                                for wc=2:wind
+                                    win_event_synchro(pac,wc)=(cum_event_synchro(pac,wc)-cum_event_synchro(pac,1))./(sqrt(win_events(trac1,wc).*win_events(trac2,wc))+...
+                                        ((sqrt(win_events(trac1,wc).*win_events(trac2,wc)))==0));
+                                    win_event_synchro(pac,m_res.num_isi+1-wc)=(cum_event_synchro(pac,m_res.num_isi)-cum_event_synchro(pac,m_res.num_isi+1-wc))./(sqrt(win_events(trac1,m_res.num_isi+1-wc).*win_events(trac2,m_res.num_isi+1-wc))+...
+                                        ((sqrt(win_events(trac1,m_res.num_isi+1-wc).*win_events(trac2,m_res.num_isi+1-wc)))==0));
+                                    %win_event_delay(pac,wc)=(cum_event_delay(pac,wc)-cum_event_delay(pac,1))./(sqrt(win_events(trac1,wc).*win_events(trac2,wc))...
+                                    %    +((sqrt(win_events(trac1,wc).*win_events(trac2,wc)))==0));
+                                    %win_event_delay(pac,m_res.num_isi+1-wc)=(cum_event_delay(pac,m_res.num_isi)-cum_event_delay(pac,m_res.num_isi+1-wc))./(sqrt(win_events(trac1,m_res.num_isi+1-wc).*win_events(trac2,m_res.num_isi+1-wc))...
+                                    %    +((sqrt(win_events(trac1,m_res.num_isi+1-wc).*win_events(trac2,m_res.num_isi+1-wc)))==0));
+                                end
+                            end
+                        end
+                        win_event_synchro(:,1)=win_event_synchro(:,2);
+                        %win_event_delay(:,1)=win_event_delay(:,2);
+                        win_event_synchro(:,m_res.num_isi)=win_event_synchro(:,m_res.num_isi-1);
+                        %win_event_delay(:,m_res.num_isi)=win_event_delay(:,m_res.num_isi-1);
+                        win_event_synchro(win_event_synchro>1)=1;
+                        %win_event_delay(win_event_delay>1)=1;
+                        %win_event_delay(win_event_delay<-1)=-1;
+                        m_res.pico_measures_mat(m_para.measure_indy(m_para.isi_pico),1:d_para.num_pairs,1:r_para.run_pico_lengths(ruc))=win_event_synchro;
+                    end
+                end
+            end
         end
         
         % #####################################################################################################################################
         % ################################################################# Pili-Measures #####################################################
         % #####################################################################################################################################
-
+        
         if m_para.num_pili_measures>0
             odds=1:2:r_para.run_pili_lengths(ruc);
             evens=odds+1;
             m_res.pili_measures_mat=zeros(m_para.num_pili_measures,d_para.num_pairs,r_para.run_pili_lengths(ruc),'single');
-
+            
             if f_para.subplot_posi(m_para.realtime_spike_pili)                                           % REALTIME-Pili
                 if exist(['SPIKY_realtimeSPIKE_MEX.',mexext],'file')
-                   m_res.pili_measures_mat(m_para.measure_indy(m_para.realtime_spike_pili),1:d_para.num_pairs,1:r_para.run_pili_lengths(ruc)) = ...
+                    m_res.pili_measures_mat(m_para.measure_indy(m_para.realtime_spike_pili),1:d_para.num_pairs,1:r_para.run_pili_lengths(ruc)) = ...
                         SPIKY_realtimeSPIKE_MEX(int32(d_para.num_pairs),int32(r_para.run_pili_lengths(ruc)),int32(d_para.num_trains),...
                         prev_spikes_pili,int32(prev_spikes_indy_pili),run_udists);
                 else
@@ -579,12 +742,12 @@ if any(f_para.subplot_posi(m_para.isi_pico:m_para.num_all_measures))            
                             foll_spikes_indy_pili(trac,[foll_edge_cor_indy{trac}*2-1 foll_edge_cor_indy{trac}*2])=...
                                 foll_spikes_indy_pili(trac,[foll_edge_cor_indy{trac}*2-1 foll_edge_cor_indy{trac}*2])-1;
                         end
-                    end                    
+                    end
                 end
                 clear isis
                 isi_indy_pili=reshape(repmat(r_para.run_pico_starts(ruc):r_para.run_pico_ends(ruc),2,1),1,2*r_para.run_pico_lengths(ruc))-...
                     r_para.run_pico_starts(ruc)+1;
-
+                
                 if exist(['SPIKY_SPIKE_MEX.',mexext],'file')
                     m_res.pili_measures_mat(m_para.measure_indy(m_para.spike_pili),1:d_para.num_pairs,1:r_para.run_pili_lengths(ruc)) = ...
                         SPIKY_SPIKE_MEX(int32(d_para.num_pairs),int32(r_para.run_pili_lengths(ruc)),int32(d_para.num_trains),...
@@ -726,6 +889,7 @@ if any(f_para.subplot_posi(m_para.isi_pico:m_para.num_all_measures))            
     else
         d_para.num_triggered_averages=0;
     end
+    d_para.num_frames=d_para.num_instants+d_para.num_selective_averages+d_para.num_triggered_averages;
     f_para.select_trains=1:d_para.num_trains;
     f_para.group_vect=d_para.group_vect;
 else
